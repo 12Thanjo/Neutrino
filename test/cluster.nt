@@ -1,0 +1,99 @@
+local cluster = require('cluster');
+local num_CPUs = require('os').cpus().length;
+
+
+local run_master = function(){
+    console.log(|"Master is running (pid: " process.pid ")"|);
+    local num_threads = num_CPUs - 1;
+
+    // build data_set
+    local data_set = [];
+    forNum(i, 50000){
+        data_set.push(i);
+    };
+    local data_set_length = data_set.length;
+    local data_set_i = 0;
+
+    local done = false;
+    // create workers
+    forNum(i, 11){
+        local worker = cluster.fork();
+        worker.on('message', @(data)->{
+            data_set[data.i] = data.v;
+
+            if(data_set_i < data_set_length){
+                local send = {
+                    i: data_set_i,
+                    v: data_set[data_set_i]
+                };
+
+                data_set_i += 1;
+
+                worker.send(send);
+            }else if(done == false){
+                done = true;
+                console.log('data_set: ', data_set);
+                console.timeEnd('cluster');
+            };
+        });
+    };
+
+    console.time("cluster");
+    forKeys cluster.workers(id, worker){
+        local send = {
+            i: data_set_i,
+            v: data_set[data_set_i],
+        };
+
+        data_set_i += 1;
+
+        worker.send(send);
+    };
+};
+
+
+
+
+local run_worker = function(){
+    local worker = cluster.worker;
+
+    local log = function(msg){
+        console.log(|'\x1b[36m' worker.id ": \x1b[37m"  msg "\x1b[37m"|);
+    };
+    
+    log(|"\x1b[32m" 'initialized'|);
+
+
+    process.on("message", @(data)->{
+        data.v *= data.v;
+        process.send(data);
+    });
+};
+
+
+species Cluster(threads){
+    if(threads > num_CPUs){
+        RangeError |"there are only " num_CPUs - 1 " threads available | got " threads|;
+    };
+};
+
+
+
+
+
+local test = spawn Cluster(11);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

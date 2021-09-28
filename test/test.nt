@@ -1,0 +1,361 @@
+// this is a comment
+
+
+local foo = 1 - 2;
+// set a variable with local scope (let in JS)
+local integer = 12;
+
+// set a variable with regional scope (var in JS)
+regional negative_and_decimal = -12.4;
+
+// set a variable with global scope (globalThis. in JS)
+// create an object
+global var3 = {
+	string: "Hello World",
+	array: [1.2, "3", ["2D"], {foo: "bar"}],
+	boolean: [true, false],
+	foo: "bar"
+};
+
+// add the property "nullish" to var3 
+var3.nulish = [null, undefined];
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// test assert setup
+local assert = function(title, value, condition){
+	if(condition() == value){
+		console.log(|"\x1b[32m✓ " title "\x1b[37m"|);
+	}else{
+		console.log(|"\x1b[31m✘ " title "\x1b[37m"|);
+	};
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+console.log("Variable Initialization:");
+assert('local', true, @()->{
+	local local_var = true;
+	return local_var;
+});
+assert('regional', true, @()->{
+	regional regional_var = true;
+	return regional_var;
+});
+assert('global', true, @()->{
+	global global_var = true;
+	return global_var;
+});
+console.log();
+
+
+console.log('Modules:');
+assert('import (.nti)', true, @()->{
+	import 'import test.nti';
+});
+console.log();
+
+console.log("Misc: ");
+assert('function', true, @()->{
+	regional func = function(param){
+		return param;
+	};
+	return func(true);
+});
+assert('arrow function (@()->{})', true, @()->{
+	regional a_func = @(param)->{
+		return param;
+	};
+	return a_func(true);
+});
+assert('spread (~)', 1, @()->{
+	local arr = [1];
+	local spread_arr = [~arr];
+	return spread_arr[0];
+});
+assert('concat (| |)', true, @()->{
+	local foo = "c";
+	local bar = "d";
+	local str = |"a" (1 + 4) "b" foo bar|;
+	return str == "a5bcd";
+});
+console.log();
+
+// math
+console.log("Arithmetic Operators:");
+assert('addition (+)', 10, @()->{return 6 + 4;});
+assert('subtraction (-)', 2, @()->{return 6 - 4;});
+assert('multiplication (*)', 24, @()->{return 6 * 4;});
+assert('division (/)', 1.5, @()->{return 6 / 4;});
+assert('modulus (%)', 2, @()->{return 6 % 4;});
+console.log();
+
+
+console.log("Assignment Operators:");
+regional num = 10;
+assert('addition (+=)', 14, @()->{num += 4; return num;});
+assert('subtraction (-=)', 12, @()->{num -= 2; return num;});
+assert('multiplication (*=)', 24, @()->{num *= 2; return num;});
+assert('division (/=)', 6, @()->{num /= 4; return num;});
+assert('modulus (%=)', 2, @()->{num %= 4; return num;});
+console.log();
+
+
+console.log("Reverse Assignment Operators:");
+regional num = 10;
+regional str = "foo";
+assert('addition (=+)', 'barfoo', @()->{str =+ "bar"; return str;});
+assert('subtraction (=-)', -8, @()->{num =- 2; return num;});
+assert('multiplication (=*)', -16, @()->{num =* 2; return num;});
+assert('division (=/)', 2, @()->{num =/ -32; return num;});
+assert('modulus (=%)', 1, @()->{num =% 5; return num;});
+console.log();
+
+
+console.log("Special Assignment Operators:");
+regional num = 5;
+assert("set greater (=>) smaller", 5, @()->{num => 3; return num});
+assert("set greater (=>) larger", 8, @()->{num => 8; return num});
+assert("set lesser (=<) smaller", 3, @()->{num =< 3; return num});
+assert("set lesser (=<) larger", 3, @()->{num =< 8; return num});
+console.log();
+
+
+console.log("Conditionals:");
+assert('if', true, @()->{
+	if(true){
+		return true
+	};
+});
+assert('else', true, @()->{
+	if(false){
+		return false;
+	}else{
+		return true;
+	};
+});
+assert('else if', true, @()->{
+	if(false){
+		return false;
+	}else if(true){
+		return true;
+	}else{
+		return false;
+	};
+});
+assert('equals (==)', true, @()->{return 1 == 1;});
+assert('not equals (!=)', true, @()->{return 1 != 1.2;});
+assert('greater than (>)', true, @()->{return 0 > -1;});
+assert('less than (<)', true, @()->{return -1.3 < -1.1;});
+assert('greater than or equal to (<=)', true, @()->{return 1 <= 2 && 2 <= 2;});
+assert('less than or equal to (>=)', true, @()->{return 2 >= 1 && 2 <= 2;});
+assert('and (&&)', false, @()->{return 1 == 2 && "foo" == "foo"});
+assert('or (||)', true, @()->{return 1 == 2 || "foo" == "foo"});
+console.log();
+
+
+console.log("Loops:");
+assert("for", 6, @()->{
+	local forArr = [1, 2, 3];
+	local count = 0;
+	for(i, forArr){
+		count += forArr[i];
+	};
+	return count;
+});
+assert("forNum", 6, @()->{
+	local count = 0;
+	forNum(i, 4){
+		// 0, 1, 2, 3
+		count += i;
+	};
+	return count;
+});
+assert("itterate", true, @()->{
+	local forArr = [1, 2, 3];
+	local key_count = 0;
+	local value_count = 0;
+	itterate forArr(key, value){
+		key_count += key;
+		value_count += value;
+	};
+	return key_count == 3 && value_count == 6;
+});
+assert("forKeys", true, @()->{
+	local forKeysObj = {
+		foo: "bar",
+		hello: "world"
+	};
+	local key_arr = [];
+	local value_arr = [];
+	forKeys forKeysObj(key, value){
+		key_arr.push(key);
+		value_arr.push(value);
+	};
+	return key_arr[0] == 'foo' &&
+		key_arr[1] == 'hello' &&
+		value_arr[0] == 'bar' &&
+		value_arr[1] == 'world';
+});
+console.log();
+
+
+console.log("Classes:");
+assert('species', true, @()->{
+	species GenericClass(param){
+		this.name = param;
+		private.priv_prop = "hi";
+	};
+
+	local gen = spawn GenericClass("name");
+	return gen.name == "name" && gen.priv_prop == null;
+});
+assert('class', true, @()->{
+	 // id is needed
+	class GenericClass(id, param){
+		this.name = id;
+		this.param = param;
+		private.priv_prop = "hi";
+		access getter_prop = 1;
+
+	};
+
+	local gen = spawn GenericClass('id', 'foo');
+
+	gen.getter_prop = 2;
+
+	local getter_count = 0;
+	GenericClass.forEach(@(e)->{
+		getter_count += e.getter_prop;
+	});
+
+	return GenericClass.has('id') && GenericClass.get('id') == gen && gen.param == 'foo' && gen.priv_prop == null && gen.getter_prop == 1 && getter_count == 1;
+});
+console.log();
+
+
+console.log("Keywords:");
+assert('return', true, @()->{
+	return true;
+});
+assert('try', true, @()->{
+	try{
+		return true;
+	};
+});
+assert('catch', true, @()->{
+	try{
+		foo = doesnt_exist;
+		return false;
+	}catch{
+		return true;
+	};
+});
+assert('catch (e)', true, @()->{
+	try{
+		foo = doesnt_exist;
+		return false;
+	}catch(e){
+		return e != null;
+	};
+});
+assert('typeof', true, @()->{
+	local num = 1234;
+	return num typeof 'number';
+});
+assert('instanceof', true, @()->{
+	species Spec(){};
+
+	local foo = spawn Spec();
+
+	return foo instanceof Spec;
+});
+assert('break', 1, @()->{
+	local count = 0;
+	forNum(i, 3){
+		count += i + 1;
+		break;
+	};
+	return count;
+});
+assert('default', 2, @()->{
+	local foo = null;
+	foo default 2;
+	return foo;
+});
+console.log();
+
+
+console.log("Errors:");
+assert('Error', 'message', @()->{
+	try{
+		Error "message";
+	}catch(e){
+		return e.message;
+	};
+});
+assert('SyntaxError', 'message', @()->{
+	try{
+		SyntaxError "message";
+	}catch(e){
+		return e.message;
+	};
+});
+assert('ReferenceError', 'message', @()->{
+	try{
+		ReferenceError "message";
+	}catch(e){
+		return e.message;
+	};
+});
+assert('RangeError', 'message', @()->{
+	try{
+		RangeError "message";
+	}catch(e){
+		return e.message;
+	};
+});
+console.log();
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+console.log("Multithreading:");
+assert("Thread", true, @()->{});
+assert("Thread Pool", true, @()->{});
+console.log();
+
+
+
+
+// Environment main;
+
+// main -> Entity foo;
+// main -> Entity bar('bar');
+
+// Component position{
+// 	x: Prop(0),
+// 	y: Prop(0)
+// };
+
+// position >> main;
+
+// Query physics[All(position)];
+
+// physics >> main;
+
+// physics >> foo;
+
+// main -> System physics_system(physics){
+// 	entity.x += 1;
+// };
+
+console.log("OCS:");
+assert("Environment", false, @()->{});
+assert("Entity", false, @()->{});
+assert("Component", false, @()->{});
+assert("Query", false, @()->{});
+assert("System", false, @()->{});
+console.log();
