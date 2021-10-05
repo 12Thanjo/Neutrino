@@ -1,4 +1,4 @@
-const {cmd} = require('virtuosity-server');
+	const {cmd} = require('virtuosity-server');
 var neutrino = require("../bin/index.js");
 
 var vm = require('vm');
@@ -34,11 +34,12 @@ cmd.enableInput((data)=>{
 				exit: false
 			});
 			var tokens = neutrino.Tokenizer(character_stream);
-			var parsed = neutrino.Parser(tokens, {
+			var parsed = neutrino.Parser(tokens, null, {
 				exit: false
 			});
 			var compiled = neutrino.Compiler(parsed.output, parsed.const_dict, {
-				exit: false
+				exit: false,
+				debug: false
 			});
 			vm.runInContext(compiled, context);
 		}catch(e){

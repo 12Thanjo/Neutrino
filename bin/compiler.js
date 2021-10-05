@@ -1,7 +1,9 @@
-var {structures, cmd} = require('virtuosity-server');
+var {structures, cmd, files} = require('virtuosity-server');
 var fix_floating_point = function(val){
 	return Math.round(val*10000)/10000;
 }
+
+
 
 
 var Compiler = function(input, const_dict, config){
@@ -11,6 +13,27 @@ var Compiler = function(input, const_dict, config){
 	config.slient = config.silent ?? false;
 	config.debug = config.debug ?? true;
 	config.exit = config.exit ?? true;
+	config.plugin = config.plugin ?? false;
+
+	var plugins = {};
+	var dir = files.getFiles(__dirname + "/../plugins", 1).forEach((folder)=>{
+		if(folder.type == "folder"){
+			// if config.plugin is false, then the plugin usage is set to false
+			// if config.plugin is true, then the plugin usage is already set to true to prevent its addition
+			plugins[folder.name] = config.plugin;
+		}else{
+			cmd.log(`compiler >\n\tThe Neutrino plugins folder is messed up\n\tEncountered a file that shouldn't be there` + "\x1b[37m", cmd.color.red);
+		}
+	});
+
+
+
+	var error = function(message){
+		cmd.log("compiler >\n\t" + message, cmd.color.red);
+		if(config.exit){
+			process.exit(1);
+		}
+	}
 
 	var n = '';
 	if(config.debug){
@@ -45,7 +68,7 @@ var Compiler = function(input, const_dict, config){
 			left = traverse(left);
 			if(isNaN(left)){
 				left = {
-					type: "DIGIT",
+					type: "ID",
 					value: left
 				}
 			}
@@ -55,12 +78,11 @@ var Compiler = function(input, const_dict, config){
 			right = traverse(right);
 			if(isNaN(right)){
 				right = {
-					type: "DIGIT",
+					type: "ID",
 					value: right
 				}
 			}
 		}
-
 
 		if(left.type == 'DIGIT' && right.type == "DIGIT" && ["+", "-", "*", "/", "%"].includes(operator)){
 			var output = eval(evaluate(left) + " " + operator + " " + no_tab_evaluate(right));
@@ -69,10 +91,128 @@ var Compiler = function(input, const_dict, config){
 			return no_tab_evaluate(left) + operator + no_tab_evaluate(right);
 		}
 	}
+
+
+	var simplify_expression = function(expr_init){
+		var first_pass = function(expr){
+			if(expr.type == "binary"){
+				var left = first_pass(expr.left);
+				var right = first_pass(expr.right);
+
+				if(left.type == "DIGIT" && right.type == "DIGIT"){
+					first = false;
+					var value = eval(left.value + expr.operator + right.value) + "";
+					return {
+						type: "DIGIT",
+						value: value
+					}
+				}else{
+					return {
+						type: "binary",
+						operator: expr.operator,
+						left: left,
+						right: right
+					}
+				}
+			}else{
+				return expr;
+			}
+		}
+
+		var second_pass = function(expr){
+			if(expr.type == "binary"){
+				var left;
+				var right;
+				if(expr.left.type == "binary" || expr.right.type == "binary"){
+					left = second_pass(expr.left);
+					right = second_pass(expr.right);
+				}else{
+					if(expr.right.type == "id" && expr.left.type == "DIGIT"){
+						left = second_pass(expr.right);
+						right = second_pass(expr.left);
+					}else{
+						left = second_pass(expr.left);
+						right = second_pass(expr.right);
+					}
+				}
+
+				expr.left = left;
+				expr.right = right;
+			}
+
+			return expr;
+		}
+
+		var third_pass = function(expr){
+			if(expr.type == "binary"){
+				if(['+', "-"].includes(expr.operator)){
+					if(expr.left.type == "binary" && ["+", "-"].includes(expr.left.operator) && expr.left.right.type == "DIGIT" && expr.right.type == "DIGIT"){
+						var left = expr.left.left;
+						var right = eval(expr.left.right.value + expr.left.operator + expr.right.value);
+						expr.left = left;
+						expr.right = {
+							type: "DIGIT",
+							value: right + ""
+						};
+					}
+				}else if(expr.operator == "*"){
+					if(expr.left.type == "binary" && expr.left.operator == "*" && expr.left.right.type == "DIGIT" && expr.right.type == "DIGIT"){
+						var left = expr.left.left;
+						var right = eval(expr.left.right.value + "*" + expr.right.value);
+						expr.left = left;
+						expr.right = {
+							type: "DIGIT",
+							value: right + ""
+						};
+					}
+				}else if(expr.operator == "/"){
+					if(expr.left.type == "binary" && expr.left.operator == "/" && expr.left.right.type == "DIGIT" && expr.right.type == "DIGIT"){
+						var left = expr.left.left;
+						var right = eval(expr.left.right.value + "/" + expr.right.value);
+						expr.left = left;
+						expr.right = {
+							type: "DIGIT",
+							value: right + ""
+						};
+					}
+				}
+
+			}
+
+			return expr;
+		}
+
+
+		// the first pass simplifies a much as possible in the current structure
+		var first_pass_output = first_pass(expr_init);
+
+		// the second pass makes the variable left and the digit right (if applicable)
+		var second_pass_output = second_pass(first_pass_output);
+
+		// the third pass makes simplifies further
+		var third_pass_output = third_pass(second_pass_output);	
+
+		return third_pass_output;
+	}
 	
 	var traverse = function(expr){
 		if(expr.type == "binary"){
-			return "(" + simplify(expr.left, expr.operator, expr.right) + ")";
+			var simplified = simplify_expression(expr);
+			var simplified_string;
+
+			try{
+				while(simplify(simplified.left, simplified.operator, simplified.right) != simplified_string){
+					simplified_string = simplify(simplified.left, simplified.operator, simplified.right);
+					simplified = simplify_expression(simplified);
+				}
+			}catch{}
+			
+
+			if(simplified.type == "binary"){
+				return simplified_string;
+			}else{
+				return evaluate(simplified);
+			}
 		}else{
 			return no_tab_evaluate(expr);
 		}
@@ -187,11 +327,12 @@ var Compiler = function(input, const_dict, config){
 			if(const_dict_enabled){
 				return evaluate(const_dict.get(expr.value));
 			}else{
-				cmd.log(`compiler >\n\tCONST variable is left-hand side in assignment` + "\x1b[37m", cmd.color.red);
-				cmd.log("\t<" + cmd.color.magenta + expr.position.line + ":" + expr.position.collumn + cmd.color.red + "> ", cmd.color.red);
-				if(config.exit){
-					process.exit();
-				}
+				// cmd.log(`compiler >\n\tCONST variable is left-hand side in assignment` + "\x1b[37m", cmd.color.red);
+				// cmd.log("\t<" + cmd.color.magenta + expr.position.line + ":" + expr.position.collumn + cmd.color.red + "> ", cmd.color.red);
+				// if(config.exit){
+				// 	process.exit();
+				// }
+				error("CONST variable is left-hand side in assignment" + "\t<" + cmd.color.magenta + expr.position.line + ":" + expr.position.collumn + cmd.color.red + "> ");
 			}
 		}
 	});
@@ -216,7 +357,9 @@ var Compiler = function(input, const_dict, config){
 			if(expr.right.type != "function"){
 				var semi_index = right.lastIndexOf(';');
 				if(right[semi_index + 2] == "/" && right[semi_index+3] == "/"){
-					right = right.slice(0, semi_index);
+					if(right.slice(semi_index).includes("}") == false){
+						right = right.slice(0, semi_index);
+					}
 				}
 			}
 			output += `=${right};`+ comment(expr.left.position);
@@ -229,7 +372,9 @@ var Compiler = function(input, const_dict, config){
 			if(expr.right.type != "function"){
 				var semi_index = right.lastIndexOf(';');
 				if(right[semi_index + 2] == "/" && right[semi_index+3] == "/"){
-					right = right.slice(0, semi_index);
+					if(right.slice(semi_index).includes("}") == false){
+						right = right.slice(0, semi_index);
+					}
 				}
 			}
 			output += `=${right};`+ comment(expr.left.position);
@@ -243,7 +388,9 @@ var Compiler = function(input, const_dict, config){
 			if(expr.right.type != "function"){
 				var semi_index = right.lastIndexOf(';');
 				if(right[semi_index + 2] == "/" && right[semi_index+3] == "/"){
-					right = right.slice(0, semi_index);
+					if(right.slice(semi_index).includes("}") == false){
+						right = right.slice(0, semi_index);
+					}
 				}
 			}
 			output += `=${right};`+ comment(expr.left.position);
@@ -321,8 +468,9 @@ var Compiler = function(input, const_dict, config){
 
 	evaluators.set('for', (expr)=>{
 		var output = t();
-		output += "let $" + expr.arr + '_length=' + expr.arr + ".length;" + n;
-		output += t() + 'for(var '+expr.i+'=0;'+expr.i+'<$'+expr.arr+'_length;'+expr.i+'++){' + n;
+		var arr = no_tab_evaluate(expr.arr);
+		output += "let $arr_length=" + arr + ".length;" + n;
+		output += t() + 'for(var '+expr.i+'=0;'+expr.i+'<$arr_length;'+expr.i+'++){' + n;
 		tab_depth += 1;
 		output += evaluate(expr.program);
 		tab_depth -= 1;
@@ -333,7 +481,7 @@ var Compiler = function(input, const_dict, config){
 
 	evaluators.set('forNum', (expr)=>{
 		var output = t();
-		output += 'for(var '+expr.i+'=0;'+expr.i+'<'+expr.arr+";"+expr.i+'++){' + n;
+		output += 'for(var '+expr.i+'=0;'+expr.i+'<'+expr.arr.value+";"+expr.i+'++){' + n;
 		tab_depth += 1;
 		output += evaluate(expr.program);
 		tab_depth -= 1;
@@ -345,7 +493,7 @@ var Compiler = function(input, const_dict, config){
 	evaluators.set("itterate", (expr)=>{
 		var output = t();
 
-		output += 'for(var['+expr.key+','+expr.value+']of ' + expr.id + ".entries()){" + n;
+		output += 'for(var['+expr.key+','+expr.value+']of ' + evaluate(expr.id) + ".entries()){" + n;
 		tab_depth += 1;
 		output += evaluate(expr.program);
 		tab_depth -= 1;
@@ -446,7 +594,7 @@ var Compiler = function(input, const_dict, config){
 	evaluators.set('species', (expr)=>{
 		var output = "";
 
-		output += t() + `var ${no_tab_evaluate(expr.id)}=function${parse_params(expr.params)}{` + n;
+		output += t() + `let ${no_tab_evaluate(expr.id)}=function${parse_params(expr.params)}{` + n;
 		tab_depth += 1;
 		output += t() + "let private={};" + n;
 		output += evaluate(expr.program);
@@ -460,7 +608,7 @@ var Compiler = function(input, const_dict, config){
 		var output = "";
 		var id = no_tab_evaluate(expr.id);
 
-		output += t() + `var ${id}=function${parse_params(expr.params)}{` + n;
+		output += t() + `let ${id}=function${parse_params(expr.params)}{` + n;
 		tab_depth += 1;
 		output += t() + "let private={};" + id + ".$map.set(" + expr.params[0].value + ",this);" + n;
 		output += evaluate(expr.program);
@@ -514,12 +662,45 @@ var Compiler = function(input, const_dict, config){
 
 
 	evaluators.set('error', (expr)=>{
-		var output = t() + "try{" + n;
-		tab_depth += 1;
+		var output = "";
+		// output = t() + "try{" + n;
+		// tab_depth += 1;
 		output += t() + "throw " + expr.error + "(" + no_tab_evaluate(expr.message) + ");" + n;
-		tab_depth -= 1;
-		output += t() + "}catch(e){console.error(e);};" + comment(expr.position);
+		// tab_depth -= 1;
+		// output += t() + "}catch(e){console.error(e);};" + comment(expr.position);
 		return output;
+	});
+
+
+
+	evaluators.set('import', (expr)=>{
+		var plugin_name = expr.value.value;
+		if(plugins[plugin_name] == null){
+			error(`plugin (${plugin_name}) doesn't exist`);
+		}
+
+
+		if(!config.plugin){
+			var dependancy_recursion = function(target){
+				if(plugins[target] == false){
+					var plugin_script = files.readFile(__dirname + "/../plugins/" + target + "/compiled.ntp");
+					plugins[target] = true;
+					plugin_code += plugin_script + comment(expr.position);
+
+					var plugin_config = require(__dirname + "/../plugins/" + target + "/plugin.json");
+					// console.log("plugin_config: ", plugin_config);
+					plugin_config.dependancies.forEach((dependant)=>{
+						dependancy_recursion(dependant);
+					});
+				}
+			}
+
+			dependancy_recursion(plugin_name);
+
+			return "let " + plugin_name + "=$plugins.get('" + plugin_name + "');" + comment(expr.position);
+		}else{
+			return "let " + plugin_name + "=$get_plugin('" + plugin_name + "');";
+		}
 	});
 
 
@@ -531,13 +712,14 @@ var Compiler = function(input, const_dict, config){
 			var output = evaluators.get(expr.type)(expr);
 			return output;
 		}else{
-			console.error("\x1b[31m" + `compiler >\n\tunkown type: ${expr.type}` + "\x1b[37m");
+			// console.error("\x1b[31m" + `compiler >\n\tunkown type: ${expr.type}` + "\x1b[37m");
 			var line = expr?.position?.line;
 			var col = expr?.position?.col;
-			console.log(cmd.color.red + "\t<" + cmd.color.magenta + line + ":" + col + cmd.color.red + ">\n\texpr: \n\x1b[37m", expr);
-			if(config.exit){
-				process.exit();
-			}
+			// console.log(cmd.color.red + "\t<" + cmd.color.magenta + line + ":" + col + cmd.color.red + ">\n\texpr: \n\x1b[37m", expr);
+			error(`unkown type: ${expr.type}`+ "\t<" + cmd.color.magenta + line + ":" + col + cmd.color.red + ">\n\texpr: \n\x1b[37m" + expr);
+			// if(config.exit){
+			// 	process.exit();
+			// }
 		}
 	}
 
@@ -597,13 +779,20 @@ var Compiler = function(input, const_dict, config){
 		return semi_colon_depth == 0;
 	}
 
-
+	// var plugin_starter_code = "let $plugins=new Map();let $pending_plugins=new Map();let $get_plugin=function(name){if($plugins.has(name)){return $plugins.get(name);}else{let $plugin={plugin:{}};$pending_plugins.get(name)($plugin.plugin);$plugins.set(name,$plugin.plugin);$pending_plugins.delete(name);return $plugin.plugin;};};";
+	var plugin_starter_code = "let $plugins=new Map();let $pending_plugins=new Map();let $get_plugin=function(name){if($plugins.has(name)){return $plugins.get(name);}else{var output=$pending_plugins.get(name)();$plugins.set(name,output);$pending_plugins.delete(name);return output;};};";
+	var plugin_setup_code = "for(var[$key,$value]of $pending_plugins.entries()){$get_plugin($key);};";
+	var plugin_code = "";
 	if(input.type == "program"){
 		var output = "";
 
 		input.program.forEach((expr)=>{
 			output += evaluate(expr);
 		});
+
+		if(plugin_code != ""){
+			output = plugin_starter_code + n + plugin_code + plugin_setup_code + n + "(()=>{"+ n + output + "})();";
+		}
 
 		return output;
 	};

@@ -37,7 +37,7 @@ var Tokenizer = function(stream, config){
 				'if', 'else',
 				// 'true', 'false',
 				'local', 'regional', 'global', 'substitute', 'access',
-				'import',
+				'import', 'macro',
 				'function', 'return', 'break',
 				'for', 'itterate', 'forKeys', 'forNum',
 				'spawn', 'species', 'class',

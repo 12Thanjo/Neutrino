@@ -23,14 +23,23 @@ var3.nulish = [null, undefined];
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // test assert setup
-local assert = function(title, value, condition){
-	if(condition() == value){
-		console.log(|"\x1b[32m✓ " title "\x1b[37m"|);
-	}else{
-		console.log(|"\x1b[31m✘ " title "\x1b[37m"|);
-	};
-};
+//local assert = function(title, value, condition){
+//	if(condition() == value){
+//		console.log(|"\x1b[32m✓ " title "\x1b[37m"|);
+//	}else{
+//		console.log(|"\x1b[31m✘ " title "\x1b[37m"|);
+//	};
+//};
 
+import "assert";
+console.log('Modules:');
+assert("import (tau .ntp)", true, @()->{
+	return true;
+});
+assert('macro (.ntm)', true, @()->{
+	macro 'macro test.ntm';
+});
+console.log();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,12 +58,6 @@ assert('global', true, @()->{
 });
 console.log();
 
-
-console.log('Modules:');
-assert('import (.nti)', true, @()->{
-	import 'import test.nti';
-});
-console.log();
 
 console.log("Misc: ");
 assert('function', true, @()->{

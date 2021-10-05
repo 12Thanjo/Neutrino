@@ -11,7 +11,7 @@ var colors = {
 
 var {structures} = require('virtuosity-server');
 
-var Parser = function(tokens, import_map, config){
+var Parser = function(tokens, macro_map, config){
 	config = config ?? {};
 	config.silent = config.silent ?? false;
 	config.exit = config.exit ?? true;
@@ -294,25 +294,43 @@ var Parser = function(tokens, import_map, config){
 		},
 
 
-		import: ()=>{
-			self.skip.keyword('import');
+		macro: ()=>{
+			self.skip.keyword('macro');
 			var file = self.next();
 			self.skip.punctuation(";");
 
 			if(file.type != "STRING1" && file.type != "STRING2"){
-				self.error("Syntax Error", 'Invalid taraccess for import (must be a string)');
+				self.error("Syntax Error", 'Invalid target for macro (must be a string)');
 			}
-			if(import_map == null){
-				self.error('Uncaught Error', `(import) commands are invalid with this compile paradigm\n\tDid you mean ${colors.blue}neutrino build${colors.red}?`);
+			if(macro_map == null){
+				self.error('Uncaught Error', `(macro) commands are invalid with this compile paradigm\n\tDid you mean ${colors.blue}neutrino build${colors.red}?`);
 			}
-			if(!import_map.has(file.value)){
-				self.error("Reference Error", `(${file.value}) is not a valid neutrino import compile taraccess.\n\tMake sure the file type is correct and that you are using a .nti file`);
+			if(!macro_map.has(file.value)){
+				self.error("Reference Error", `(${file.value}) is not a valid neutrino macro compile target.\n\tMake sure the file type is correct and that you are using a .ntm file`);
 			}
 
-			self.insert(import_map.get(file.value));
+			self.insert(macro_map.get(file.value));
 
 			// skip
 			return self.parse.expression();
+		},
+
+		import: ()=>{
+			var position = self.peek().position;
+			self.skip.keyword('import');
+			var file = self.next();
+			// self.skip.punctuation(";");
+
+			if(file.type != "STRING1" && file.type != "STRING2"){
+				self.error("Syntax Error", 'Invalid target for import (must be a string)');
+			}
+
+			position.file = file.value.value;
+			return {
+				type: "import",
+				value: file,
+				position: position
+			};
 		},
 
 
@@ -530,7 +548,9 @@ var Parser = function(tokens, import_map, config){
 				return self.parse.arrow();
 			}
 
-			if(self.is.keyword("import")){
+			if(self.is.keyword("macro")){
+				return self.parse.macro();
+			}else if(self.is.keyword("import")){
 				return self.parse.import();
 			}else if(self.is.keyword('return')){
 				return self.parse.return();
@@ -722,7 +742,7 @@ var Parser = function(tokens, import_map, config){
 			return {
 				type: type,
 				i: i.value,
-				arr: arr.value,
+				arr: arr,
 				program: program,
 				position: position
 			}

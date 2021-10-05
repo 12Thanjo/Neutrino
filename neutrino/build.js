@@ -6,7 +6,7 @@ var {cmd, files} = require('virtuosity-server');
 
 
 
-module.exports = function(args, dirname, compile_target){
+module.exports = function(args, dirname, compile_target, output_target){
 	var debug = args.includes("--debug");
 	var verbose = args.includes('--verbose');
 	var log = function(msg, color){
@@ -25,29 +25,28 @@ module.exports = function(args, dirname, compile_target){
 	var build_files_recursive = function(dir, path, relative){
 		dir.forEach((item)=>{
 			if(item.type == "folder"){
-				build_files_recursive(item.dir, path + "/" + item.name, relative + item.name + "\\");
+				if(item.dir != null){
+					build_files_recursive(item.dir, path + "/" + item.name, relative + item.name + "\\");
+				}
 			}else{
 				if(item.type == ".nt"){
 					item.path = path;
 					item.relative = relative;
 					nt_files.push(item);
-				}else if(item.type == ".nti"){
+				}else if(item.type == ".ntm"){
 					item.path = path;
-					item.relative = relative + item.name + ".nti";
+					item.relative = relative + item.name + ".ntm";
 					nt_files.push(item);
 				}
 			}
 		});
-
 	}
-
-	
 
 
 	var dir = files.getFiles(dirname, Infinity);
 	build_files_recursive(dir, dirname, '');
 
-	var nti_tokens = new Map();
+	var ntm_tokens = new Map();
 	var nt_tokens = new Set();
 	nt_files.forEach((file)=>{
 		if(file.type != ".nt" || (compile_target == null || compile_target == file.name + ".nt")){
@@ -56,20 +55,24 @@ module.exports = function(args, dirname, compile_target){
 			var tokens = neutrino.Tokenizer(character_stream, {});
 
 
-			if(file.type == ".nti"){
+			if(file.type == ".ntm"){
 				tokens.splice(tokens.length-1);
 				tokens.forEach((token)=>{
 					if(token.type != 'END'){
 						token.position.file = file.relative;
 					}
 				});
-				nti_tokens.set(file.relative, tokens);
+				ntm_tokens.set(file.relative, tokens);
 				log(`Tokenized: ${cmd.color.yellow + file.relative}`, cmd.color.green);
 			}else{
+				var name = file.name;
+				if(output_target){
+					name = output_target;
+				}
 				nt_tokens.add({
 					tokens: tokens,
 					relative: file.relative,
-					name: file.name,
+					name: name,
 					path: file.path
 				});
 			}
@@ -79,7 +82,7 @@ module.exports = function(args, dirname, compile_target){
 
 
 	nt_tokens.forEach((file)=>{
-		var parsed = neutrino.Parser(file.tokens, nti_tokens, {});
+		var parsed = neutrino.Parser(file.tokens, ntm_tokens, {});
 
 		if(args.includes('--view')){
 			console.log("~~~~~~~~~~~~~~~");
@@ -88,7 +91,8 @@ module.exports = function(args, dirname, compile_target){
 		}
 
 		var compiled = neutrino.Compiler(parsed.output, parsed.const_dict, {
-			debug: debug
+			debug: debug,
+			plugin: args.includes('--plugin'),
 		});
 		files.writeFile(file.path + "\\" + file.name + ".js", compiled);
 		log(`> Compiled: ${cmd.color.yellow + file.relative + cmd.color.blue + file.name}.nt`, cmd.color.green);

@@ -1,0 +1,8 @@
+{
+    "name": "cmd",
+    "version": "0.1.0",
+    "description": "command line interaction",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}

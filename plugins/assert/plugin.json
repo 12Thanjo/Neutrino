@@ -1,0 +1,10 @@
+{
+    "name": "assert",
+    "version": "0.1.0",
+    "description": "assert module",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": [
+        "cmd"
+    ]
+}

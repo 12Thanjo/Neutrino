@@ -1,0 +1,18 @@
+// plugin: assert
+// description: assert module
+// author: 12Thanjo
+
+import "cmd";
+
+local check = "✓";
+local x = '✘';
+
+
+
+plugin = function(title, value, condition){
+	if(condition() == value){
+		cmd.log(check + " " + title, cmd.color.green);
+	}else{
+		cmd.log(x + " " + title, cmd.color.red);
+	};
+};
