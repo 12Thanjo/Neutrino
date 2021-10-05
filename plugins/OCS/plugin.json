@@ -1,0 +1,8 @@
+{
+    "name": "OCS",
+    "version": "0.1.0",
+    "description": "ECS architecture thats feature rich and incredibly fast",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}

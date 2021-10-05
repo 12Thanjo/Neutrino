@@ -23,9 +23,11 @@ var help = function(){
 	cmd.log("Tau (Neutrino's plugin manager) help:", cmd.color.cyan);
 	cmd.log('----------------', cmd.color.cyan);
 	help_log("add <plugin> <dependancy>", "add a dependancy to a plugin");
+	help_log('build <plugin> [...args]', "build a tau project");
 	help_log("help", 'shows "help" menu');
 	help_log("init", "initialize a new plugin");
 	help_log("list <plugin>", "list all dependancies of a plugin");
+	help_log('package <plugin> [...args]', "build a tau project from a .js file instead of a .nt file");
 	help_log("remove <plugin> <dependancy>", "remove a dependancy from a plugin");
 
 	process.exit();
@@ -38,6 +40,8 @@ if(args[0] == 'init'){
 	require('./tau/init.js')();
 }else if(args[0] == 'build'){
 	require('./tau/build.js')(args.slice(1));
+}else if(args[0] == 'package'){
+	require('./tau/package.js')(args.slice(1));
 }else if(args[0] == 'help'){
 	help();
 }else if(['add', 'remove', 'list'].includes(args[0])){

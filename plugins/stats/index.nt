@@ -1,0 +1,139 @@
+// plugin: stats
+// description: statistics library
+// author: 12Thanjo
+
+local get_arr = function(~params){
+	local arr = params;
+	if(arr.length == 1){
+		arr = params[0];
+	};
+	return arr;
+};
+
+
+plugin.sort = function(arr){
+	return arr.sort(@(a, b)->{
+		return a-b;
+	});
+};
+
+
+plugin.sum = function(arr){
+	local count = 0;
+	itterate arr(i, num){
+		count += num;
+	};
+	return count;
+};
+
+
+plugin.max = function(~params){
+	local nums = get_arr(params);
+
+	local max = -1 * Infinity;
+	itterate nums(i, num){
+		max => num;
+	};
+
+	return max;
+};
+
+
+
+plugin.min = function(~params){
+	local nums = get_arr(params);
+
+	local min = Infinity;
+	itterate nums(i, num){
+		min =< num;
+	};
+
+	return min;
+};
+
+
+
+plugin.mean = function(~params){
+	local nums = get_arr(~params);
+	local count = plugin.sum(nums);
+	return count / nums.length;
+};
+
+
+plugin.median = function(~params){
+	local nums = get_arr(~params);
+
+	nums = plugin.sort(nums);
+
+	local half = Math.floor(nums.length/2);
+
+
+	if(nums.length % 2 == 0){
+		local a = nums[half];
+		local b = nums[half - 1];
+
+
+		return (a + b) / 2;
+	}else{
+		return nums[half];
+	};
+};
+
+
+plugin.mode = function(~params){
+	local nums = get_arr(~params);
+	local counter = spawn Map();
+
+	itterate nums(i, number){
+		if(counter.has(number) == false){
+			counter.set(number, 1);
+		}else{
+			counter.set(number, counter.get(number) + 1);
+		};
+	};
+
+	local max = -1 * Infinity;
+	local max_value = 0;
+	itterate counter(key, value){
+		if(max < value){
+			max = value;
+			max_value = key;
+		};
+	};
+
+	
+	return max_value;
+};
+
+
+
+
+
+
+plugin.range = function(~params){
+	local nums = get_arr(~params);
+
+	nums = plugin.sort(nums);
+	return [nums[0], nums[nums.length - 1]];
+};
+
+
+
+
+
+plugin.standardDeviation = function(~params){
+	local nums = get_arr(~params);
+
+	local mean = plugin.mean(nums);
+	local square_distance_mean = 0;
+
+	itterate nums(i, num){
+		local distance = Math.floor(num - mean);
+		square_distance_mean += distance * distance;
+	};
+
+	local count = nums.length;
+	// local sum = plugin.sum(nums);
+
+	return Math.sqrt(square_distance_mean / count);
+};

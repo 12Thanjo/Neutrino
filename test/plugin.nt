@@ -1,9 +1,4 @@
-//import "test_plugin";
-//import "foo";
 
-//console.log("name: ", test_plugin.name);
-//console.log("name: ", foo.name);
+import "OCS";
+console.log('OCS: ', OCS);
 
-import "assert";
-
-console.log('assert: ', assert);

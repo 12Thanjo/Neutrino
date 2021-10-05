@@ -526,7 +526,9 @@ var Parser = function(tokens, macro_map, config){
 
 		atom: ()=>{
 
-			if(self.is.punctuation('[')){
+			if(self.is.punctuation("(")){
+			    return self.parse.call();
+			}else if(self.is.punctuation('[')){
 				return self.parse.array();
 			}else if(self.is.punctuation('{')){
 				return self.parse.object();

@@ -1,0 +1,8 @@
+{
+    "name": "crypto",
+    "version": "0.1.0",
+    "description": "extention to the built in crypto module to nodejs",
+    "main": "index.js",
+    "author": "12Thanjo",
+    "dependancies": []
+}

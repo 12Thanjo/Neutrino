@@ -60,9 +60,6 @@ module.exports = function(dirname){
 						plugin.version = '0.1.0';
 					}
 
-					if(plugin.main.slice(plugin.main.length-3) != ".nt"){
-						plugin.main += ".nt";
-					}
 					plugin.dependancies = [];
 
 					console.log();

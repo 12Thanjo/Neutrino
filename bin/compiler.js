@@ -405,10 +405,12 @@ var Compiler = function(input, const_dict, config){
 
 		var arr_length = expr.array.length;
 		if(arr_length > 0){	
+			add_semi();
 			for(var i=0; i<arr_length-1;i++){
 				output += no_tab_evaluate(expr.array[i]) + ",";
 			}
 			output += no_tab_evaluate(expr.array[arr_length-1]);
+			remove_semi();
 		}
 
 		output += "]";
@@ -701,6 +703,15 @@ var Compiler = function(input, const_dict, config){
 		}else{
 			return "let " + plugin_name + "=$get_plugin('" + plugin_name + "');";
 		}
+	});
+
+
+	evaluators.set("call", (expr)=>{
+		if(expr.params.length != 1){
+			error(`there should only be 1 param in this call\n\texpr> ` + expr);
+		}
+
+		return "(" + no_tab_evaluate(expr.params[0]) + ")";
 	});
 
 

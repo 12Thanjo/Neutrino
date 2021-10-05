@@ -1,0 +1,200 @@
+// plugin: DOM
+// description: DOM manipulation library
+// author: 12Thanjo
+
+
+local to_camel_case = function(prop){
+	local output = "";
+	for(i, prop){
+		if(prop[i] == "-"){
+			i += 1;
+			output += prop[i].toLocaleUpperCase();
+		}else{
+			output += prop[i];
+		};
+	};
+
+	return output;
+};
+
+
+
+
+
+species DOMElement(elem){
+	this.element = elem;
+
+	this.on = function(event, callback){
+		this.element.addEventListener(event, callback);
+		return this;
+	};
+
+	this.isReady = function(){
+		return this.element.readyState != null && this.element.readyState != "loading";
+	};
+
+	this.ready = function(callback){
+		if(this.isReady()){
+			callback();
+		}else{
+			this.on('DOMContentLoaded', callback);
+		};
+	};
+
+	// next
+	this.getNext = function(){
+		return spawn DOMElement(this.element.nextElementSibling);
+	};
+
+	this.next = function(){
+		this.element = this.element.nextElementSibling;
+		return this;
+	};
+
+	// previous
+	this.getPrevious = function(){
+		return spawn DOMElement(this.element.previousElementSibling);
+	};
+
+	this.previous = function(){
+		this.element = this.element.previousElementSibling;
+		return this;
+	};
+
+
+	// classes
+	this.addClass = function(className){
+		this.element.classList.add(className);
+		return this;
+	};
+
+	this.removeClass = function(className){
+		this.element.classList.remove(className);
+		return this;
+	};
+
+
+
+	this.css = function(prop, val){
+		prop = to_camel_case(prop);
+		this.element.style[prop] = val;
+		return this;
+	};
+};
+
+
+species DOMCollection(arr){
+	itterate arr(i, elem){
+		arr[i] = spawn DOMElement(elem);
+	};
+
+
+	this.array = arr;
+
+	this.on = function(event, callback){
+		// local foo = ;
+		itterate this.array(i, elem){
+			elem.on(event, callback);
+		};
+		return this;
+	};
+
+	this.ready = function(callback){
+		local is_ready = this.array.some(@(elem)->{
+    		return elem.isReady();
+		});
+
+		if(is_ready){
+			callback();
+		}else{
+			this.on('DOMContentLoaded', callback);
+		};
+	};
+
+
+	this.addElement = function(domElement){
+		if(domElement instanceof DOMElement){
+			this.array.push(domElement);
+			return this;
+		}else{
+			console.error("DOMCollection.addElement must take a domElement");
+		};
+	};
+
+
+	this.removeElement = function(domElement){
+		itterate this.array(i, elem){
+			if(elem == domElement){
+				this.array.splice(i, 1);
+				break;
+			};
+		};
+		return this;
+	};
+
+
+	this.next = function(){
+		itterate this.array(i, elem){
+			elem.next();
+		};
+	};
+	this.prev = function(){
+		itterate this.array(i, elem){
+			elem.prev();
+		};
+	};
+
+	this.addClass = function(className){
+		itterate this.array(i, elem){
+			elem.addClass(className);
+		};
+		return this;
+	};
+
+	this.removeClass = function(className){
+		itterate this.array(i, elem){
+			elem.removeClass(className);
+		};
+		return this;
+	};
+
+
+	this.css = function(prop, val){
+		itterate this.array(i, elem){
+			elem.css(prop, val);
+		};
+	};
+
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+module.exports = function(query){
+	if(query typeof 'string' || query instanceof String){
+		// string selector
+		local output = spawn DOMCollection([~document.querySelectorAll(query)]);
+		return output;
+	}else{
+		local output = spawn DOMCollection([query]);
+		return output;
+	};
+};
+
+module.exports.get = function(query){
+	if(query typeof 'string' || query instanceof String){
+		// string selector
+		local selector = document.querySelectorAll(query);
+		if(selector.length > 1){
+			console.error("DOM.select only takes 1 element");
+		}else{
+			local output = spawn DOMElement(selector[0]);
+			return output;
+		};
+	}else{
+		local output = spawn DOMElement(query);
+		return output;
+	};
+};

@@ -233,6 +233,11 @@ var Tokenizer = function(stream, config){
 			}
 
 
+			if(value == "new"){
+				value = "$new";
+			}
+
+
 			tokens.push({
 				type: type,
 				value: value,

@@ -1,0 +1,8 @@
+{
+    "name": "DOM",
+    "version": "0.1.0",
+    "description": "DOM manipulation library",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}
