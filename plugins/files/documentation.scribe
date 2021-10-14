@@ -1,0 +1,120 @@
+name: files
+	type: object
+	description: interaction with the file system - an expansion to the built in "fs" module
+	name: readFile
+		type: function
+		description: read a file
+		param: path
+			type: string
+			description: path of file to read
+	name: writeFile
+		type: function
+		description: write to a file (creates the file if it doesn't already exist)
+		param: path
+			type: string
+			description: path of file to write
+		param: output
+			type: string
+			description: string to write to the file
+	name: deleteFile
+		type: function
+		description: deletes a file
+		param: path
+			type: string
+			description: path of file to delete
+	name: copyFile
+		type: function
+		description: copies a file to another directory
+		param: path
+			type: string
+			description: path of file to copy
+		param: destination
+			type: string
+			description: path to copy the file to
+	name: fileExists
+		type: function
+		description: checks if a file exists
+		param: path
+			type: string
+			description: path to check
+	name: createDirectory
+		type: function
+		description: creates a new directory
+		param: path
+			type: string
+			description: path of new directory
+	name: getFileExtention
+		type: function
+		description: get the extension of a file (with or without full path)
+		param: path
+			type: string
+			description: path to evaulate
+	name: getFileName
+		type: function
+		description: get the file name from a path
+		param: path
+			type: string
+			description: path to evaulate
+	name: getFileNameWithoutExtention
+		type: function
+		description: get the file name from a path without the extension
+		param: path
+			type: string
+			description: path to evaulate
+	name: getFilePath
+		type: function
+		description: gets the path without the file
+		param: path
+			type: string
+			description: path to evaulate
+	name: normalize
+		type: function
+		description: normalize which slash type is used
+		param: path
+			type: string
+			description: path to evaulate
+		param: forwards
+			type: boolean
+			description: if the slashes should be forwards slashes
+			default: false
+	name: getFilePathUpDirectory
+		type: function
+		description: get the file path up directory
+		param: path
+			type: string
+			description: path to evaulate
+		param: number
+			type: integer
+			description: number of directories to go up
+			default: 1
+	name: isDirectory
+		type: function
+		description: check if a directory exists at a specific path
+		param: path
+			type: string
+			description: path to check
+	name: renameFile
+		type: function
+		description: rename a file
+		param: path
+			type: string
+			description: path of file to rename
+		param: name
+			type: string
+			description: new name of the file
+	name: deleteDirectory
+		type: function
+		description: delete a directory	
+		param: path
+			type: string
+			description: path to directory to delete
+	name: getFiles
+		type: function
+		description: recursively searches a directory, and gets all directories and files
+		param: path
+			type: string
+			description: path to search
+		param: depth
+			type: integer
+			description: maximum depth to search to
+			default: Infinity

@@ -1,0 +1,93 @@
+name: cmd
+	type: object
+	description: command line interaction
+	name: color
+		type: object
+		description: set the color of the text
+		prop: black
+			type: string
+			description: text color black
+		prop: red
+			type: string
+			description: text color red
+		prop: yellow
+			type: string
+			description: text color yellow
+		prop: green
+			type: string
+			description: text color green
+		prop: blue
+			type: string
+			description: text color blue
+		prop: magenta
+			type: string
+			description: text color magenta
+		prop: cyan
+			type: string
+			description: text color cyan
+		prop: white
+			type: string
+			description: text color white
+	name: backgroundColor
+		type: object
+		description: set the background color of the text
+		prop: black
+			type: string
+			description: text background color black
+		prop: red
+			type: string
+			description: text background color red
+		prop: yellow
+			type: string
+			description: text background color yellow
+		prop: green
+			type: string
+			description: text background color green
+		prop: blue
+			type: string
+			description: text background color blue
+		prop: magenta
+			type: string
+			description: text background color magenta
+		prop: cyan
+			type: string
+			description: text background color cyan
+		prop: white
+			type: string
+			description: text background color white
+	name: style
+		type: object
+		description: set the background color of the text
+		prop: reset
+			type: string
+			description: set the text reset
+		prop: bright
+			type: string
+			description: set the text bright
+		prop: dim
+			type: string
+			description: set the text dim
+		prop: underscore
+			type: string
+			description: set the text underscore
+		prop: blink
+			type: string
+			description: set the text blink
+		prop: reverse
+			type: string
+			description: set the text reverse
+		prop: hidden
+			type: string
+			description: set the text hidden
+	name: log
+		type: function
+		description: console.log() with stylizations with preventing overflow
+		param: string
+			type: string
+			description: string to output
+		param: color
+			type: string
+			description: color of text (cmd.color)
+		param: backgroundColor
+			type: string
+			description: bakground color of text (cmd.backgroundColor)

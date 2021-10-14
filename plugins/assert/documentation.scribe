@@ -1,0 +1,12 @@
+name: assert
+	type: function
+	description: assert testing
+	param: title
+		type: string
+		description: title of the assertion test
+	param: value
+		type: any
+		description: value that the assert should return in order to succeed
+	param: condition
+		type: function
+		description: function that should (in theory) return the correct value

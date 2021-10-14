@@ -1,0 +1,66 @@
+name: math
+	type: object
+	description: advanced math types and functions
+	name: Vector2
+		type: class
+		description: 2d vector
+		prop: x
+			type: number
+			description: x value of the Vector2
+		prop: y
+			type: number
+			description: y value of the Vector2
+		name: add
+			type: method
+			description: add by another Vector2
+			param: vector
+				type: Vector2
+				description: vector to add by
+		name: sub
+			type: method
+			description: subtract by another Vector2
+			param: vector
+				type: Vector2
+				description: vector to subtract by
+		name: mul
+			type: method
+			description: multiply by another Vector2
+			param: vector
+				type: Vector2
+				description: vector to multiply by
+		name: div
+			type: method
+			description: divide by another Vector2
+			param: vector
+				type: Vector2
+				description: vector to divide by
+		name: equal
+			type: method
+			description: check if this is equal to another Vector2
+			param: vector
+				type: Vector2
+				description: Vector2 to check if equal to
+		name: normalize
+			type: function
+			description: normalize a Vector2
+			param: vector
+				type: Vector2
+				description: Vector2 to normalize
+		name: dot
+			type: function
+			description: get the dot product of two Vector2's
+			param: vector1
+				type: Vector2
+				description: first vector
+			param: vector2
+				type: Vector2
+				description: second vector
+		name: cross
+			type: function
+			description: get the cross product of two Vector2's
+			param: vector1
+				type: Vector2
+				description: first vector
+			param: vector2
+				type: Vector2
+				description: second vector

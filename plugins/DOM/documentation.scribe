@@ -1,0 +1,144 @@
+name: DOM
+	type: object
+	description: interaction with DOM
+	prop: w
+		type: number
+		description: width of window (window.innerWidth)
+	prop: h
+		type: number
+		description: height of window (window.innerHeight)
+	name: vw
+		type: function
+		description: returns the pixel count of a vw value
+		param: val
+			type: number
+			description: vw value
+	name: vh
+		type: function
+		description: returns the pixel count of a vh value
+		param: val
+			type: number
+			description: vh value
+	name: onResize
+		type: function
+		description: event to run when the window is resized
+		param: event
+			type: function
+			description: event to run
+	name: triggerOnResize
+		type: function
+		description: trigger the onResize function
+	name: createElement
+		type: function
+		description: create an HTML element
+		param: type
+			type: string
+			description: the type of HTML element
+		param: appendTarget
+			type: HTML-element
+			description: the HTML element to append the new element to
+	name: get
+		type: function
+		description: a function to get a single element
+	name: DOMElement
+		type: class
+		description: a wrapper around a DOM element
+		prop: element
+			type: HTML-element
+			description: the HTML element this is wrapped around
+		name: on
+			type: function
+			description: add an event to the HTML element
+			param: event
+				type: string
+				description: event type
+			param: callback
+				type: function
+				description: event to run
+		name: isReady
+			type: function
+			description: function that returns if the elemenet is ready / loaded
+		name: ready
+			type: function
+			description: event to run when the if and when the element is ready
+			param: callback
+				type: function
+				description: event to run
+		name: getNext
+			type: function
+			description: get the next sibling node
+		name: next
+			type: function
+			description: set to the next sibling node
+		name: getPrevious
+			type: function
+			description: get the previous sibling node
+		name: previous
+			type: function
+			description: set to the previous sibling node
+		name: addClass
+			type: function
+			description: add a class to the element
+			param: className
+				type: string
+				description: the name of the class
+		name: removeClass
+			type: function
+			description: remove a class to the element
+			param: className
+				type: string
+				description: the name of the class
+		name: getStyle
+			type: function
+			description: get the value of a style property of the element
+			param: prop
+				type: string
+				description: the property to get
+		name: style
+			type: function
+			description: get the value of a style property of the element
+			param: prop
+				type: string
+				description: the property to set
+		name: css
+			type: function
+			description: set multiple style properties at once
+			param: props
+				type: object
+				description: each property of the object is the style property
+		name: select
+			type: function
+			description: select elements that are direct children
+			param: query
+				type: string
+				description: query to get
+		name: selectAll
+			type: function
+			description: select all elements that are children 
+			param: query
+				type: string
+				description: query to get
+		prop: innerHTML
+			type: string
+			description: the value of the inner html of the element
+		prop: width
+			type: number
+			description: the width of the element
+		prop: height
+			type: number
+			description: the height of the element
+		prop: x
+			type: number
+			description: the x position of the element
+		prop: y
+			type: number
+			description: the y position of the element
+		name: appendChild
+			type: function
+			description: add a child node to the element
+			param: child
+				type: HTML-element
+				description: HTML-element to add as a child node
+		name: destroy
+			type: function
+			description: destroy the element

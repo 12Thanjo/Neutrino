@@ -1,0 +1,57 @@
+plugin.mouse = {};
+
+local set_mouse_position = function(e){
+	plugin.mouse.x = e.clientX;
+	plugin.mouse.y = e.clientY;
+	plugin.mouse.screenX = e.screenX;
+	plugin.mouse.screenY = e.screenY;
+};
+
+
+
+document.addEventListener("pointermove", set_mouse_position);
+
+
+
+document.addEventListener('pointerdown', @(e)->{
+	set_mouse_position(e);
+
+	// *-1 to fit into the INPUT_MAP
+	local code = e.which * -1;
+	local name = INPUTCODE_MAP.get(code);
+
+
+	INPUT_DOWN[code] = true;
+
+	local events = DOWN_EVENTS[code + 22];
+	itterate events(key, event){
+		event();
+	};
+});
+
+
+document.addEventListener('pointerup', @(e)->{
+	set_mouse_position(e);
+
+	// *-1 to fit into the INPUT_MAP
+	local code = e.which * -1;
+	local name = INPUTCODE_MAP.get(code);
+
+	INPUT_DOWN[code] = false;
+	local events = UP_EVENTS[code + 22];
+	itterate events(key, event){
+		event();
+	};
+});
+
+
+document.addEventListener('wheel', @(e)->{
+	set_mouse_position(e);
+	
+	plugin.mouse.wheelX = e.wheelDeltaX;
+	plugin.mouse.wheelY = e.wheelDeltaY;
+
+	itterate WHEEL_EVENTS(key, event){
+		event();
+	};
+});

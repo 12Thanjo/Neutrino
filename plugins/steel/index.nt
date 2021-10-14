@@ -1,0 +1,5 @@
+// plugin: steel
+// description: a game engine written in neutrino
+// author: 12Thanjo
+
+plugin.name = "steel";

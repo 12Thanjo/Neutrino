@@ -1,0 +1,110 @@
+name: crypto
+	type: object
+	description: extention to the built in crypto module to nodejs
+	name: sha256
+		type: function
+		description: hash using the sha256 standard
+		param: data
+			type: string
+			description: data to encrypt
+		param: secretKey
+			type: string
+			description: secret key to encrypt with
+	name: scrypt
+		type: function
+		description: hash using the scrypt standard
+		param: data
+			type: string
+			description: data to encrypt
+		param: salt
+			type: string
+			description: salt to encrypt with
+		param: length
+			type: integer
+			description: length of the output
+	name: equal
+		type: function
+		description: securely check if two strings are equal (timing safe)
+		param: a
+			type: string
+			description: first string to compare
+		param: b
+			type: string
+			description: second string to compare
+	name: generateIV
+		type: function
+		description: generate and IV (random 16 bytes)
+	name: encrypt
+		type: function
+		description: encrypt a string
+		param: text
+			type: string
+			description: text to encrypt
+		param: iv
+			type: IV
+			description: IV to use
+		param: secretKey
+			type: string
+			description: secret key to use
+		return>
+			prop: content
+				type: string
+				description: encrypted string
+			prop: iv
+				type: string
+				description: IV used in to encrypt
+	name: decrypt
+		type: function
+		description: decrypt a string
+		param: content
+			type: string
+			description: text to decrypt (the content property from the return of crypto.encrypt())
+		param: iv
+			type: string
+			description: IV used to encrypt (the IV from the return of crypto.encrypt())
+		param: secretKey
+			type: string
+			description: secret key to used to encrypt
+	name: diffieHellman
+		type: object
+		description: diffie hellman creation and solving
+		name: generate
+			type: function
+			description: generate a diffie hellman key
+			return>
+				prop: publicKey
+					type: string
+					description: our public key
+				prop: privateKey
+					type: string
+					description: our private key
+		name: solve
+			type: function
+			description: compute a diffie hellman key
+			param: privateKey
+				type: string
+				description: our private key
+			param: theirPublicKey
+				type: string
+				description: their public key
+	name: sign
+		type: function
+		description: sign a string
+		param: data
+			type: string
+			description: data to sign
+		param: secretKey
+			type: string
+			description: secret key to sign with
+	name: verify
+		type: string
+		description: verify a signed string (from crypto.sign())
+		param: signed
+			type: string
+			description: the signed string to check
+		param: secretKey
+			type: string
+			description: secret key that was used to sign with
+	name: uuid
+		type: function
+		description: generate a uuid (uses the the UUIDv4 protocol)

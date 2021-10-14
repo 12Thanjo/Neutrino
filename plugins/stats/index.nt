@@ -11,16 +11,28 @@ local get_arr = function(~params){
 };
 
 
-plugin.sort = function(arr){
-	return arr.sort(@(a, b)->{
+plugin.clamp = function(val, min, max){
+	if(val < min){
+		val = min;
+	}else if(val > max){
+		val = max;
+	};
+	return val;	
+};
+
+
+plugin.sort = function(~params){
+	local nums = get_arr(params);
+	return nums.sort(@(a, b)->{
 		return a-b;
 	});
 };
 
 
-plugin.sum = function(arr){
+plugin.sum = function(~params){
+	local nums = get_arr(params);
 	local count = 0;
-	itterate arr(i, num){
+	itterate nums(i, num){
 		count += num;
 	};
 	return count;
@@ -82,7 +94,7 @@ plugin.median = function(~params){
 
 plugin.mode = function(~params){
 	local nums = get_arr(~params);
-	local counter = spawn Map();
+	local counter = new Map();
 
 	itterate nums(i, number){
 		if(counter.has(number) == false){

@@ -1,0 +1,52 @@
+scope {
+	struct Node(data){
+		this.data = data;
+		this.next = null;
+	};
+
+	struct Queue(){
+		private.front = null;
+		private.back = null;
+		access size = 0;
+
+		this.push = function(data){
+			local new_back = new Node(data);
+			if(private.size != 0){
+				private.back.next = new_back;
+				private.back = new_back;
+			}else{
+				private.front = new_back;
+				private.back = new_back;
+			};
+			private.size += 1;
+		};
+
+		this.pop = function(){
+			if(private.size != 0){
+				local output = private.front;
+				private.size -= 1;
+				private.front = output.next;
+				return output.data;
+			}else{
+				return null;
+			};
+		};
+
+		this.peek = function(){
+			return this.front.data;
+		};
+
+		this.print = function(){
+			local output = [];
+			local target = private.front;
+
+			while(target != null){
+				output.push(target.data);
+				target = target.next;
+			};
+
+			return output;
+		};
+	};
+	plugin.Queue = Queue;
+};

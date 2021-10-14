@@ -1,0 +1,180 @@
+// plugin: easing
+// description: easing functions (0-1)
+// author: 12Thanjo
+
+plugin.smoothStart2 = function(t){
+	return t*t;	
+};
+plugin.smoothStart3 = function(t){
+	return t*t*t;	
+};
+plugin.smoothStart4 = function(t){
+	return t*t*t*t;	
+};
+plugin.smoothStartN = function(t, n){
+	forNum(i, n){
+		t *= t;
+	};
+	return t;
+};
+plugin.smoothStartPow = function(t, n){
+	local ease1 = function(t){
+		plugin.smoothStartN(t, Math.floor(n));
+	};
+
+	local ease2 = function(t){
+		plugin.smoothStartN(t, Math.ceil(n));
+	};
+
+	local percent2 = n - Math.floor(n);
+
+	return plugin.mix(x, ease1, ease2, percent2);
+};
+
+
+plugin.smoothStop2 = function(t){
+	//t = 1 - t;
+	//t = plugin.smoothStart2(t);
+	//return 1 - t;
+	return 1-plugin.smoothStart2(1 - t);
+};
+plugin.smoothStop3 = function(t){
+	//t = 1 - t;
+	//t = plugin.smoothStart3(t);
+	//return 1 - t;
+	return 1-plugin.smoothStart3(1 - t);
+};
+plugin.smoothStop4 = function(t){
+	//t = 1 - t;
+	//t = plugin.smoothStart4(t);
+	//return 1 - t;
+	return 1-plugin.smoothStart4(1 - t);
+};
+plugin.smoothStopN = function(t, n){
+	//t = 1 - t;
+	//t = plugin.smoothStartN(t, n);
+	//return 1 - t;
+	return 1-plugin.smoothStartN(1 - t, n);
+};
+plugin.smoothStopPow = function(t, n){
+	//t = 1 - t;
+	//t = plugin.smoothStopPow(t, n);
+	//return 1 - t;
+	return 1-plugin.smoothStopPow(1 - t, n);
+};
+
+
+
+plugin.mix = function(t, ease1, ease2, percent2){
+	return ( (1-percent2)*ease1(t) ) + ( percent2*ease2(t) );
+};
+
+
+plugin.crossFade = function(t, ease1, ease2){
+	return ( (1-t)*ease1(t) ) + ( t*ease2(t) );
+};
+
+
+plugin.scale = function(t, ease){
+	return t * ease(t);
+};
+plugin.reverseScale = function(t, ease){
+	return (1-t) * ease(t);	
+};
+plugin.arch = function(t){
+	return t * (1-t);
+};
+plugin.bellCurve = function(t, n){
+	return plugin.smoothStartN(t, n) * plugin.smoothStopN(t, n);
+};
+
+// through points (A,B,C,D) where A=0 and B=1
+plugin.bezier2 = function(t, b){
+	local s = 1 - t;
+
+	local t2 = t*t;
+
+	return (2*b*s*t) + t2;
+};
+plugin.bezier3 = function(t, b, c){
+	local s = 1 - t;
+	local s2 = s*s;
+
+	local t2 = t*t;
+	local t3 = t2*t;
+
+	return (3*b*s2*t) + (3*c*s*t2) + t3;
+};
+plugin.bezier4 = function(t, b, c, d){
+	local s = 1 - t;
+	local s2 = s*s;
+	local s3 = s2*s;
+
+	local t2 = t*t;
+	local t3 = t2*t;
+	local t4 = t3*t;
+
+	// console.log(4, b, s3, t);
+	// console.log(12, c, s2, t2);
+	// console.log(4, d, s, t3);
+	return (4*b*s3*t) + (12*c*s2*t2) + (4*d*s*t3) + t4;
+};
+plugin.bezierN = function(t, arr){
+	local n = arr.length;
+
+	local s = 1 - t;
+	local last_s = s;
+	local s_arr = [last_s];
+
+	local last_t = t;
+	local t_arr = [last_t];
+
+	forNum(i, n-1){
+		last_s *= s;
+		s_arr.push(last_s);
+
+		last_t *= t;
+		t_arr.push(last_t);	
+	};
+
+	local output = last_t;
+	local flip = Math.floor(Math.abs(((n-1) / 2)));
+	for(i, arr){
+		local coeficient = Math.floor(Math.abs(((n-1) / 2) - i));
+		coeficient = flip - coeficient;
+		coeficient *= 2;
+		coeficient += 1;
+		coeficient *= n+1;
+
+		
+		output += coeficient * arr[i] * s_arr[n - 1 - i] * t_arr[i];
+	};
+	return output;
+};
+
+plugin.bounceClamp = {
+	bottom: function(t){
+		return Math.abs(t);
+	},
+	top: function(t){
+		return t - Math.abs(1-t);
+	},
+	bottomTop: function(t){
+		return t - Math.abs(1-Math.abs(t));
+	},
+};
+
+
+plugin.range = {
+	map: function(t, min, max){
+		t *= (max - min);
+		return t + min;
+	},
+	convert: function(t, fromMin, fromMax, func, toMin, toMax){
+		t -= fromMin;
+		t /= (fromMax - fromMin);
+		t = func(t);
+		return plugin.range.map(t, toMin, toMax);
+	},
+};
+

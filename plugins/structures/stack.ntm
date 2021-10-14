@@ -1,0 +1,47 @@
+scope {
+	struct Node(data){
+		this.data = data;
+		this.next = null;
+	};
+
+
+	struct Stack(){
+		private.top = null;
+		access size = 0;
+
+		this.push = function(data){
+			local new_top = new Node(data);
+			new_top.next = private.top;
+			private.top = new_top;
+			private.size += 1;
+		};
+
+		this.pop = function(){
+			if(private.size != 0){
+				private.size -= 1;
+				local output = private.top;
+				private.top = private.top.next;
+				return output.data;
+			}else{
+				return null;
+			};
+		};
+
+		this.peek = function(){
+			return private.top.data;
+		};
+
+		this.print = function(){
+			local output = [];
+			local target = private.top;
+
+			while(target != null){
+				output.push(target.data);
+				target = target.next;
+			};
+
+			return output;
+		};
+	};
+	plugin.Stack = Stack;
+};

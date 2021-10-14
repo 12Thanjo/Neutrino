@@ -1,0 +1,8 @@
+{
+    "name": "math",
+    "version": "0.1.0",
+    "description": "advanced math types and functions",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}

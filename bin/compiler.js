@@ -256,7 +256,9 @@ var Compiler = function(input, const_dict, config){
 		const_dict_enabled = false;
 		var output = evaluate(expr.left);
 		const_dict_enabled = true;
+		add_semi();
 		output += expr.operator + no_tab_evaluate(expr.right) + ";" + comment(expr.left.position);
+		remove_semi();
 		return output;
 	});
 
@@ -283,28 +285,31 @@ var Compiler = function(input, const_dict, config){
 
 
 	evaluators.set('instanceof', (expr)=>{
-		var output = evaluate(expr.left) + " instanceof " + no_tab_evaluate(expr.right);
-		output.replaceAll('\t', '');
-		return output;
+		return evaluate(expr.left) + " instanceof " + no_tab_evaluate(expr.right);
 	});
 
 	evaluators.set('typeof', (expr)=>{
-		var output = "typeof " + evaluate(expr.left) + "==" + no_tab_evaluate(expr.right);
-		output.replaceAll('\t', '');
-		return output;
+		return "typeof " + evaluate(expr.left) + "==" + no_tab_evaluate(expr.right);
+	});
+
+	evaluators.set('includes', (expr)=>{
+		return evaluate(expr.left) + ".includes(" + no_tab_evaluate(expr.right) + ")";
 	});
 
 
 
 	evaluators.set("id", (expr)=>{
 		if(!const_dict.has(expr.value)){
+
 			var output = t() + expr.value;
 
 			var call = false;
 
 			if(expr.attachment != null){
 				if(expr.attachment.type == "index"){
-					output += "[" + no_tab_evaluate(expr.attachment.value) + "]";
+					add_semi();
+					output += "[" +  no_tab_evaluate(expr.attachment.value) + "]";
+					remove_semi();
 				}else if(expr.attachment.type == "call"){
 					call = true;
 					add_semi();
@@ -435,14 +440,18 @@ var Compiler = function(input, const_dict, config){
 		}
 
 
-
 		return output;
 	});
 
 	evaluators.set('function', (expr)=>{
 		var output = "function" + parse_params(expr.params) + "{" + comment(expr.position);
 		tab_depth += 1;
+
+		var save_semi = semi_colon_depth;
+		semi_colon_depth = 0;
 		output += t() + eat_tab_evaluate(expr.program);
+		semi_colon_depth = save_semi;
+		
 		tab_depth -= 1;
 		output += t() + "}";
 
@@ -483,7 +492,8 @@ var Compiler = function(input, const_dict, config){
 
 	evaluators.set('forNum', (expr)=>{
 		var output = t();
-		output += 'for(var '+expr.i+'=0;'+expr.i+'<'+expr.arr.value+";"+expr.i+'++){' + n;
+		var arr = no_tab_evaluate(expr.arr);
+		output += 'for(var '+expr.i+'=0;'+expr.i+'<'+arr+";"+expr.i+'++){' + n;
 		tab_depth += 1;
 		output += evaluate(expr.program);
 		tab_depth -= 1;
@@ -495,7 +505,7 @@ var Compiler = function(input, const_dict, config){
 	evaluators.set("itterate", (expr)=>{
 		var output = t();
 
-		output += 'for(var['+expr.key+','+expr.value+']of ' + evaluate(expr.id) + ".entries()){" + n;
+		output += 'for(var['+expr.key+','+expr.value+']of ' + no_tab_evaluate(expr.id) + ".entries()){" + n;
 		tab_depth += 1;
 		output += evaluate(expr.program);
 		tab_depth -= 1;
@@ -514,6 +524,20 @@ var Compiler = function(input, const_dict, config){
 		output += evaluate(expr.program);
 		tab_depth -= 1;
 		output += t() + "};" + comment(expr.position);
+
+		return output;
+	});
+
+	evaluators.set("while", (expr)=>{
+		var output = t();
+
+		add_semi();
+		output += "while(" + no_tab_evaluate(expr.condition) + "){" + n;
+		remove_semi();
+		tab_depth += 1;
+		output += evaluate(expr.then);
+		tab_depth -= 1;
+		output += "};" + comment(expr.position);
 
 		return output;
 	});
@@ -539,12 +563,25 @@ var Compiler = function(input, const_dict, config){
 		return output;
 	});
 
+	evaluators.set('delete', (expr)=>{
+		var output = t();
+
+		add_semi();
+		output += "delete " + no_tab_evaluate(expr.expr) + ";" + comment(expr.position);
+		remove_semi();
+
+		return output;
+	})
+
 	evaluators.set('break', (expr)=>{
 		return t() + "break;" + comment(expr.position);
 	});
 
-	evaluators.set('spawn', (expr)=>{
+	evaluators.set('new', (expr)=>{
 		return "new " + no_tab_evaluate(expr.id) + parse_call(expr.params);
+	});
+	evaluators.set('spawn', (expr)=>{
+		return "new " + no_tab_evaluate(expr.id) + parse_call(expr.params) + ";" + comment(expr.position);
 	});
 
 	evaluators.set('if', (init_expr)=>{
@@ -593,7 +630,7 @@ var Compiler = function(input, const_dict, config){
 		return output;
 	});
 
-	evaluators.set('species', (expr)=>{
+	evaluators.set('struct', (expr)=>{
 		var output = "";
 
 		output += t() + `let ${no_tab_evaluate(expr.id)}=function${parse_params(expr.params)}{` + n;
@@ -606,7 +643,7 @@ var Compiler = function(input, const_dict, config){
 		return output;
 	});
 
-	evaluators.set('class', (expr)=>{
+	evaluators.set('species', (expr)=>{
 		var output = "";
 		var id = no_tab_evaluate(expr.id);
 
@@ -616,7 +653,24 @@ var Compiler = function(input, const_dict, config){
 		output += evaluate(expr.program);
 		tab_depth -= 1;
 		output += t() + "};" + comment(expr.position);
-		output += t() + `${id}.$map=new Map();${id}.get=function(id){return ${id}.$map.get(id);};${id}.has=function(id){return ${id}.$map.has(id);};${id}.forEach=function(cb){${id}.$map.forEach(cb);};` + comment(expr.position);
+		output += t() + `${id}.$map=new Map();${id}.get=function(id){return ${id}.$map.get(id);};${id}.has=function(id){return ${id}.$map.has(id);};${id}.forEach=function(cb){${id}.$map.forEach(cb);};${id}.delete=function(cb){${id}.$map.delete(cb);};` + comment(expr.position);
+
+
+		return output;
+	});
+
+
+	evaluators.set('class', (expr)=>{
+		var output = "";
+		var id = no_tab_evaluate(expr.id);
+
+		output += t() + `let ${id}=function${parse_params(expr.params)}{` + n;
+		tab_depth += 1;
+		output += t() + "let private={};" + id + ".$map.set(" + id + ".$i,this);let id=" + id + ".$i;" + id + ".$i+=1;" + n;
+		output += evaluate(expr.program);
+		tab_depth -= 1;
+		output += t() + "};" + comment(expr.position);
+		output += t() + `${id}.$i=0;${id}.$map=new Map();${id}.get=function(id){return ${id}.$map.get(id);};${id}.has=function(id){return ${id}.$map.has(id);};${id}.forEach=function(cb){${id}.$map.forEach(cb);};${id}.delete=function(cb){${id}.$map.delete(cb);};` + comment(expr.position);
 
 
 		return output;
@@ -662,6 +716,15 @@ var Compiler = function(input, const_dict, config){
 		return output;
 	});
 
+	evaluators.set("scope", (expr)=>{
+		var output = t() + "{" + n;
+		tab_depth += 1;
+		output += evaluate(expr.program);
+		tab_depth -= 1;
+		output += t() + "};" + comment(expr.position);
+		return output;
+	});
+
 
 	evaluators.set('error', (expr)=>{
 		var output = "";
@@ -681,6 +744,18 @@ var Compiler = function(input, const_dict, config){
 			error(`plugin (${plugin_name}) doesn't exist`);
 		}
 
+		var plugin_var_name = plugin_name;
+		if(expr.accessors.length > 0){
+			plugin_var_name = "{";
+			for(var i=0; i<expr.accessors.length;i++){
+				plugin_var_name += no_tab_evaluate(expr.accessors[i]);
+
+				if(i < expr.accessors.length - 1){
+					plugin_var_name += ",";
+				}
+			}
+			plugin_var_name += "}";
+		}
 
 		if(!config.plugin){
 			var dependancy_recursion = function(target){
@@ -699,9 +774,9 @@ var Compiler = function(input, const_dict, config){
 
 			dependancy_recursion(plugin_name);
 
-			return "let " + plugin_name + "=$plugins.get('" + plugin_name + "');" + comment(expr.position);
+			return "let " + plugin_var_name + "=$plugins.get('" + plugin_name + "');" + comment(expr.position);
 		}else{
-			return "let " + plugin_name + "=$get_plugin('" + plugin_name + "');";
+			return "let " + plugin_var_name + "=$get_plugin('" + plugin_name + "');";
 		}
 	});
 
@@ -755,7 +830,7 @@ var Compiler = function(input, const_dict, config){
 		var output = "(";
 		var params_length = params.length;
 		for(var i=0; i<params_length;i++){
-			output += params[i].value;
+			output += no_tab_evaluate(params[i]);
 			if(i < params_length - 1){
 				output += ",";
 			}
@@ -802,7 +877,8 @@ var Compiler = function(input, const_dict, config){
 		});
 
 		if(plugin_code != ""){
-			output = plugin_starter_code + n + plugin_code + plugin_setup_code + n + "(()=>{"+ n + output + "})();";
+			// output = plugin_starter_code + n + plugin_code + plugin_setup_code + n + "(()=>{"+ n + output + "})();";
+			output = plugin_starter_code + n + plugin_code + plugin_setup_code + n + output;
 		}
 
 		return output;

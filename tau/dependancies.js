@@ -16,7 +16,7 @@ module.exports = function(mode, args){
 	if(mode == "add"){
 		var add_plugin = args[1];
 		if(!files.fileExists(__dirname + "\\..\\plugins\\" + add_plugin)){
-			error(`Plugin (${add_plugin}) doesn't exist`);
+			error(`Plugin (${add_plugin}) doesn't exist\n\t> tau add <plugin> <dependancy>`);
 		}
 
 		plugin_config.dependancies.push(add_plugin);
@@ -25,7 +25,7 @@ module.exports = function(mode, args){
 	}else if(mode == "remove"){
 		var remove_plugin = args[1];
 		if(!plugin_config.dependancies.includes(remove_plugin)){
-			error(`Plugin (${plugin}) doesn't have (${remove_plugin}) as a dependancy`);
+			error(`Plugin (${plugin}) doesn't have (${remove_plugin}) as a dependancy\n\t> tau remove <plugin> <dependancy>`);
 		}
 
 		var remove_index = plugin_config.dependancies.indexOf(remove_plugin);
@@ -35,5 +35,9 @@ module.exports = function(mode, args){
 		plugin_config.dependancies.forEach((dependant)=>{
 			console.log(dependant);
 		});
+	}else if(mode == "version"){
+		console.log(plugin_config.version);
+	}else if(mode == "metadata"){
+		console.log(plugin_config);
 	}
 }

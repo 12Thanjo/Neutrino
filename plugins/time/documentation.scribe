@@ -1,0 +1,70 @@
+name: time
+	type: object
+	description: advanced timings
+	name: timer
+		type: function
+		description: create an run a simple timer
+		param: duration
+			type: number
+			description: duration of the timer in ms
+		param: event
+			type: function
+			description: event to run after the timer duration
+	name: interval
+		type: function
+		description: create an run a simple interval
+		param: duration
+			type: number
+			description: duration of the interval in ms
+		param: event
+			type: function
+			description: event to run after the interval duration
+	name: AdvancedTimer
+		type: class
+		description: timer with advanced functionality
+		prop: running
+			type: boolean
+			description: if the timer is currently running
+		prop: paused
+			type: boolean
+			description: if the timer is currently paused
+		prop: overlappable
+			type: boolean
+			description: if the timer is overlappable (multiple running at once)
+			default: false
+		prop: duration
+			type: number
+			description: the duration in ms. If the duration is changed while the timer is running and it is set to less than the time left, the event will trigger immediately
+		prop: timeLeft
+			type: number
+			description: time left in the timer in ms
+		name: start
+			type: function
+			description: start / restart the timer
+		name: stop
+			type: function
+			description: stop the timer
+		name: pause
+			type: function
+			description: pause the timer
+	name: AdvancedInterval
+		type: class
+		description: interval with advanced functionality
+		param: duration
+			type: integer
+			description: the duration of the interval in ms
+		param: event
+			type: function
+			description: interval event function
+		prop: running
+			type: boolean
+			description: if the timer is currently running
+		prop: duration
+			type: integer
+			description: the duration of the interval in ms
+		name: start
+			type: function
+			description: start the interval
+		name: stop
+			type: function
+			description: stop the interval

@@ -85,8 +85,8 @@ local OCS = function(){
 	class Environment_(id, MAX){
 		private.id = id;
 		private.entity_id = 0;
-		private.entity_lookup = spawn Map();
-		private.removed = spawn Set();
+		private.entity_lookup = new Map();
+		private.removed = new Set();
 
 		private.entities = [];
 
@@ -174,7 +174,7 @@ local OCS = function(){
 
 		class Query_(id, conditionals){
 			// private.id = id;
-			this.entities = spawn Set();
+			this.entities = new Set();
 			private.conditionals = conditionals;
 
 			this.audit = function(entity){
@@ -215,7 +215,7 @@ local OCS = function(){
 
 		// components
 		this.bindComponent = function(component){
-			return spawn EnvComponent(component.id, component.builder);
+			return new EnvComponent(component.id, component.builder);
 		};
 		this.getComponent = function(id){
 			return EnvComponent.get(id);
@@ -223,17 +223,17 @@ local OCS = function(){
 
 		// entities
 		this.createEntity = function(name){
-			local new = null;
+			local new_entity = null;
 			if(private.removed.size == 0){
-				new = spawn Entity(private.entity_id, name);
+				new_entity = new Entity(private.entity_id, name);
 				private.entity_id += 1;
 			}else{
 				local entity_id = private.removed.values().next().value;
 				private.removed.delete(entity_id);
-				new = spawn Entity(entity_id, name);
+				new_entity = new Entity(entity_id, name);
 			};
 
-			return new;
+			return new_entity;
 		};
 		this.getEntity = function(name){
 			return private.entity_lookup.get(name);
@@ -244,12 +244,12 @@ local OCS = function(){
 			return Query_.get(id);
 		};
 		this.createQuery = function(id, ~conditionals){
-			spawn Query_(id, conditionals);
+			new Query_(id, conditionals);
 		};
 
 		// systems
 		this.createSystem = function(id, query, event){
-			return spawn System_(id, query, event);
+			return new System_(id, query, event);
 		};
 		this.getSystem = function(id){
 			return System_.get(id);
@@ -272,4 +272,4 @@ local OCS = function(){
 
 
 
-plugin = spawn OCS();
+plugin = new OCS();

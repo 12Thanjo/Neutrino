@@ -1,0 +1,47 @@
+
+plugin.keyboard = {
+	last: {
+		down: null,
+		up: null
+	},
+	capslock: null
+};
+
+
+document.addEventListener('keydown', @(e)->{
+	local code = e.which;
+	local name = INPUTCODE_MAP.get(code);
+
+
+	// 22 offset for non-keyboard inputs
+
+	plugin.keyboard.last.down = name;
+	plugin.keyboard.capslock = e.getModifierState("CapsLock");
+
+	if(INPUT_DOWN[code + 22] == false){
+		INPUT_DOWN[code + 22] = true;
+		local events = DOWN_EVENTS[code + 22];
+		itterate events(key, event){
+			event();
+		};
+	};
+	local events = PRESS_EVENTS[code + 22];
+	itterate events(key, event){
+		event();
+	};
+});
+document.addEventListener('keyup', @(e)->{
+	local code = e.which;
+	local name = INPUTCODE_MAP.get(code);
+
+	INPUT_DOWN[code + 22] = false;
+
+	plugin.keyboard.last.up = name;
+
+	local events = UP_EVENTS[code + 22];
+	itterate events(key, event){
+		event();
+	};
+});
+
+document.dispatchEvent(new KeyboardEvent('keydown', {}));

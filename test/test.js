@@ -1,11 +1,10 @@
 let $plugins=new Map();let $pending_plugins=new Map();let $get_plugin=function(name){if($plugins.has(name)){return $plugins.get(name);}else{var output=$pending_plugins.get(name)();$plugins.set(name,output);$pending_plugins.delete(name);return output;};};
-$pending_plugins.set('assert',()=>{let plugin={};let cmd=$get_plugin('cmd');let check="✓";let x='✘';plugin=function(title,value,condition){if(condition()==value){cmd.log(check+" "+title,cmd.color.green);}else{cmd.log(x+" "+title,cmd.color.red);};};return plugin;}); //34:1
-$pending_plugins.set('cmd',()=>{let plugin={};plugin.color={black:"\x1b[30m",red:"\x1b[31m",yellow:"\x1b[33m",green:"\x1b[32m",blue:"\x1b[34m",magenta:"\x1b[35m",cyan:"\x1b[36m",white:"\x1b[37m"};plugin.background_color={black:"\x1b[40m",red:"\x1b[41m",green:"\x1b[42m",yellow:"\x1b[43m",blue:"\x1b[44m",magenta:"\x1b[45m",cyan:"\x1b[46m",white:"\x1b[47m"};plugin.style={reset:"\x1b[0m",bright:"\x1b[1m",dim:"\x1b[2m",underscore:"\x1b[4m",blink:"\x1b[5m",reverse:"\x1b[7m",hidden:"\x1b[8m"};plugin.log=function(string,color,backgroundColor){string=string||"";color=color||"";backgroundColor=backgroundColor||"";console.log(color+backgroundColor+string+plugin.color.white+plugin.background_color.black+plugin.style.reset);};plugin.specialLog=function(data){if(typeof data=="string"==false){console.log(data);console.log();}else{if(isNaN(data)==false){console.log(plugin.color.orange+data+plugin.color.white+"\n");}else{console.log(plugin.color.green+"'"+data+"'"+plugin.color.white+"\n");};};};return plugin;}); //34:1
+$pending_plugins.set('assert',()=>{let plugin={};let cmd=$get_plugin('cmd');let check="✓";let x='✘';plugin=function(title,value,condition){if(condition()==value){cmd.log(check+" "+title,cmd.color.green);}else{cmd.log(x+" "+title,cmd.color.red);};};plugin.metadata={"name":"assert","version":"0.1.0","description":"assert module","main":"index.nt","author":"12Thanjo","dependancies":["cmd"]};return plugin;}); //34:7
+$pending_plugins.set('cmd',()=>{let plugin={};plugin.color={black:"\x1b[30m",red:"\x1b[31m",yellow:"\x1b[33m",green:"\x1b[32m",blue:"\x1b[34m",magenta:"\x1b[35m",cyan:"\x1b[36m",white:"\x1b[37m"};plugin.backgroundColor={black:"\x1b[40m",red:"\x1b[41m",green:"\x1b[42m",yellow:"\x1b[43m",blue:"\x1b[44m",magenta:"\x1b[45m",cyan:"\x1b[46m",white:"\x1b[47m"};plugin.style={reset:"\x1b[0m",bright:"\x1b[1m",dim:"\x1b[2m",underscore:"\x1b[4m",blink:"\x1b[5m",reverse:"\x1b[7m",hidden:"\x1b[8m"};plugin.log=function(string,color,backgroundColor){string=string||"";color=color||"";backgroundColor=backgroundColor||"";console.log(color+backgroundColor+string+plugin.color.white+plugin.backgroundColor.black+plugin.style.reset);};plugin.specialLog=function(data){if(typeof data=="string"==false){console.log(data);console.log();}else{if(isNaN(data)==false){console.log(plugin.color.orange+data+plugin.color.white+"\n");}else{console.log(plugin.color.green+"'"+data+"'"+plugin.color.white+"\n");};};};plugin.metadata={"name":"cmd","version":"0.1.0","description":"command line interaction","main":"index.nt","author":"12Thanjo","dependancies":[]};return plugin;}); //34:7
 for(var[$key,$value]of $pending_plugins.entries()){$get_plugin($key);};
-(()=>{
-let foo=-1; //4:7
-let integer=12; //6:7
-var negative_and_decimal=-12.4; //9:10
+let foo=-1; //4:10 | test.nt
+let integer=12; //6:14 | test.nt
+var negative_and_decimal=-12.4; //9:30 | test.nt
 globalThis.var3={
 	string:"Hello World",
 	array:[1.2,"3",["2D"],{
@@ -13,353 +12,394 @@ globalThis.var3={
 	}],
 	boolean:[true,false],
 	foo:"bar"
-}; //13:8
-var3.nulish=[null,undefined]; //21:1
-let assert=$plugins.get('assert'); //34:1
-console.log('Modules:'); //35:9
+}; //13:12 | test.nt
+var3.nulish=[null,undefined]; //21:5 | test.nt
+let assert=$plugins.get('assert'); //34:7
+console.log('Modules:'); //35:12 | test.nt
 assert("import (tau .ntp)",true,()=>{
-	return true; //37:5
-}); //36:1
+	return assert.metadata.name=="assert"; //38:11 | test.nt
+}); //36:7 | test.nt
 assert('macro (.ntm)',true,()=>{
-	return true; //1:1 | macro test.ntm
-}); //39:1
-console.log(); //42:9
-console.log("Variable Initialization:"); //46:9
+	return true; //1:7 | macro test.ntm
+}); //40:7 | test.nt
+console.log(); //43:12 | test.nt
+console.log("Variable Initialization:"); //47:12 | test.nt
 assert('local',true,()=>{
-	let local_var=true; //48:11
-	return local_var; //49:5
-}); //47:1
+	let local_var=true; //49:20 | test.nt
+	return local_var; //50:11 | test.nt
+}); //48:7 | test.nt
 assert('regional',true,()=>{
-	var regional_var=true; //52:14
-	return regional_var; //53:5
-}); //51:1
+	var regional_var=true; //53:26 | test.nt
+	return regional_var; //54:11 | test.nt
+}); //52:7 | test.nt
 assert('global',true,()=>{
-	globalThis.global_var=true; //56:12
-	return global_var; //57:5
-}); //55:1
-console.log(); //59:9
-console.log("Misc: "); //62:9
+	globalThis.global_var=true; //57:22 | test.nt
+	return global_var; //58:11 | test.nt
+}); //56:7 | test.nt
+console.log(); //60:12 | test.nt
+console.log("Misc: "); //63:12 | test.nt
 assert('function',true,()=>{
-	var func=function(param){ //64:20
-		return param; //65:9
-	}; //64:14
-	return func(true); //67:5
-}); //63:1
+	var func=function(param){ //65:28 | test.nt
+		return param; //66:15 | test.nt
+	}; //65:18 | test.nt
+	return func(true); //68:11 | test.nt
+}); //64:7 | test.nt
 assert('arrow function (@()->{})',true,()=>{
 	var a_func=(param)=>{
-		return param; //71:9
-	}; //70:14
-	return a_func(true); //73:5
-}); //69:1
+		return param; //72:15 | test.nt
+	}; //71:20 | test.nt
+	return a_func(true); //74:11 | test.nt
+}); //70:7 | test.nt
 assert('spread (~)',1,()=>{
-	let arr=[1]; //76:11
-	let spread_arr=[...arr]; //77:11
-	return spread_arr[0]; //78:5
-}); //75:1
+	let arr=[1]; //77:14 | test.nt
+	let spread_arr=[...arr]; //78:21 | test.nt
+	return spread_arr[0]; //79:11 | test.nt
+}); //76:7 | test.nt
 assert('concat (| |)',true,()=>{
-	let foo="c"; //81:11
-	let bar="d"; //82:11
-	let str="a"+(5)+"b"+(foo)+(bar); //83:11
-	return str=="a5bcd"; //84:5
-}); //80:1
-console.log(); //86:9
-console.log("Arithmetic Operators:"); //89:9
+	let foo="c"; //82:14 | test.nt
+	let bar="d"; //83:14 | test.nt
+	let str="a"+(5)+"b"+(foo)+(bar); //84:14 | test.nt
+	return str=="a5bcd"; //85:11 | test.nt
+}); //81:7 | test.nt
+console.log(); //87:12 | test.nt
+console.log("Arithmetic Operators:"); //90:12 | test.nt
 assert('addition (+)',10,()=>{
-	return 10; //90:32
-}); //90:1
+	return 10; //91:38 | test.nt
+}); //91:7 | test.nt
 assert('subtraction (-)',2,()=>{
-	return 2; //91:34
-}); //91:1
+	return 2; //92:40 | test.nt
+}); //92:7 | test.nt
 assert('multiplication (*)',24,()=>{
-	return 24; //92:38
-}); //92:1
+	return 24; //93:44 | test.nt
+}); //93:7 | test.nt
 assert('division (/)',1.5,()=>{
-	return 1.5; //93:33
-}); //93:1
+	return 1.5; //94:39 | test.nt
+}); //94:7 | test.nt
 assert('modulus (%)',2,()=>{
-	return 2; //94:30
-}); //94:1
-console.log(); //95:9
-console.log("Assignment Operators:"); //98:9
-var num=10; //99:10
+	return 2; //95:36 | test.nt
+}); //95:7 | test.nt
+console.log(); //96:12 | test.nt
+console.log("Assignment Operators:"); //99:12 | test.nt
+var num=10; //100:13 | test.nt
 assert('addition (+=)',14,()=>{
-	num+=4; //100:33
-	return num; //100:41
-}); //100:1
+	num+=4; //101:36 | test.nt
+	return num; //101:47 | test.nt
+}); //101:7 | test.nt
 assert('subtraction (-=)',12,()=>{
-	num-=2; //101:36
-	return num; //101:44
-}); //101:1
+	num-=2; //102:39 | test.nt
+	return num; //102:50 | test.nt
+}); //102:7 | test.nt
 assert('multiplication (*=)',24,()=>{
-	num*=2; //102:39
-	return num; //102:47
-}); //102:1
+	num*=2; //103:42 | test.nt
+	return num; //103:53 | test.nt
+}); //103:7 | test.nt
 assert('division (/=)',6,()=>{
-	num/=4; //103:32
-	return num; //103:40
-}); //103:1
+	num/=4; //104:35 | test.nt
+	return num; //104:46 | test.nt
+}); //104:7 | test.nt
 assert('modulus (%=)',2,()=>{
-	num%=4; //104:31
-	return num; //104:39
-}); //104:1
-console.log(); //105:9
-console.log("Reverse Assignment Operators:"); //108:9
-var num=10; //109:10
-var str="foo"; //110:10
+	num%=4; //105:34 | test.nt
+	return num; //105:45 | test.nt
+}); //105:7 | test.nt
+console.log(); //106:12 | test.nt
+console.log("Reverse Assignment Operators:"); //109:12 | test.nt
+var num=10; //110:13 | test.nt
+var str="foo"; //111:13 | test.nt
 assert('addition (=+)','barfoo',()=>{
-	str="bar"+str; //111:39
-	return str; //111:51
-}); //111:1
+	str="bar"+str; //112:42 | test.nt
+	return str; //112:57 | test.nt
+}); //112:7 | test.nt
 assert('subtraction (=-)',-8,()=>{
-	num=2-num; //112:36
-	return num; //112:44
-}); //112:1
+	num=2-num; //113:39 | test.nt
+	return num; //113:50 | test.nt
+}); //113:7 | test.nt
 assert('multiplication (=*)',-16,()=>{
-	num=2*num; //113:40
-	return num; //113:48
-}); //113:1
+	num=2*num; //114:43 | test.nt
+	return num; //114:54 | test.nt
+}); //114:7 | test.nt
 assert('division (=/)',2,()=>{
-	num=-32/num; //114:32
-	return num; //114:42
-}); //114:1
+	num=-32/num; //115:35 | test.nt
+	return num; //115:48 | test.nt
+}); //115:7 | test.nt
 assert('modulus (=%)',1,()=>{
-	num=5%num; //115:31
-	return num; //115:39
-}); //115:1
-console.log(); //116:9
-console.log("Special Assignment Operators:"); //119:9
-var num=5; //120:10
+	num=5%num; //116:34 | test.nt
+	return num; //116:45 | test.nt
+}); //116:7 | test.nt
+console.log(); //117:12 | test.nt
+console.log("Special Assignment Operators:"); //120:12 | test.nt
+var num=5; //121:13 | test.nt
 assert("set greater (=>) smaller",5,()=>{
-	if(3>num){num=3}; //121:43
-	return num; //121:51
-}); //121:1
+	if(3>num){num=3}; //122:46 | test.nt
+	return num; //122:57 | test.nt
+}); //122:7 | test.nt
 assert("set greater (=>) larger",8,()=>{
-	if(8>num){num=8}; //122:42
-	return num; //122:50
-}); //122:1
+	if(8>num){num=8}; //123:45 | test.nt
+	return num; //123:56 | test.nt
+}); //123:7 | test.nt
 assert("set lesser (=<) smaller",3,()=>{
-	if(3<num){num=3}; //123:42
-	return num; //123:50
-}); //123:1
+	if(3<num){num=3}; //124:45 | test.nt
+	return num; //124:56 | test.nt
+}); //124:7 | test.nt
 assert("set lesser (=<) larger",3,()=>{
-	if(8<num){num=8}; //124:41
-	return num; //124:49
-}); //124:1
-console.log(); //125:9
-console.log("Conditionals:"); //128:9
+	if(8<num){num=8}; //125:44 | test.nt
+	return num; //125:55 | test.nt
+}); //125:7 | test.nt
+console.log(); //126:12 | test.nt
+console.log("Conditionals:"); //129:12 | test.nt
 assert('if',true,()=>{
 	if(true){
-		return true; //131:9
-	}; //130:7
-}); //129:1
+		return true; //132:15 | test.nt
+	}; //131:7 | test.nt
+}); //130:7 | test.nt
 assert('else',true,()=>{
 	if(false){
-		return false; //136:9
+		return false; //137:15 | test.nt
 	}else{
-		return true; //138:9
-	}; //135:7
-}); //134:1
+		return true; //139:15 | test.nt
+	}; //136:7 | test.nt
+}); //135:7 | test.nt
 assert('else if',true,()=>{
 	if(false){
-		return false; //143:9
+		return false; //144:15 | test.nt
 	}else if(true){
-		return true; //145:9
+		return true; //146:15 | test.nt
 	}else{
-		return false; //147:9
-	}; //142:7
-}); //141:1
+		return false; //148:15 | test.nt
+	}; //143:7 | test.nt
+}); //142:7 | test.nt
 assert('equals (==)',true,()=>{
-	return true; //150:33
-}); //150:1
+	return true; //151:39 | test.nt
+}); //151:7 | test.nt
 assert('not equals (!=)',true,()=>{
-	return true; //151:37
-}); //151:1
+	return true; //152:43 | test.nt
+}); //152:7 | test.nt
 assert('greater than (>)',true,()=>{
-	return true; //152:38
-}); //152:1
+	return true; //153:44 | test.nt
+}); //153:7 | test.nt
 assert('less than (<)',true,()=>{
-	return true; //153:35
-}); //153:1
+	return true; //154:41 | test.nt
+}); //154:7 | test.nt
 assert('greater than or equal to (<=)',true,()=>{
-	return true; //154:51
-}); //154:1
+	return true; //155:57 | test.nt
+}); //155:7 | test.nt
 assert('less than or equal to (>=)',true,()=>{
-	return true; //155:48
-}); //155:1
+	return true; //156:54 | test.nt
+}); //156:7 | test.nt
 assert('and (&&)',false,()=>{
-	return false&&"foo"=="foo"; //156:31
-}); //156:1
+	return false&&"foo"=="foo"; //157:37 | test.nt
+}); //157:7 | test.nt
 assert('or (||)',true,()=>{
-	return false||"foo"=="foo"; //157:29
-}); //157:1
-console.log(); //158:9
-console.log("Loops:"); //161:9
+	return false||"foo"=="foo"; //158:35 | test.nt
+}); //158:7 | test.nt
+console.log(); //159:12 | test.nt
+console.log("Loops:"); //162:12 | test.nt
+assert("while",1,()=>{
+	let count=0; //164:16 | test.nt
+	while(true){
+		count+=1; //166:14 | test.nt
+		break; //167:14 | test.nt
+}; //165:10 | test.nt
+	return count; //169:11 | test.nt
+}); //163:7 | test.nt
 assert("for",6,()=>{
-	let forArr=[1,2,3]; //163:11
-	let count=0; //164:11
+	let forArr=[1,2,3]; //172:17 | test.nt
+	let count=0; //173:16 | test.nt
 	let $arr_length=forArr.length;
 	for(var i=0;i<$arr_length;i++){
-		count+=forArr[i]; //166:9
-	}; //165:5
-	return count; //168:5
-}); //162:1
+		count+=forArr[i]; //175:14 | test.nt
+	}; //174:8 | test.nt
+	return count; //177:11 | test.nt
+}); //171:7 | test.nt
 assert("forNum",6,()=>{
-	let count=0; //171:11
+	let count=0; //180:16 | test.nt
 	for(var i=0;i<4;i++){
-		count+=i; //174:9
-	}; //172:5
-	return count; //176:5
-}); //170:1
+		count+=i; //183:14 | test.nt
+	}; //181:11 | test.nt
+	return count; //185:11 | test.nt
+}); //179:7 | test.nt
 assert("itterate",true,()=>{
-	let forArr=[1,2,3]; //179:11
-	let key_count=0; //180:11
-	let value_count=0; //181:11
-	for(var[key,value]of 	forArr.entries()){
-		key_count+=key; //183:9
-		value_count+=value; //184:9
-	}; //182:5
-	return key_count==3&&value_count==6; //186:5
-}); //178:1
+	let forArr=[1,2,3]; //188:17 | test.nt
+	let key_count=0; //189:20 | test.nt
+	let value_count=0; //190:22 | test.nt
+	for(var[key,value]of forArr.entries()){
+		key_count+=key; //192:18 | test.nt
+		value_count+=value; //193:20 | test.nt
+	}; //191:13 | test.nt
+	return key_count==3&&value_count==6; //195:11 | test.nt
+}); //187:7 | test.nt
 assert("forKeys",true,()=>{
 	let forKeysObj={
 		foo:"bar",
 		hello:"world"
-	}; //189:11
-	let key_arr=[]; //193:11
-	let value_arr=[]; //194:11
+	}; //198:21 | test.nt
+	let key_arr=[]; //202:18 | test.nt
+	let value_arr=[]; //203:20 | test.nt
 	for(let key in forKeysObj){
 		let value=forKeysObj[key];
-		key_arr.push(key); //196:17
-		value_arr.push(value); //197:19
-	}; //195:5
-	return key_arr[0]=='foo'&&key_arr[1]=='hello'&&value_arr[0]=='bar'&&value_arr[1]=='world'; //199:5
-}); //188:1
-console.log(); //204:9
-console.log("Classes:"); //207:9
-assert('species',true,()=>{
-	let GenericClass=function(param){
+		key_arr.push(key); //205:21 | test.nt
+		value_arr.push(value); //206:23 | test.nt
+	}; //204:12 | test.nt
+	return key_arr[0]=='foo'&&key_arr[1]=='hello'&&value_arr[0]=='bar'&&value_arr[1]=='world'; //208:11 | test.nt
+}); //197:7 | test.nt
+console.log(); //213:12 | test.nt
+console.log("Classes:"); //216:12 | test.nt
+assert('struct',true,()=>{
+	let GenericStruct=function(param){
 		let private={};
-		this.name=param; //210:9
-		private.priv_prop="hi"; //211:9
-	}; //209:5
-	let gen=new GenericClass("name"); //214:11
-	return gen.name=="name"&&gen.priv_prop==null; //215:5
-}); //208:1
+		this.name=param; //219:13 | test.nt
+		private.priv_prop="hi"; //220:16 | test.nt
+	}; //218:11 | test.nt
+	let gen=new GenericStruct("name"); //223:14 | test.nt
+	return gen.name=="name"&&gen.priv_prop==null; //224:11 | test.nt
+}); //217:7 | test.nt
 assert('class',true,()=>{
-	let GenericClass=function(id,param){
-		let private={};GenericClass.$map.set(id,this);
-		this.name=id; //220:9
-		this.param=param; //221:9
-		private.priv_prop="hi"; //222:9
-		private.getter_prop=1; //223:16
-		Object.defineProperty(this, "getter_prop", {get: ()=>{return private.getter_prop;}}); //223:9
-	}; //219:5
-	GenericClass.$map=new Map();GenericClass.get=function(id){return GenericClass.$map.get(id);};GenericClass.has=function(id){return GenericClass.$map.has(id);};GenericClass.forEach=function(cb){GenericClass.$map.forEach(cb);}; //219:5
-	let gen=new GenericClass('id','foo'); //227:11
-	gen.getter_prop=2; //229:5
-	let getter_count=0; //231:11
-	GenericClass.forEach((e)=>{
-		getter_count+=e.getter_prop; //233:9
-	}); //232:18
-	return GenericClass.has('id')&&GenericClass.get('id')==gen&&gen.param=='foo'&&gen.priv_prop==null&&gen.getter_prop==1&&getter_count==1; //236:5
-}); //217:1
-console.log(); //238:9
-console.log("Keywords:"); //241:9
+	let GenericClass=function(param){
+		let private={};GenericClass.$map.set(GenericClass.$i,this);let id=GenericClass.$i;GenericClass.$i+=1;
+		private.id=id; //230:18 | test.nt
+		Object.defineProperty(this, "id", {get: ()=>{return private.id;}}); //230:15 | test.nt
+		this.param=param; //231:13 | test.nt
+		private.priv_prop="hi"; //232:16 | test.nt
+	}; //229:10 | test.nt
+	GenericClass.$i=0;GenericClass.$map=new Map();GenericClass.get=function(id){return GenericClass.$map.get(id);};GenericClass.has=function(id){return GenericClass.$map.has(id);};GenericClass.forEach=function(cb){GenericClass.$map.forEach(cb);};GenericClass.delete=function(cb){GenericClass.$map.delete(cb);}; //229:10 | test.nt
+new GenericClass("foo"); //235:10 | test.nt
+new GenericClass("bar"); //236:10 | test.nt
+	return GenericClass.has(0)&&GenericClass.get(0).param=="foo"&&GenericClass.get(1).param=="bar"; //238:11 | test.nt
+}); //226:7 | test.nt
+assert('species',true,()=>{
+	let GenericSpecies=function(id,param){
+		let private={};GenericSpecies.$map.set(id,this);
+		this.name=id; //245:13 | test.nt
+		this.param=param; //246:13 | test.nt
+		private.priv_prop="hi"; //247:16 | test.nt
+		private.getter_prop=0; //248:27 | test.nt
+		Object.defineProperty(this, "getter_prop", {get: ()=>{return private.getter_prop;}}); //248:15 | test.nt
+		private.getter_prop+=1; //249:16 | test.nt
+	}; //244:12 | test.nt
+	GenericSpecies.$map=new Map();GenericSpecies.get=function(id){return GenericSpecies.$map.get(id);};GenericSpecies.has=function(id){return GenericSpecies.$map.has(id);};GenericSpecies.forEach=function(cb){GenericSpecies.$map.forEach(cb);};GenericSpecies.delete=function(cb){GenericSpecies.$map.delete(cb);}; //244:12 | test.nt
+	let gen=new GenericSpecies('id','foo'); //252:14 | test.nt
+	gen.getter_prop=2; //254:8 | test.nt
+	let getter_count=0; //256:23 | test.nt
+	GenericSpecies.forEach((target)=>{
+		getter_count+=target.getter_prop; //258:21 | test.nt
+	}); //257:27 | test.nt
+	return GenericSpecies.has('id')&&GenericSpecies.get('id')==gen&&gen.param=='foo'&&gen.priv_prop==null&&gen.getter_prop==1&&getter_count==1; //260:11 | test.nt
+}); //240:7 | test.nt
+console.log(); //262:12 | test.nt
+console.log("Keywords:"); //265:12 | test.nt
 assert('return',true,()=>{
-	return true; //243:5
-}); //242:1
+	return true; //267:11 | test.nt
+}); //266:7 | test.nt
 assert('try',true,()=>{
 	try{
-		return true; //247:9
-	}catch{}; //246:5
-}); //245:1
+		return true; //271:15 | test.nt
+	}catch{}; //270:8 | test.nt
+}); //269:7 | test.nt
 assert('catch',true,()=>{
 	try{
-		foo=doesnt_exist; //252:9
-		return false; //253:9
+		foo=doesnt_exist; //276:12 | test.nt
+		return false; //277:15 | test.nt
 	}catch{
-		return true; //255:9
+		return true; //279:15 | test.nt
 	};
-}); //250:1
+}); //274:7 | test.nt
 assert('catch (e)',true,()=>{
 	try{
-		foo=doesnt_exist; //260:9
-		return false; //261:9
+		foo=doesnt_exist; //284:12 | test.nt
+		return false; //285:15 | test.nt
 	}catch(e){
-		return e!=null; //263:9
+		return e!=null; //287:15 | test.nt
 	};
-}); //258:1
+}); //282:7 | test.nt
 assert('typeof',true,()=>{
-	let num=1234; //267:11
-	return typeof num=='number'; //268:5
-}); //266:1
+	let num=1234; //291:14 | test.nt
+	return typeof num=='number'; //292:11 | test.nt
+}); //290:7 | test.nt
 assert('instanceof',true,()=>{
 	let Spec=function(){
 		let private={};
-	}; //271:5
-	let foo=new Spec(); //273:11
-	return foo instanceof Spec; //275:5
-}); //270:1
+	}; //295:11 | test.nt
+	let foo=new Spec(); //297:14 | test.nt
+	return foo instanceof Spec; //299:11 | test.nt
+}); //294:7 | test.nt
 assert('break',1,()=>{
-	let count=0; //278:11
+	let count=0; //302:16 | test.nt
 	for(var i=0;i<3;i++){
-		count+=i+1; //280:9
-		break; //281:9
-	}; //279:5
-	return count; //283:5
-}); //277:1
+		count+=i+1; //304:14 | test.nt
+		break; //305:14 | test.nt
+	}; //303:11 | test.nt
+	return count; //307:11 | test.nt
+}); //301:7 | test.nt
 assert('default',2,()=>{
-	let foo=null; //286:11
-	if(foo==null){foo=2;}; //287:5
-	return foo; //288:5
-}); //285:1
-console.log(); //290:9
-console.log("Errors:"); //293:9
+	let foo=null; //310:14 | test.nt
+	if(foo==null){foo=2;}; //311:8 | test.nt
+	return foo; //312:11 | test.nt
+}); //309:7 | test.nt
+assert('delete',null,()=>{
+	let foo={
+		bar:"asdf"
+	}; //315:14 | test.nt
+	delete foo.bar; //318:11 | test.nt
+	return foo.bar; //319:11 | test.nt
+}); //314:7 | test.nt
+assert('includes',true,()=>{
+	let foo="foo"; //322:14 | test.nt
+	return (['asdf','foo'].includes('foo')); //323:11 | test.nt
+}); //321:7 | test.nt
+assert('scope',true,()=>{
+	let foo=true; //326:14 | test.nt
+	let bar=false; //327:14 | test.nt
+	{
+		let foo=false; //329:18 | test.nt
+		bar=true; //330:12 | test.nt
+	}; //328:10 | test.nt
+	return foo&&bar; //332:11 | test.nt
+}); //325:7 | test.nt
+console.log(); //334:12 | test.nt
+console.log("Errors:"); //337:12 | test.nt
 assert('Error','message',()=>{
 	try{
 		throw Error("message");
 	}catch(e){
-		return e.message; //298:9
+		return e.message; //342:15 | test.nt
 	};
-}); //294:1
+}); //338:7 | test.nt
 assert('SyntaxError','message',()=>{
 	try{
 		throw SyntaxError("message");
 	}catch(e){
-		return e.message; //305:9
+		return e.message; //349:15 | test.nt
 	};
-}); //301:1
+}); //345:7 | test.nt
 assert('ReferenceError','message',()=>{
 	try{
 		throw ReferenceError("message");
 	}catch(e){
-		return e.message; //312:9
+		return e.message; //356:15 | test.nt
 	};
-}); //308:1
+}); //352:7 | test.nt
 assert('RangeError','message',()=>{
 	try{
 		throw RangeError("message");
 	}catch(e){
-		return e.message; //319:9
+		return e.message; //363:15 | test.nt
 	};
-}); //315:1
-console.log(); //322:9
-console.log("Multithreading:"); //328:9
+}); //359:7 | test.nt
+console.log(); //366:12 | test.nt
+console.log("Multithreading:"); //372:12 | test.nt
 assert("Thread",true,()=>{
-}); //329:1
+}); //373:7 | test.nt
 assert("Thread Pool",true,()=>{
-}); //330:1
-console.log(); //331:9
-console.log("OCS:"); //358:9
+}); //374:7 | test.nt
+console.log(); //375:12 | test.nt
+console.log("OCS:"); //402:12 | test.nt
 assert("Environment",false,()=>{
-}); //359:1
+}); //403:7 | test.nt
 assert("Entity",false,()=>{
-}); //360:1
+}); //404:7 | test.nt
 assert("Component",false,()=>{
-}); //361:1
+}); //405:7 | test.nt
 assert("Query",false,()=>{
-}); //362:1
+}); //406:7 | test.nt
 assert("System",false,()=>{
-}); //363:1
-console.log(); //364:9
-})();
+}); //407:7 | test.nt
+console.log(); //408:12 | test.nt

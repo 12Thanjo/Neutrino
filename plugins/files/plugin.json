@@ -1,0 +1,10 @@
+{
+    "name": "files",
+    "version": "0.1.0",
+    "description": "interaction with the file system - an expansion to the built in \"fs\" module",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": [
+        "stats"
+    ]
+}

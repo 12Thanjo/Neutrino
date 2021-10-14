@@ -1,0 +1,5 @@
+plugin.gamepad = {};
+
+window.addEventListener('gamepadconnected', @(e)->{
+	console.log("gamepad connected: " + e.gamepad.index);
+});

@@ -1,0 +1,8 @@
+{
+    "name": "time",
+    "version": "0.1.0",
+    "description": "advanced timings",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}

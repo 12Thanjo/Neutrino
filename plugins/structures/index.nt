@@ -1,0 +1,7 @@
+// plugin: structures
+// description: adding data structures
+// author: 12Thanjo
+
+macro "stack";
+macro "queue";
+

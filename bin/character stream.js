@@ -69,7 +69,8 @@ var CharacterStream = function(input, config){
     this.position = function(){
         return {
             line,
-            collumn
+            collumn,
+            line_str: line_str.replaceAll("\t", "")
        };
     }
 }

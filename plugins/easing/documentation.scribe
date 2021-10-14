@@ -1,0 +1,228 @@
+name: easing
+	type: object
+	description: easing functions [0-1]
+	name: smoothStart2
+		type: function
+		description: smooth start square exponential
+		param: t
+			type: number
+			description: intput value
+	name: smoothStart3
+		type: function
+		description: smooth start cubic exponential
+		param: t
+			type: number
+			description: intput value
+	name: smoothStart4
+		type: function
+		description: smooth start quadric exponential
+		param: t
+			type: number
+			description: intput value
+	name: smoothStartN
+		type: function
+		description: smooth start N exponential
+		param: t
+			type: number
+			description: intput value
+		param: n
+			type: integer
+			description: exponential value
+	name: smoothStartPow
+		type: function
+		description: smooth start pow exponential (uses fast pow to improve performance)
+		param: t
+			type: number
+			description: intput value
+		param: n
+			type: number
+			description: exponential value
+	name: smoothStop2
+		type: function
+		description: smooth stop square exponential
+		param: t
+			type: number
+			description: intput value
+	name: smoothStop3
+		type: function
+		description: smooth stop cubic exponential
+		param: t
+			type: number
+			description: intput value
+	name: smoothStop4
+		type: function
+		description: smooth stop quadric exponential
+		param: t
+			type: number
+			description: intput value
+	name: smoothStopN
+		type: function
+		description: smooth stop N exponential
+		param: t
+			type: integer
+			description: intput value
+		param: n
+			type: number
+			description: exponential value
+	name: smoothStopPow
+		type: function
+		description: smooth stop pow exponential (uses fast pow to improve performance)
+		param: t
+			type: number
+			description: intput value
+		param: n
+			type: number
+			description: exponential value
+	name: mix
+		type: function
+		description: mix between two easing functions
+		param: t
+			type: number
+			description: input value
+		param: ease1
+			type: function
+			description: first easing function
+		param: ease2
+			type: function
+			description: second easing function
+		param: percent2
+			type: number
+			description: percentage of second easing function used [0-1]
+	name: crossFade
+		type: function
+		description: cross fade between eeasing functions
+		param: t
+			type: number
+			description: input value
+		param: ease1
+			type: function
+			description: first easing function
+		param: ease2
+			type: function
+			description: second easing function
+	name: scale
+		type: function
+		description: scale an easing function {t*ease}
+		param: t
+			type: number
+			description: input value
+		param: ease
+			type: function
+			description: easing function
+	name: reverseScale
+		type: function
+		description: reverse scale an easing function {(1-t)*ease}
+		param: t
+			type: number
+			description: input value
+		param: ease
+			type: function
+			description: easing function
+	name: arch
+		type: function
+		description: arch easing function
+		param: t
+			type: number
+			description: input number
+	name: bellCurve
+		type: function
+		description: bell curve easing function
+		param: t
+			type: number
+			description: input value
+		param: n
+			type: integer
+			description: exponential strenght
+	name: bezier2
+		type: function
+		description: 3 point bezier curve (A, B, C) where A=0 and C=1
+		param: t
+			type: number
+			description: input number
+		param: b
+			type: number
+			description: the value of point B
+	name: bezier3
+		type: function
+		description: 4 point bezier curve (A, B, C, D) where A=0 and D=1
+		param: t
+			type: number
+			description: input number
+		param: b
+			type: number
+			description: the value of point B
+		param: c
+			type: number
+			description: the value of point C
+	name: bezier4
+		type: function
+		description: 5 point bezier curve (A, B, C, D, E) where A=0 and E=1
+		param: t
+			type: number
+			description: input number
+		param: b
+			type: number
+			description: the value of point B
+		param: c
+			type: number
+			description: the value of point C
+		param: d
+			type: number
+			description: the value of point D
+	name: bezierN
+		type: function
+		description: N + 1 point bezier curve (A, B, ..., Z) where A=0 and Z=1
+		param: t
+			type: number
+			description: input number
+		param: arr
+			type: [number]
+			description: array of points
+	name: bounceClamp
+		type: object
+		description: bounce clamp
+		name: bottom
+			type: function
+			description: bottom bounce clamp
+		name: top
+			type: function
+			description: top bounce clamp
+		name: bottomTop
+			type: function
+			description: bottom and top bounce clamp
+	name: range
+		type: object
+		description: normalize values into a range
+		name: map
+			type: function
+			description: map a value to the normalized range [0, 1]
+			param: t
+				type: number
+				description: input value
+			param: min
+				type: number
+				description: minimum of the "from" range
+			param: max
+				type: number
+				description: maximum of the "from" range
+		name: convert
+			type: function
+			description: convert from one range to another with an easing function runable on normalized range
+			param: t
+				type: number
+				description: input value
+			param: fromMin
+				type: number
+				description: minimum of the "from" range
+			param: fromMax
+				type: number
+				description: maximum of the "from" range
+			param: func
+				type: function
+				description: easing function to run
+			param: toMin
+				type: number
+				description: minimum of the "to" range
+			param: toMax
+				type: number
+				description: maximum of the "to" range

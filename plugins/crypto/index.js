@@ -15,8 +15,8 @@ plugin.sha256 = function(data, secretKey){
 	        .digest('hex');	
 };
 
-plugin.scrypt = function(secretKey, salt, length){
-	let key = crypto.scryptSync(secretKey, salt, length);
+plugin.scrypt = function(data, salt, length){
+	let key = crypto.scryptSync(data, salt, length);
 	return key.toString('hex');
 };
 
@@ -73,7 +73,7 @@ plugin.diffieHellman.generate = function(){
 	};
 };
 
-plugin.diffieHellman.solve = function(privateKey, theirPublicKey){
+plugin.diffieHellman.compute = function(privateKey, theirPublicKey){
 	privateKey = Buffer.from(privateKey, 'hex');
 	theirPublicKey = Buffer.from(theirPublicKey, 'hex');
 

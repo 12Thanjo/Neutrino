@@ -23,6 +23,9 @@ module.exports = function(args){
 	args = args.slice(1);
 	args.forEach((arg)=>{
 		flags += " " + arg;
+		// if(arg == "--verbose"){
+		// 	error("Cannot use the (--verbose) flag");
+		// }
 	});
 
 
@@ -38,11 +41,13 @@ module.exports = function(args){
 
 
 	    if(stdout){
-	    	console.log(stdout);
-	    }else{
+	    	console.log(stdout.substring(0, stdout.length-1));
+	    }
+
+	    if(files.fileExists(plugin_path + "\\compiled.js")){
 	    	files.renameFile(plugin_path + "\\compiled.js", plugin_path + "\\compiled.ntp");
 	    	var code = files.readFile(plugin_path + "\\compiled.ntp");
-	    	code = `$pending_plugins.set('${target}',()=>{let plugin={};${code}return plugin;});`;
+	    	code = `$pending_plugins.set('${target}',()=>{let plugin={};${code}plugin.metadata=${JSON.stringify(plugin_config)};return plugin;});`;
 	    	files.writeFile(plugin_path + "\\compiled.ntp", code);
 	    }
 	});

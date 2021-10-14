@@ -2,7 +2,7 @@
 // description: assert module
 // author: 12Thanjo
 
-import "cmd";
+import cmd;
 
 local check = "✓";
 local x = '✘';

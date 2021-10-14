@@ -26,11 +26,12 @@ module.exports = function(args, dirname, compile_target, output_target){
 		dir.forEach((item)=>{
 			if(item.type == "folder"){
 				if(item.dir != null){
-					build_files_recursive(item.dir, path + "/" + item.name, relative + item.name + "\\");
+					build_files_recursive(item.dir, path + "/" + item.name, relative + item.name + "/");
 				}
 			}else{
 				if(item.type == ".nt"){
 					item.path = path;
+					item.input_file = relative + item.name + ".nt";
 					item.relative = relative;
 					nt_files.push(item);
 				}else if(item.type == ".ntm"){
@@ -50,7 +51,7 @@ module.exports = function(args, dirname, compile_target, output_target){
 	var nt_tokens = new Set();
 	nt_files.forEach((file)=>{
 		if(file.type != ".nt" || (compile_target == null || compile_target == file.name + ".nt")){
-			var read_file = files.readFile(file.path + "\\" + file.name + file.type);
+			var read_file = files.readFile(file.path + "/" + file.name + file.type);
 			var character_stream = new neutrino.CharacterStream(read_file);
 			var tokens = neutrino.Tokenizer(character_stream, {});
 
@@ -62,13 +63,22 @@ module.exports = function(args, dirname, compile_target, output_target){
 						token.position.file = file.relative;
 					}
 				});
-				ntm_tokens.set(file.relative, tokens);
-				log(`Tokenized: ${cmd.color.yellow + file.relative}`, cmd.color.green);
+
+				var path = files.getFilePath(file.relative).replaceAll("\\", "/");
+				ntm_tokens.set(path + file.name, tokens);
+				log(`Tokenized: ${cmd.color.yellow + path + cmd.color.blue + file.name}.ntm`, cmd.color.green);
 			}else{
 				var name = file.name;
 				if(output_target){
 					name = output_target;
 				}
+
+				tokens.forEach((token)=>{
+					if(token.type != 'END'){
+						token.position.file = file.input_file;
+					}
+				});
+
 				nt_tokens.add({
 					tokens: tokens,
 					relative: file.relative,
@@ -94,7 +104,7 @@ module.exports = function(args, dirname, compile_target, output_target){
 			debug: debug,
 			plugin: args.includes('--plugin'),
 		});
-		files.writeFile(file.path + "\\" + file.name + ".js", compiled);
-		log(`> Compiled: ${cmd.color.yellow + file.relative + cmd.color.blue + file.name}.nt`, cmd.color.green);
+		files.writeFile(file.path + "/" + file.name + ".js", compiled);
+		log(`> Compiled: ${cmd.color.yellow + file.relative.replaceAll("\\", "/") + cmd.color.blue + file.name}.nt`, cmd.color.green);
 	});
 }

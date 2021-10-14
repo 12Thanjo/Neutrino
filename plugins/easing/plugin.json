@@ -1,0 +1,8 @@
+{
+    "name": "easing",
+    "version": "0.1.0",
+    "description": "easing functions (0-1)",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}

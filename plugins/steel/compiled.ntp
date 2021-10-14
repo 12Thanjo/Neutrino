@@ -1,0 +1,1 @@
+$pending_plugins.set('steel',()=>{let plugin={};plugin.name="steel";plugin.metadata={"name":"steel","version":"0.1.0","description":"a game engine written in neutrino","main":"index.nt","author":"12Thanjo","dependancies":[]};return plugin;});

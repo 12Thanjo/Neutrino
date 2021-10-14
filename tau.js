@@ -27,8 +27,10 @@ var help = function(){
 	help_log("help", 'shows "help" menu');
 	help_log("init", "initialize a new plugin");
 	help_log("list <plugin>", "list all dependancies of a plugin");
+	help_log("metadata <plugin>", "get all of the metadata of a plugin");
 	help_log('package <plugin> [...args]', "build a tau project from a .js file instead of a .nt file");
 	help_log("remove <plugin> <dependancy>", "remove a dependancy from a plugin");
+	help_log("version <plugin>", "get the version of a plugin");
 
 	process.exit();
 }
@@ -44,7 +46,7 @@ if(args[0] == 'init'){
 	require('./tau/package.js')(args.slice(1));
 }else if(args[0] == 'help'){
 	help();
-}else if(['add', 'remove', 'list'].includes(args[0])){
+}else if(['add', 'remove', 'list', 'version', 'metadata'].includes(args[0])){
 	require('./tau/dependancies.js')(args[0], args.slice(1));
 }else{
 	console.log("Unknown command");

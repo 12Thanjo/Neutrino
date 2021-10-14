@@ -1,0 +1,182 @@
+// plugin: files
+// description: interaction with the file system - an expansion to the built in "fs" module
+// author: 12Thanjo
+
+import stats;
+local fs = require('fs');
+
+plugin.readFile = function(path){
+	//if(async == null || async == false){
+        return fs.readFileSync(path, 'utf8');
+ //   }else{
+        //return fs.readFile(path, 'utf8');
+    //};
+};
+
+plugin.writeFile = function(path, output){
+    //if(async == null || async == false){
+        fs.writeFileSync(path, output);
+    //}else{
+    //    fs.writeFile(path, output);
+    //};
+};
+
+plugin.deleteFile = function(path){
+    fs.unlinkSync(path);
+};
+
+plugin.copyFile = function(path, destination){
+    fs.copyFileSync(path, destination);
+};
+
+plugin.fileExists = function(path){
+    return fs.existsSync(path);
+};
+
+plugin.createDirectory = function(path){
+    try{
+        fs.mkdirSync(path);
+    }catch(e){
+        if(e.message.substring(0, 34) == "EEXIST: file already exists, mkdir"){
+            console.info("Directory already exists (" + path + ")");
+        }else{
+            Error e;
+        };
+    };
+};
+
+
+plugin.getFileExtention = function(path){
+    local dot_index = path.lastIndexOf(".");
+    local forward = path.lastIndexOf("/");
+    local backward = path.lastIndexOf("\\");
+    if(stats.max(dot_index, forward, backward) != dot_index){
+        return "";
+    }else{
+        return path.substring(dot_index + 1);
+    };
+};
+
+plugin.getFileName = function(path){
+    local forward = path.lastIndexOf("/");
+    local backward = path.lastIndexOf("\\");
+    return path.substring(stats.max(forward, backward)+1);
+};
+
+
+plugin.getFileNameWithoutExtention = function(path){
+    local name = get_file_name(path);
+    local ext = get_file_extention(path);
+    if(ext != ""){
+        return name.slice(0, name.length - ext.length - 1);
+    }else{
+        return name;
+    };
+};
+
+plugin.getFilePath = function(path){
+    if(plugin.getFileExtention(path) != ""){
+        local forward = path.lastIndexOf("/");
+        local backward = path.lastIndexOf("\\");
+        return path.substring(0, stats.max(forward, backward) + 1);
+    }else{
+        return path;
+    };
+};
+
+plugin.normalize = function(path, forwards){
+    if(forwards == null || forwards == false){
+        return path.replaceAll("\\", "/");
+    }else{
+        return path.replaceAll("/", "\\");
+    };
+};
+
+plugin.getFilePathUpDirectory = function(path, number){
+    number default 1;
+    if(plugin.getFileExtention(path) != ""){
+        number += 1;
+    };
+
+    forNum(i, number){
+        local forward = path.lastIndexOf("/");
+        local backward = path.lastIndexOf("\\");
+        path = path.substring(stats.max(forward, backward)+1);  
+    };
+
+    return path;
+};
+
+
+plugin.isDirectory = function(path){
+    return fs.lstatSync(path).isDirectory();
+};
+
+
+
+plugin.renameFile = function(path, name){
+    fs.renameSync(path, name);
+};
+
+plugin.deleteDirectory = function(path){
+    if(fs.existsSync(path)){
+        fs.readdirSync(path).forEach(@(file, index)->{
+            local current_path = node_path.join(path, file);
+            if(fs.lstatSync(current_path).isDirectory()){ // recurse
+                deleteDirectory(current_path);
+            }else{ // delete file
+                fs.unlinkSync(current_path);
+            };
+        });
+        fs.rmdirSync(path);
+    };
+};
+
+
+
+
+
+plugin.getFiles = function(path, depth){
+    if(depth == null){
+        depth = Infinity;
+    };
+    return get_files_recursive(path, depth);
+};
+
+local get_files_recursive = function(path, depth){
+    try{
+        if(depth > -1){
+            local output = [];
+
+            fs.readdirSync(path, {
+                withFileTypes: true
+            }).forEach(@(file)->{
+                if(file.isFile() == false){//directory
+                    output.push({
+                        name: file.name,
+                        type: "directory",
+                        dir: get_files_recursive(path + "/" + file.name, depth - 1)
+                    });
+                }else{//file
+                    output.push({
+                        name: plugin.getFileNameWithoutExtention(file.name),
+                        type: plugin.getFileExtention(file.name)
+                    });
+                };
+            });
+
+            if(output.length != 0){
+                return output;
+            }else{
+                return null;
+            };
+        }else{
+            return null;
+        };
+    }catch(e){
+        return {
+            type: "error",
+            name: e
+        };
+    };
+};

@@ -1,4 +1,4 @@
 
-import "OCS";
+import OCS;
 console.log('OCS: ', OCS);
 

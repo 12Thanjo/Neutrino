@@ -37,10 +37,10 @@ var Tokenizer = function(stream, config){
 				'if', 'else',
 				// 'true', 'false',
 				'local', 'regional', 'global', 'substitute', 'access',
-				'import', 'macro',
-				'function', 'return', 'break',
-				'for', 'itterate', 'forKeys', 'forNum',
-				'spawn', 'species', 'class',
+				'import', 'macro', 'scope',
+				'function', 'return', 'break', 'delete',
+				'for', 'itterate', 'forKeys', 'forNum', 'while',
+				'new', 'spawn', 'species', 'class', 'struct',
 				'try', 'catch',
 				'Error', 'SyntaxError', 'ReferenceError', 'RangeError',
 			].includes(keyword);
@@ -86,7 +86,15 @@ var Tokenizer = function(stream, config){
 			if(['instanceof'].includes(_10)){
 				self.move(10);
 				read_operation = _10;
-				return _7;
+				return _10;
+			}
+
+
+			var _8 = self.get(8);
+			if(['includes'].includes(_8)){
+				self.move(8);
+				read_operation = _8;
+				return _8;
 			}
 
 
@@ -102,7 +110,7 @@ var Tokenizer = function(stream, config){
 			if(['typeof'].includes(_6)){
 				self.move(6);
 				read_operation = _6;
-				return _7;
+				return _6;
 			}
 
 
@@ -179,7 +187,6 @@ var Tokenizer = function(stream, config){
 
 	while(!stream.end()){
 		this.read.while(this.is.whitespace);
-		var position = stream.position();
 		var char = stream.peek();
 
 		if(this.get(2) == "//"){
@@ -191,22 +198,22 @@ var Tokenizer = function(stream, config){
             tokens.push({
             	type: "STRING2",
             	value: this.read.escaped('"'),
-            	position: position
+            	position: stream.position()
             });
         }else if(char == "'"){
             tokens.push({
             	type: "STRING1",
             	value: this.read.escaped("'"),
-            	position: position
+            	position: stream.position()
             });
-		}else if(this.is.digit_start(char)){
+		}else if(this.is.digit_start(char) && this.is.id(stream.look(-1)) == false){
 			var value = self.next();
 			value += this.read.digit();
 
 			tokens.push({
 				type: "DIGIT",
 				value: value,
-				position: position
+				position: stream.position()
 			});
 		}else if(this.read.operation() != false){
 			var value = read_operation;
@@ -214,13 +221,13 @@ var Tokenizer = function(stream, config){
 			tokens.push({
 				type: "OPERATION",
 				value: value,
-				position: position
+				position: stream.position()
 			});
 		}else if(this.is.punctuation(char)){
 			tokens.push({
 				type: "PUNCTUATION",
 				value: char,
-				position: position
+				position: stream.position()
 			});
 			self.next();
         }else if(this.is.id_start(char)){
@@ -232,17 +239,18 @@ var Tokenizer = function(stream, config){
 				type = "TYPE";
 			}
 
-
-			if(value == "new"){
-				value = "$new";
+			
+			if(['async'].includes(value)){
+				value = "$" + value;
 			}
 
-
-			tokens.push({
-				type: type,
-				value: value,
-				position: position
-			});
+			if(value != ""){
+				tokens.push({
+					type: type,
+					value: value,
+					position: stream.position()
+				});
+			}
 		}else{
             stream.error("Syntax Error", "Can't handle character: " + char);
         }

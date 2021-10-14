@@ -1,0 +1,52 @@
+struct Vector2(x, y){
+	access x = x;
+	access y = y;
+
+	this.add = function(vector){
+		private.x += vector.x;
+		private.y += vector.y;
+	};
+
+	this.sub = function(vector){
+		private.x -= vector.x;
+		private.y -= vector.y;
+	};
+
+	this.mul = function(scalar){
+		private.x *= scalar;
+		private.y *= scalar;
+	};
+	
+	this.div = function(scalar){
+		private.x /= scalar;
+		private.y /= scalar;
+	};
+
+	this.equal = function(vector){
+		return vector instanceof Vector2 && private.x == vector.x && private.y == vector.y;
+	};
+
+	this.magnitude = function(){
+		return Math.sqrt(private.x * private.x, private.y * private.y);
+	};
+
+	this.distance = function(vector){
+		local dx = private.x - vector.x;
+		local dy = private.y - vector.y;
+		return Math.sqrt(dx*dx, dy*dy);
+	};
+};
+plugin.Vector2 = Vector2;
+
+Vector2.normalize = function(vector){
+	local length = vector.magnitude();
+	return new Vector2(vector.x / length, vector.y / length);
+};
+
+Vector2.dot = function(vector1, vector2){
+	return vector1.x * vector2.x + vector1.y * vector2.y;
+};
+
+Vector2.cross = function(vector1, vector2){
+	return vector1.x * vector2.y - vector1.y * vector2.x;
+};

@@ -1,0 +1,111 @@
+name: inputManager
+	type: object
+	description: manage inputs for keyboard, mouse, and gamepad
+	name: down
+		type: function
+		description: get if an input is down
+		param: input
+			type: string
+			description: name of the input to check
+	name: event
+		type: object
+		description: manage input events
+		name: add
+			type: function
+			description: add an input event
+			param: id
+				type: string
+				description: unique id of the event
+			param: trigger
+				type: object
+				description: trigger for event
+				prop: input
+					type: string
+					description: input for they trigger
+				prop: type
+					type: string
+					description: type "down" or "up" (don't use for wheel)
+			param: event
+				type: function
+				description: event to run
+		name: getEvent
+			type: function
+			description: get an event
+			param: id
+				type: string
+				description: id of the event to get
+		name: getTrigger
+			type: function
+			description: get an event trigger
+			param: id
+				type: string
+				description: id of the event trigger to get
+		name: setEvent
+			type: function
+			description: change the event function of an event
+			param: id
+				type: string
+				description: id of the event
+			param: event
+				type: function
+				description: new event function
+		name: setTrigger
+			type: function
+			description: change the trigger of an event
+			param: id
+				type: string
+				description: id of the event
+			param: trigger
+				type: object
+				description: new trigger for the event
+				prop: input
+					type: string
+					description: input for they trigger
+				prop: type
+					type: string
+					description: type "down", "up", or "press" (don't use for wheel)
+		name: delete
+			type: function
+			description: delete an event
+			param: id
+				type: string
+				description: id of the event to delete
+	name: keyboard
+		type: object
+		description: manage keyboard inputs
+		prop: capslock
+			type: boolean
+			description: if capslock is enabled
+		name: last
+			type: object
+			description: get last keyboard input
+			prop: down
+				type: string
+				description: get the last down key
+			prop: up
+				type: string
+				description: get the last up key
+	name: mouse
+		type: object
+		description: manage mouse inputs
+		prop: x
+			type: integer
+			description: x position of the mouse relative to the window
+		prop: y
+			type: integer
+			description: y position of the mouse relative to the window
+		prop: screenX
+			type: integer
+			description: x position of the mouse relative to the screen
+		prop: screenY
+			type: integer
+			description: y position of the mouse relative to the screen
+		prop: wheelX
+			type: integer
+			description: last ammount scrolled in the x direction
+		prop: wheelY
+			type: integer
+			description: last ammount scrolled in the y direction
+	name: gamepad
+		type: object
+		description: manage gamepad inputs

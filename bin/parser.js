@@ -25,7 +25,6 @@ var Parser = function(tokens, macro_map, config){
 
 	this.next = function(){
 		var output = tokens[TOKENS_I];
-		line_str += output.value + " ";
 		TOKENS_I += 1;
 		return output;
 	}
@@ -51,16 +50,14 @@ var Parser = function(tokens, macro_map, config){
 	this.error = function(type, msg){
 		var line = this.peek()?.position?.line;
 		var col = this.peek()?.position?.collumn;
-		console.log("\n\n" + colors.red + type + ":\n\t" + msg + "\n\t<" + colors.magenta + line + ":" + col + colors.red + "> " + colors.yellow + line_str + colors.red + "..." + colors.white);
-		if(config.exit){
-			process.exit(1);
-		}
-	}
+		var line_str = this.peek()?.position?.line_str;
+		var file = this.peek()?.position?.file;
 
-	this.warning = function(type, msg){
-		var line = this.peek()?.position?.line;
-		var col = this.peek()?.position?.collumn;
-		console.log("\n\n" + colors.red + type + ":\n\t" + msg + "\n\t<" + colors.magenta + line + ":" + col + colors.red + "> " + colors.yellow + line_str + colors.red + "..." + colors.white);
+		var output = "\n\n" + colors.red + type + ":";
+		output += "\n\t" + msg;
+		output += "\n\t" + "[" + colors.magenta + file + colors.red + "]";
+		output += "\n\t<" + colors.magenta + line + ":" + col + colors.red + "> " + colors.yellow + line_str + colors.red + "..." + colors.white;
+		console.log(output);
 		if(config.exit){
 			process.exit(1);
 		}
@@ -80,7 +77,7 @@ var Parser = function(tokens, macro_map, config){
 
 	this.is = {
 		punctuation: (punctuation)=>{
-			var token = this.peek();
+			var token = self.peek();
 			return token && token.type == "PUNCTUATION" && (!punctuation || token.value == punctuation) && token;
 		},
 		id: (id)=>{
@@ -211,9 +208,8 @@ var Parser = function(tokens, macro_map, config){
 			var PRECEDENCE = {
 			    "=": 1, "+=": 1, "-=": 1, "*=": 1, "/=": 1, "%=": 1,
 			    "=>": 1, "=<": 1, "=+": 1, "=-": 1, "=*": 1, "=/": 1, "=%": 1,
-			    "default": 1, "typeof": 1, "instanceof": 1,
-			    "||": 2,
-			    "&&": 3,
+			    "default": 2, "typeof": 2, "instanceof": 2, "includes": 2,
+			    "&&": 3, "||": 3,
 			    "<": 4, ">": 4, "<=": 4, ">=": 4, "==": 4, "!=": 4,
 			    "+": 5, "-": 5,
 			    "*": 6, "/": 6, "%": 6,
@@ -236,7 +232,7 @@ var Parser = function(tokens, macro_map, config){
                         type = "reverse assign";
                     }else if(["=>", "=<"].includes(token.value)){
                         type = "special assign";
-                    }else if(["default", 'typeof', 'instanceof'].includes(token.value)){
+                    }else if(["default", 'typeof', 'instanceof', 'includes'].includes(token.value)){
                         type = token.value;
                     }
 
@@ -255,6 +251,13 @@ var Parser = function(tokens, macro_map, config){
 
 
 	this.parse = {
+
+		skip: ()=>{
+			return {
+				type: "skip"
+			};
+		},
+
 		initialization: ()=>{
 			var type = self.get.keyword();
 			var expr = self.parse.expression();
@@ -306,7 +309,8 @@ var Parser = function(tokens, macro_map, config){
 				self.error('Uncaught Error', `(macro) commands are invalid with this compile paradigm\n\tDid you mean ${colors.blue}neutrino build${colors.red}?`);
 			}
 			if(!macro_map.has(file.value)){
-				self.error("Reference Error", `(${file.value}) is not a valid neutrino macro compile target.\n\tMake sure the file type is correct and that you are using a .ntm file`);
+				// console.log("macro_map: ", macro_map);
+				self.error("Reference Error", `(${file.value}) is not a valid neutrino macro compile target.\n\tMake sure the file path is correct and are ommiting the .ntm`);
 			}
 
 			self.insert(macro_map.get(file.value));
@@ -318,18 +322,20 @@ var Parser = function(tokens, macro_map, config){
 		import: ()=>{
 			var position = self.peek().position;
 			self.skip.keyword('import');
-			var file = self.next();
-			// self.skip.punctuation(";");
+			var file = self.get.id();
+			
 
-			if(file.type != "STRING1" && file.type != "STRING2"){
-				self.error("Syntax Error", 'Invalid target for import (must be a string)');
+			var accessors = [];
+			if(self.is.punctuation("(")){
+				accessors = self.parse.call().params;
 			}
 
 			position.file = file.value.value;
 			return {
 				type: "import",
 				value: file,
-				position: position
+				position: position,
+				accessors: accessors
 			};
 		},
 
@@ -556,12 +562,16 @@ var Parser = function(tokens, macro_map, config){
 				return self.parse.import();
 			}else if(self.is.keyword('return')){
 				return self.parse.return();
+			}else if(self.is.keyword('delete')){
+				return self.parse.delete();
 			}else if(self.is.keyword('break')){
 				return self.parse.break();
 			}
 
 			if(self.is.keyword("if")){
 				return self.parse.if();
+			}else if(self.is.keyword("while")){
+				return self.parse.while();
 			}
 
 			if(self.is.keyword("for")){
@@ -575,17 +585,25 @@ var Parser = function(tokens, macro_map, config){
 			}
 
 
-			if(self.is.keyword('spawn')){
-				return self.parse.spawn();
+			if(self.is.keyword('new')){
+				return self.parse.new('new');
+			}else if(self.is.keyword('spawn')){
+				return self.parse.new('spawn');
 			}
 			if(self.is.keyword('species')){
 				return self.parse.class("species");
 			}else if(self.is.keyword('class')){
 				return self.parse.class("class");
+			}else if(self.is.keyword('struct')){
+				return self.parse.class("struct");
 			}
 
 			if(self.is.keyword("try")){
 				return self.parse.try();
+			}
+
+			if(self.is.keyword('scope')){
+				return self.parse.scope();
 			}
 
 			if(self.is.keyword('Error') || self.is.keyword('SyntaxError') || self.is.keyword('ReferenceError') || self.is.keyword('RangeError')){
@@ -636,7 +654,6 @@ var Parser = function(tokens, macro_map, config){
 			var call = self.parse.call();
 			var program = self.parse.program();
 
-			line_str = "";
 			return {
 				type: "function",
 				params: call.params,
@@ -652,7 +669,6 @@ var Parser = function(tokens, macro_map, config){
 			self.skip.operation("->");
 			var program = self.parse.program();
 
-			line_str = "";
 			return {
 				type: "arrow",
 				params: call.params,
@@ -665,9 +681,19 @@ var Parser = function(tokens, macro_map, config){
 			var position = self.peek().position;
 			self.skip.keyword('return');
 			var expr = self.parse.expression();
-			line_str = "";
 			return {
 				type: 'return',
+				expr: expr,
+				position: position,
+			}
+		},
+
+		delete: ()=>{
+			var position = self.peek().position;
+			self.skip.keyword('delete');
+			var expr = self.parse.expression();
+			return {
+				type: 'delete',
 				expr: expr,
 				position: position,
 			}
@@ -713,7 +739,6 @@ var Parser = function(tokens, macro_map, config){
 					});
 				}
 			}
-			line_str = "";
 			return {
 				type: 'if',
 				condition: condition,
@@ -723,11 +748,26 @@ var Parser = function(tokens, macro_map, config){
 			};
 		},
 
+		while: ()=>{
+			var position = self.peek().position;
+			self.skip.keyword("while");
+			var condition = self.capture("(", ")", self.parse.expression);
+			var then = self.parse.program();
+
+			return {
+				type: "while",
+				condition: condition,
+				then: then,
+				position: position
+			}
+		},
+
 		for: (type)=>{
 			var position = self.peek().position;
 			self.skip.keyword(type);
-			var call = self.parse.call();
-			if(call.params.length != 2){
+			// var call = self.parse.call();
+			var params = self.delimited("(", ")", ",", self.parse.expression);
+			if(params.length != 2){
 				if(type == "for"){
 					self.error('Syntax Error', "for loops must have 2 parameters (itterator variable, array)");
 				}else if(type == "forNum"){
@@ -735,12 +775,11 @@ var Parser = function(tokens, macro_map, config){
 				}
 			}
 
-			var i = call.params[0];
-			var arr = call.params[1];
+			var i = params[0];
+			var arr = params[1];
 
 			var program = self.parse.program();
 
-			line_str = "";
 			return {
 				type: type,
 				i: i.value,
@@ -762,7 +801,6 @@ var Parser = function(tokens, macro_map, config){
 
 			var program = self.parse.program();
 
-			line_str = "";
 			return {
 				type: type,
 				id: id,
@@ -774,15 +812,15 @@ var Parser = function(tokens, macro_map, config){
 		},
 
 
-		spawn: (type)=>{
+		new: (type)=>{
 			var position = self.peek().position;
-			self.skip.keyword('spawn');
+			self.skip.keyword(type);
 			var variable = self.parse.variable();
 			var call = self.parse.call();
 
 
 			return{
-				type: "spawn",
+				type: type,
 				id: variable,
 				params: call.params,
 				position: position,
@@ -803,7 +841,6 @@ var Parser = function(tokens, macro_map, config){
 
 			var program = self.parse.program();
 
-			line_str = "";
 
 			return {
 				type: type,
@@ -833,9 +870,20 @@ var Parser = function(tokens, macro_map, config){
 		        output.catch = self.parse.program();
 		    }
 
-		    line_str = "";
 
 		    return output;
+		},
+
+		scope: ()=>{
+			var position = self.peek().position;
+		    self.skip.keyword('scope');
+		    var program = self.parse.program();
+
+		    return {
+		    	type: "scope",
+		    	program: program,
+		    	position: position
+		    };
 		},
 
 		error: ()=>{
@@ -858,12 +906,11 @@ var Parser = function(tokens, macro_map, config){
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	var program = [];
-	var line_str = "";
 	while(!this.end()){
 		try{
 		    var expr = this.parse.expression();
 		}catch(e){
-			console.log(e);
+			// console.log(e);
 		    this.error("Uncaught Error", e.message);
 		}
 
@@ -871,7 +918,6 @@ var Parser = function(tokens, macro_map, config){
 
 		if(!this.end()){
 		    this.skip.punctuation(";");
-		    line_str = "";
 		}
 	}
 

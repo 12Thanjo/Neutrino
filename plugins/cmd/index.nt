@@ -15,7 +15,7 @@ plugin.color = {
 	white: "\x1b[37m"
 };
 
-plugin.background_color = {
+plugin.backgroundColor = {
 	black: "\x1b[40m",
 	red: "\x1b[41m",
 	green: "\x1b[42m",
@@ -58,7 +58,7 @@ plugin.log = function(string, color, backgroundColor){
 	string = string || "";
 	color = color || "";
 	backgroundColor = backgroundColor || "";
-	console.log(color + backgroundColor + string + plugin.color.white + plugin.background_color.black + plugin.style.reset);
+	console.log(color + backgroundColor + string + plugin.color.white + plugin.backgroundColor.black + plugin.style.reset);
 };
 
 plugin.specialLog = function(data){
