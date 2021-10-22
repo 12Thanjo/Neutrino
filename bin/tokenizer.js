@@ -36,7 +36,7 @@ var Tokenizer = function(stream, config){
 			return [
 				'if', 'else',
 				// 'true', 'false',
-				'local', 'regional', 'global', 'substitute', 'access',
+				'local', 'regional', 'global', 'define', 'access',
 				'import', 'macro', 'scope',
 				'function', 'return', 'break', 'delete',
 				'for', 'itterate', 'forKeys', 'forNum', 'while',
@@ -47,7 +47,7 @@ var Tokenizer = function(stream, config){
 		},
 
 		type: function(keyword){
-			return ["Environment", "Component", "Query", "System"].includes(keyword);
+			return ["Environment", "Component", "Entity", "Query", "System", "Prop"].includes(keyword);
 		},
 
 		digit: function(char){
@@ -82,58 +82,27 @@ var Tokenizer = function(stream, config){
 	var read_operation;
 	this.read = {
 		operation: function(){
-			var _10 = self.get(10);
-			if(['instanceof'].includes(_10)){
-				self.move(10);
-				read_operation = _10;
-				return _10;
-			}
+			// look 10 becasue thats length of the longest word
+			var look = self.get(10);
+			var words = [
+				'=', '+', '-', '/', '*', '%', '<', '>',
 
-
-			var _8 = self.get(8);
-			if(['includes'].includes(_8)){
-				self.move(8);
-				read_operation = _8;
-				return _8;
-			}
-
-
-			var _7 = self.get(7);
-			if(['default'].includes(_7)){
-				self.move(7);
-				read_operation = _7;
-				return _7;
-			}
-
-
-			var _6 = self.get(6);
-			if(['typeof'].includes(_6)){
-				self.move(6);
-				read_operation = _6;
-				return _6;
-			}
-
-
-			var _2 = self.get(2);
-			if([
 				'==', "+=", "-=", "*=", "/=", "%=", "!=",
 				"=+", "=-", "=*", "=/", "=%", '=>', "=<",
 				'>=', "<=",
 				"&&", "||",
-				">>", '->'
-			].includes(_2)){
-				self.move(2);
-				read_operation = _2;
-				return _2;
-			}
+				">>", '->', "x>",
 
-			var _1 = self.get(1);
-			if([
-				'=', '+', '-', '/', '*', '%', '<', '>'
-			].includes(_1)){
-				self.move(1);
-				read_operation = _1;
-				return _1;
+				'instanceof', 'includes', 'default', 'typeof', 'swap',
+			];
+
+			for(var i = words.length - 1; i>=0; i--){
+				if(look.indexOf(words[i]) == 0){
+					self.move(words[i].length);
+					read_operation = words[i];
+					stream.add_to_line_str(words[i]);
+					return words[i];
+				}
 			}
 
 			return false;

@@ -28,8 +28,12 @@ var Compiler = function(input, const_dict, config){
 
 
 
-	var error = function(message){
-		cmd.log("compiler >\n\t" + message, cmd.color.red);
+	var error = function(message, position){
+		message = "\n\t" + message;
+		message += "\n\t" + "[" + cmd.color.magenta + position.file + cmd.color.red + "]";
+		message += "\n\t<" + cmd.color.magenta + position.line + ":" + position.collumn + cmd.color.red + "> " + cmd.color.yellow + position.line_str + cmd.color.red + "...";
+
+		cmd.log("compiler >" + message, cmd.color.red);
 		if(config.exit){
 			process.exit(1);
 		}
@@ -296,6 +300,13 @@ var Compiler = function(input, const_dict, config){
 		return evaluate(expr.left) + ".includes(" + no_tab_evaluate(expr.right) + ")";
 	});
 
+	evaluators.set('swap', (expr)=>{
+		var a = no_tab_evaluate(expr.left);
+		var b = no_tab_evaluate(expr.right);
+
+		return t() + `let $save=${a};${a}=${b};${b}=$save;` + comment(expr.left.position);
+	});
+
 
 
 	evaluators.set("id", (expr)=>{
@@ -305,18 +316,20 @@ var Compiler = function(input, const_dict, config){
 
 			var call = false;
 
-			if(expr.attachment != null){
-				if(expr.attachment.type == "index"){
+
+			expr.attachments.forEach((attachment)=>{
+				if(attachment.type == "index"){
 					add_semi();
-					output += "[" +  no_tab_evaluate(expr.attachment.value) + "]";
+					output += "[" +  no_tab_evaluate(attachment.value) + "]";
 					remove_semi();
-				}else if(expr.attachment.type == "call"){
+					call = false;
+				}else if(attachment.type == "call"){
 					call = true;
 					add_semi();
-					output += parse_call(expr.attachment.value);
+					output += parse_call(attachment.value);
 					remove_semi();
 				}
-			}
+			});
 
 			if(expr.accessor != null){
 				call = false;
@@ -337,7 +350,7 @@ var Compiler = function(input, const_dict, config){
 				// if(config.exit){
 				// 	process.exit();
 				// }
-				error("CONST variable is left-hand side in assignment" + "\t<" + cmd.color.magenta + expr.position.line + ":" + expr.position.collumn + cmd.color.red + "> ");
+				error("CONST variable is left-hand side in assignment" + "\t<" + cmd.color.magenta + expr.position.line + ":" + expr.position.collumn + cmd.color.red + "> ", expr.position);
 			}
 		}
 	});
@@ -732,7 +745,7 @@ var Compiler = function(input, const_dict, config){
 		// tab_depth += 1;
 		output += t() + "throw " + expr.error + "(" + no_tab_evaluate(expr.message) + ");" + n;
 		// tab_depth -= 1;
-		// output += t() + "}catch(e){console.error(e);};" + comment(expr.position);
+		// output += t() + "}catch(e){console.error(e);};" + comment(expr.position, expr.position);
 		return output;
 	});
 
@@ -741,7 +754,7 @@ var Compiler = function(input, const_dict, config){
 	evaluators.set('import', (expr)=>{
 		var plugin_name = expr.value.value;
 		if(plugins[plugin_name] == null){
-			error(`plugin (${plugin_name}) doesn't exist`);
+			error(`plugin (${plugin_name}) doesn't exist`, expr.position);
 		}
 
 		var plugin_var_name = plugin_name;
@@ -757,6 +770,8 @@ var Compiler = function(input, const_dict, config){
 			plugin_var_name += "}";
 		}
 
+
+		var output = "";
 		if(!config.plugin){
 			var dependancy_recursion = function(target){
 				if(plugins[target] == false){
@@ -774,20 +789,137 @@ var Compiler = function(input, const_dict, config){
 
 			dependancy_recursion(plugin_name);
 
-			return "let " + plugin_var_name + "=$plugins.get('" + plugin_name + "');" + comment(expr.position);
+			output = "let " + plugin_var_name + "=$plugins.get('" + plugin_name + "');";
+			if(expr.accessors_type == "[]"){
+				output += "let " + plugin_name + "=$plugins.get('" + plugin_name + "');";
+			}
 		}else{
-			return "let " + plugin_var_name + "=$get_plugin('" + plugin_name + "');";
+			output = "let " + plugin_var_name + "=$get_plugin('" + plugin_name + "');";
+			if(expr.accessors_type == "[]"){
+				output += "let " + plugin_name + "=$get_plugin('" + plugin_name + "');";
+			}
 		}
+
+
+		output += comment(expr.position);
+		return output;
 	});
 
 
 	evaluators.set("call", (expr)=>{
 		if(expr.params.length != 1){
-			error(`there should only be 1 param in this call\n\texpr> ` + expr);
+			error(`there should only be 1 param in this call\n\texpr> ` + expr, expr.position);
 		}
 
 		return "(" + no_tab_evaluate(expr.params[0]) + ")";
 	});
+
+
+	// OCS //////////////////////////////////////////////////////
+
+	evaluators.set('env create', (expr)=>{
+		if(plugins.OCS == false){
+			error("OCS has not been imported", expr.position);
+		}
+
+		var id = no_tab_evaluate(expr.id);
+		
+		return t() + `let ${id}=new OCS._Environment_("${id}");` + comment(expr.position);
+	});
+
+
+	evaluators.set('component', (expr)=>{
+		var id = no_tab_evaluate(expr.id);
+		var builder = no_tab_evaluate(expr.builder);
+		return t() + `let ${id}=new OCS._Component_("${id}",${builder});` + comment(expr.position);
+	});
+
+	evaluators.set("prop", (expr)=>{
+		return t() + `new OCS._Prop_(${no_tab_evaluate(expr.value)})`;
+	});
+
+
+
+	var OCS = {
+		create_entity: function(expr){
+			var environment = no_tab_evaluate(expr.left);
+			var entity = expr.right.id.value;
+			var name = "";
+
+			if(expr.right.name != null){
+				name = no_tab_evaluate(expr.right.name);
+			}
+			return t() + `let ${entity}=${environment}.createEntity(${name});` + comment(expr.right.position);
+		},
+
+		create_query: function(expr){
+			var environment = no_tab_evaluate(expr.left);
+			var name = expr.right.id.value;
+			expr.right.id.attachments[0].value.forEach((conditional)=>{
+				if(!['All', 'Some', 'None'].includes(conditional.value)){
+					error("Query conditionals can only use All, Some, or None\n\tgot (" + conditional.value + ")", conditional.position);
+				}
+
+				conditional.value = "OCS." + conditional.value.toLowerCase();
+			});
+			
+			add_semi();
+			var call = parse_call(expr.right.id.attachments[0].value);
+			call = call.substring(1, call.length-1);
+			remove_semi();
+			return t() + `${environment}.createQuery("${name}",${call});` + comment(expr.right.position);
+		},
+
+		push_component: function(expr){
+			var component = no_tab_evaluate(expr.left);
+			var values = "";
+
+			if(expr.right.attachments.length != []){
+				var params = parse_params(expr.right.attachments[0].value);
+				values = "," + params.substring(1, params.length-1);
+				expr.right.attachments = [];
+			}
+
+			add_semi();
+			var target = no_tab_evaluate(expr.right);
+			remove_semi();
+			return t() + `${target}.bindComponent(${component + values});` + comment(expr.right.position);
+		},
+
+		create_system: function(expr){
+			var environment = no_tab_evaluate(expr.left);
+			var system = no_tab_evaluate(expr.right.id);
+			var query = no_tab_evaluate(expr.right.query);
+
+			var program = evaluate(expr.right.program);
+
+			var output = `let ${system}=${environment}.createSystem("${system}",${query},(entity,i)=>{`;
+			tab_depth += 1;
+			output += program;
+			tab_depth -= 1;
+			output += "return entity;});" + comment(expr.right.position);
+
+			return output;
+		},
+	}
+
+	evaluators.set("OCS", (expr)=>{
+		if(expr.right.type == "entity"){
+			return OCS.create_entity(expr);
+		}else if(expr.right.type == "query"){
+			return OCS.create_query(expr);
+		}else if(expr.operator == ">>"){
+			return OCS.push_component(expr);
+		}else if(expr.right.type == "system"){
+			return OCS.create_system(expr);
+		}
+	});
+
+
+
+
+
+	/////////////////////////////////////////////////////////////
 
 
 
@@ -798,11 +930,11 @@ var Compiler = function(input, const_dict, config){
 			var output = evaluators.get(expr.type)(expr);
 			return output;
 		}else{
-			// console.error("\x1b[31m" + `compiler >\n\tunkown type: ${expr.type}` + "\x1b[37m");
+			// console.error("\x1b[31m" + `compiler >\n\tunknown type: ${expr.type}` + "\x1b[37m", expr.position);
 			var line = expr?.position?.line;
 			var col = expr?.position?.col;
 			// console.log(cmd.color.red + "\t<" + cmd.color.magenta + line + ":" + col + cmd.color.red + ">\n\texpr: \n\x1b[37m", expr);
-			error(`unkown type: ${expr.type}`+ "\t<" + cmd.color.magenta + line + ":" + col + cmd.color.red + ">\n\texpr: \n\x1b[37m" + expr);
+			error(`unknown type: ${expr.type}`+ "\t<" + cmd.color.magenta + line + ":" + col + cmd.color.red + ">\n\texpr: \n\x1b[37m" + require("util").inspect(expr, false, null, true) + cmd.color.red, expr.position);
 			// if(config.exit){
 			// 	process.exit();
 			// }
@@ -842,6 +974,7 @@ var Compiler = function(input, const_dict, config){
 
 	var parse_call = function(params){
 		var output = "(";
+		add_semi();
 		var params_length = params.length;
 		for(var i=0; i<params_length;i++){
 			output += no_tab_evaluate(params[i]);
@@ -849,6 +982,8 @@ var Compiler = function(input, const_dict, config){
 				output += ",";
 			}
 		}
+
+		remove_semi();
 
 		output += ")";
 		return output;

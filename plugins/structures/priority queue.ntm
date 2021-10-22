@@ -1,0 +1,165 @@
+scope {
+	struct Node(priority, data){
+		this.priority = priority;
+		this.data = data;
+	};
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+
+	struct MinPriorityQueue(array){
+		private.array = array;
+		private.array default [];
+		private.array = [null, ~private.array];
+
+		this.peek = function(){
+			return this.array[1];
+		};
+
+		this.size = function(){
+			return private.array.length;
+		};
+
+		this.print = function(){
+			return private.array.slice(1);
+		};
+
+		this.push = function(priority, value){
+			private.array.push(new Node(priority, value));
+
+			if(private.array.length > 1){
+				local i = private.array.length - 1;
+
+				while(i > 1 && private.array[Math.floor(i/2)].priority > private.array[i].priority){
+					local save = private.array[Math.floor(i/2)];
+					private.array[Math.floor(i/2)] = private.array[i];
+					private.array[i] = save;
+					i = Math.floor(i/2);
+				};
+			};
+		};
+
+		this.pop = function(){
+			local output = private.array[1];
+
+			if(private.array.length > 2){
+			    private.array[1] = private.array[private.array.length-1];
+			    private.array.splice(private.array.length - 1);
+
+			    if(private.array.length == 3){
+			        if(private.array[1].priority > private.array[2].priority){
+			            private.array[1] swap private.array[2];
+			        };
+			        return output;
+			    };
+
+			    local i = 1;
+			    local left_i = i * 2;
+			    local right_i = i * 2 + 1;
+			    local left = private.array[left_i];
+			    local right = private.array[right_i];
+
+
+			    while(left && private.array[right_i] && (private.array[i].priority > left.priority || private.array[i].priority > right.priority)){
+			        if(left.priority < right.priority){
+			            private.array[i] swap private.array[left_i];
+			            i = left_i;
+			        }else{
+			            private.array[i] swap private.array[right_i];
+			            i = right_i;
+			        };
+
+			        left_i = i * 2;
+			        right_i = i * 2 + 1;
+			    };
+			}else if(private.array.length == 2){
+			    private.array.splice(1, 1);
+			}else{
+			    return null;
+			};
+
+			return output;
+		};
+
+	};
+	plugin.MinPriorityQueue = MinPriorityQueue;
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	struct MaxPriorityQueue(array){
+		private.array = array;
+		private.array default [];
+		private.array = [null, ~private.array];
+
+		this.peek = function(){
+			return this.array[1];
+		};
+
+		this.size = function(){
+			return private.array.length;
+		};
+
+		this.print = function(){
+			return private.array.slice(1);
+		};
+
+		this.push = function(priority, value){
+			private.array.push(new Node(priority, value));
+
+			if(private.array.length > 1){
+				local i = private.array.length - 1;
+
+				while(i > 1 && private.array[Math.floor(i/2)].priority < private.array[i].priority){
+					local save = private.array[Math.floor(i/2)];
+					private.array[Math.floor(i/2)] = private.array[i];
+					private.array[i] = save;
+					i = Math.floor(i/2);
+				};
+			};
+		};
+
+		this.pop = function(){
+			local output = private.array[1];
+
+			if(private.array.length > 2){
+			    private.array[1] = private.array[private.array.length-1];
+			    private.array.splice(private.array.length - 1);
+
+			    if(private.array.length == 3){
+			        if(private.array[1].priority < private.array[2].priority){
+			            private.array[1] swap private.array[2];
+			        };
+			        return output;
+			    };
+
+			    local i = 1;
+			    local left_i = i * 2;
+			    local right_i = i * 2 + 1;
+			    local left = private.array[left_i];
+			    local right = private.array[right_i];
+
+
+			    while(left && private.array[right_i] && (private.array[i].priority < left.priority || private.array[i].priority < right.priority)){
+			        if(left.priority > right.priority){
+			            private.array[i] swap private.array[left_i];
+			            i = left_i;
+			        }else{
+			            private.array[i] swap private.array[right_i];
+			            i = right_i;
+			        };
+
+			        left_i = i * 2;
+			        right_i = i * 2 + 1;
+			    };
+			}else if(private.array.length == 2){
+			    private.array.splice(1, 1);
+			}else{
+			    return null;
+			};
+
+			return output;
+		};
+
+	};
+	plugin.MaxPriorityQueue = MaxPriorityQueue;
+};
+

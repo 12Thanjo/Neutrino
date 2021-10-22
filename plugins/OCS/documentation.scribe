@@ -1,0 +1,33 @@
+name: OCS
+	type: obj
+	description: Entity Component System
+	name: Environment
+		type: class
+		description: OCS environment
+		name: bindComponent
+			type: function
+			description: bind a component to the Environment
+			param: component
+				type: Component
+				description: component to bind
+		name: getComponent
+			type: function
+			description: get a component bound to the Environment
+			param: id
+				type: string
+				description: id of the component
+		name: createEntity
+			type: function
+			description: create an entity
+			param: name
+				type: string
+				description: name of the entity (optional)
+		name: createQuery
+			type: function
+			description: create a query
+			param: id
+				type: string
+				description: id of the query
+			param: [...conditionals]
+				type: [function]
+				description: conditionals of the query

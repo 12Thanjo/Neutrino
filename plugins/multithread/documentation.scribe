@@ -1,0 +1,54 @@
+name: multithread
+	type: object
+	description: managing multithreading
+	name: Thread
+		type: class
+		description: setup a worker thread
+		param: event
+			type: function
+			description: event to run when the worker recieves data. The output is the return. Takes the data as a parameter
+		param: callback
+			type: function
+			description: event to run when the worker outputs data. Takes the data as a parameter
+		name: postMessage
+			type: method
+			description: send data to the worker
+	name: Cluster
+		type: object
+		description: create a cluster
+		name: forAll
+			type: class
+			description: create a cluster of threads that itterates over a set of data and returns the data in a single batch
+			param: threads
+				type: integer
+				description: number of threads to use. The max is the number of threads the machine has minus one. (default is the max thread count)
+			param: event
+				type: function
+				description: event for the threads to use
+			name: run
+				type: method
+				description: run the cluster
+				param: dataSet
+					type: array
+					description: data for the cluster to work on
+				param: callback
+					type: function
+					description: event to run when the cluster works on all the data. Takes the data as a parameter
+		name: forEach
+			type: class
+			description: create a cluster of threads that itterates over a set of data and returns the data when each calculation is finished
+			param: threads
+				type: integer
+				description: number of threads to use. The max is the number of threads the machine has minus one. (default is the max thread count)
+			param: event
+				type: function
+				description: event for the threads to use
+			name: run
+				type: method
+				description: run the cluster
+				param: dataSet
+					type: array
+					description: data for the cluster to work on
+				param: callback
+					type: function
+					description: event to run when the cluster works on all the data. Takes the data as a parameter

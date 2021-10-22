@@ -28,7 +28,7 @@ module.exports = function(args){
 		// }
 	});
 
-
+	// console.log(`cd "${plugin_path}" && neutrino compile ${plugin_config.main} --plugin -o compiled${flags}`);
 	var command = exec(`cd "${plugin_path}" && neutrino compile ${plugin_config.main} --plugin -o compiled${flags}`, (error, stdout, stderr)=>{
 	    // if(error){
 	    //     cmd.log(`error: ${error.message}`, cmd.color.red);
@@ -47,7 +47,7 @@ module.exports = function(args){
 	    if(files.fileExists(plugin_path + "\\compiled.js")){
 	    	files.renameFile(plugin_path + "\\compiled.js", plugin_path + "\\compiled.ntp");
 	    	var code = files.readFile(plugin_path + "\\compiled.ntp");
-	    	code = `$pending_plugins.set('${target}',()=>{let plugin={};${code}plugin.metadata=${JSON.stringify(plugin_config)};return plugin;});`;
+	    	code = `$pending_plugins.set('${target}',()=>{let plugin={metadata:${JSON.stringify(plugin_config)}};${code};return plugin;});`;
 	    	files.writeFile(plugin_path + "\\compiled.ntp", code);
 	    }
 	});

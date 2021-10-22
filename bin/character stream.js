@@ -19,18 +19,21 @@ var CharacterStream = function(input, config){
     var collumn = 1;
     var line_str = "";
 
+    this.add_to_line_str = function(str){
+        line_str += str;
+    }
+
     this.next = function(){
     	position += 1;
         var char = input[position];
         if(char == "\n"){
-            line+=1;
+            line += 1;
             collumn = 1; 
             line_str = "";
         }else if(char == "\t"){
             collumn += 4;
-            line_str += char;
         }else{
-            collumn+=1;
+            collumn += 1;
             line_str += char;
         }
         return char;

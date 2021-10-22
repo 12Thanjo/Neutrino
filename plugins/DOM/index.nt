@@ -428,3 +428,6 @@ plugin.createElement = function(type, appendTarget){
 	appendTarget.appendChild(elem);
 	return new DOMElement(elem);
 };
+
+
+macro "colors";

@@ -1,15 +1,10 @@
-import "test_plugin";
-
 
 local cluster = require('cluster');
 local num_CPUs = require('os').cpus().length;
 
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
 worker_event = function(data, worker){
@@ -19,7 +14,6 @@ worker_event = function(data, worker){
 
     return data;
 };
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,26 +86,20 @@ if(cluster.isWorker){
         worker.send(data);
     });
 
-    console.time("cluster");
+    //console.time("cluster");
     // console.log(data_set);
-    test.run(data_set, @()->{
-        test.run(data_set, @()->{
-            test.run(data_set, @()->{
-                test.run(data_set, @()->{
-                    console.timeEnd('cluster');
-                    process.exit();
-                });
-            });
-        });
-    });
+    
+    //test.run(data_set, @()->{
+    //    test.run(data_set, @()->{
+    //        test.run(data_set, @()->{
+    //            test.run(data_set, @()->{
+    //                console.timeEnd('cluster');
+    //                process.exit();
+    //            });
+    //        });
+    //    });
+    //});
 };
-
-
-
-
-
-
-
 
 
 

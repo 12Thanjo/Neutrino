@@ -1,0 +1,8 @@
+{
+    "name": "multithread",
+    "version": "0.1.0",
+    "description": "multithreading",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}

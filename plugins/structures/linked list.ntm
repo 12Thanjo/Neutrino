@@ -1,0 +1,186 @@
+scope {
+	struct Node(data){
+		this.data = data;
+		this.next = null;
+	};
+
+	struct LinkedList(){
+		access head = null;
+		access size = 0;
+
+		this.push = function(data){
+			if(private.head == null){
+				private.head = new Node(data);
+			}else{
+				local target = private.head;
+				while(target.next != null){
+					target = target.next;
+				};
+				target.next = new Node(data);
+			};
+
+			private.size += 1;
+		};
+
+
+		this.delete = function(i){
+			if(i > private.size - 1 || i < 0){
+				return null;
+			}else{
+				private.size -= 1;
+				if(i == 0){
+					local output = private.head.data;
+					private.head = private.head.next;
+					return output;
+				}else{
+					local target = private.head;
+					forNum(j, i - 1){
+						target = target.next;
+					};
+
+					local output = target.next;
+					target.next = output.next;
+					return output.data;
+				};
+			};
+		};
+
+		this.get = function(i){
+			if(i > private.size - 1 || i < 0){
+				return null;
+			}else{
+				local target = private.head;
+				forNum(j, i){
+					target = target.next;
+				};
+				return target;
+			};
+		};
+
+
+		this.peek = function(){
+			return private.head;
+		};
+
+		this.print = function(){
+			local output = [];
+			local target = private.head;
+			while(target != null){
+				output.push(target.data);
+				target = target.next;
+			};
+			return output;
+		};
+
+	};
+	plugin.LinkedList = LinkedList;
+};
+
+
+scope {
+	struct Node(data){
+		this.data = data;
+		this.previous = null;
+		this.next = null;
+	};
+
+	struct DoublyLinkedList(){
+		private.front = null;
+		private.rear = null;
+		access size = 0;
+
+		this.push = function(data){
+			if(private.front == null){
+				private.front = new Node(data);
+				private.rear = private.front;
+			}else{
+				local new_node = new Node(data);
+				private.rear.next = new_node;
+				new_node.previous = private.rear;
+				private.rear = new_node;
+			};
+			private.size += 1;
+		};
+
+
+		this.delete = function(i){
+			if(i > private.size - 1 || i < 0){
+				return null;
+			}else if(i == 0){
+				private.size -= 1;
+				
+				local output = private.front.data;
+				private.front = private.front.next;
+				private.front.previous = null;
+				return output;
+			}else if(i == private.size - 1){
+				private.size -= 1;
+
+				local output = private.rear.data;
+				private.rear = private.rear.previous;
+				private.rear.next = null;
+				return output;
+			}else{
+				private.size -= 1;
+				local target = null;
+				if(i / private.size < 0.5){
+					target = private.front;
+					forNum(j, i){
+						target = target.next;
+					};
+				}else{
+					i = private.size - i - 1;
+					target = private.rear;
+					forNum(j, i){
+						target = target.previous;
+					};	
+				};
+
+				local previous = target.previous;
+				local next = target.next;
+				previous.next = next;
+				next.previous = previous;
+
+				return target.data;
+			};
+		};
+
+
+		this.get = function(i){
+			if(i > private.size - 1 || i < 0){
+				return null;
+			}else{
+				local target = null;
+				if(i / private.size < 0.5){
+					target = private.front;
+					forNum(j, i){
+						target = target.next;
+					};
+				}else{
+					i = private.size - i - 1;
+					target = private.rear;
+					forNum(j, i){
+						target = target.previous;
+					};
+				};
+				return target;
+			};
+		};
+
+		this.peek = function(){
+			return private.front;
+		};
+
+		this.print = function(){
+			local output = [];
+			local target = private.front;
+			while(target != null){
+				output.push(target.data);
+				target = target.next;
+			};
+			return output;
+		};
+	};
+
+	plugin.DoublyLinkedList = DoublyLinkedList;
+};

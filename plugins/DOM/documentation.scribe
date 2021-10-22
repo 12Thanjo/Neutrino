@@ -142,3 +142,732 @@ name: DOM
 		name: destroy
 			type: function
 			description: destroy the element
+	name: color
+		type: object
+		description: out-of-the-box default color palette (tailwindcss)
+		name: blueGray
+			type: object
+			description: blueGray colors
+			prop: _50
+				type: string
+				description: blueGray-50 #F8FAFC
+			prop: _100
+				type: string
+				description: blueGray-100 #F1F5F9
+			prop: _200
+				type: string
+				description: blueGray-200 #E2E8F0
+			prop: _300
+				type: string
+				description: blueGray-300 #CBD5E1
+			prop: _400
+				type: string
+				description: blueGray-400 #94A3B8
+			prop: _500
+				type: string
+				description: blueGray-500 #64748B
+			prop: _600
+				type: string
+				description: blueGray-600 #475569
+			prop: _700
+				type: string
+				description: blueGray-700 #334155
+			prop: _800
+				type: string
+				description: blueGray-800 #1E293B
+			prop: _900
+				type: string
+				description: blueGray-900 #0F172A
+		name: coolGray
+			type: object
+			description: coolGray colors
+			prop: _50
+				type: string
+				description: coolGray-50 #F9FAFB
+			prop: _100
+				type: string
+				description: coolGray-100 #F3F4F6
+			prop: _200
+				type: string
+				description: coolGray-200 #E5E7EB
+			prop: _300
+				type: string
+				description: coolGray-300 #D1D5DB
+			prop: _400
+				type: string
+				description: coolGray-400 #9CA3AF
+			prop: _500
+				type: string
+				description: coolGray-500 #6B7280
+			prop: _600
+				type: string
+				description: coolGray-600 #4B5563
+			prop: _700
+				type: string
+				description: coolGray-700 #374151
+			prop: _800
+				type: string
+				description: coolGray-800 #1F2937
+			prop: _900
+				type: string
+				description: coolGray-900 #111827
+		name: gray
+			type: object
+			description: Gray colors
+			prop: _50
+				type: string
+				description: Gray-50 #FAFAFA
+			prop: _100
+				type: string
+				description: Gray-100 #F4F4F5
+			prop: _200
+				type: string
+				description: Gray-200 #E4E4E7
+			prop: _300
+				type: string
+				description: Gray-300 #D4D4D8
+			prop: _400
+				type: string
+				description: Gray-400 #A1A1AA
+			prop: _500
+				type: string
+				description: Gray-500 #71717A
+			prop: _600
+				type: string
+				description: Gray-600 #52525B
+			prop: _700
+				type: string
+				description: Gray-700 #3F3F46
+			prop: _800
+				type: string
+				description: Gray-800 #27272A
+			prop: _900
+				type: string
+				description: Gray-900 #18181B
+		name: trueGray
+			type: object
+			description: trueGray colors
+			prop: _50
+				type: string
+				description: trueGray-50 #FAFAFA
+			prop: _100
+				type: string
+				description: trueGray-100 #F5F5F5
+			prop: _200
+				type: string
+				description: trueGray-200 #E5E5E5
+			prop: _300
+				type: string
+				description: trueGray-300 #D4D4D4
+			prop: _400
+				type: string
+				description: trueGray-400 #A3A3A3
+			prop: _500
+				type: string
+				description: trueGray-500 #737373
+			prop: _600
+				type: string
+				description: trueGray-600 #525252
+			prop: _700
+				type: string
+				description: trueGray-700 #404040
+			prop: _800
+				type: string
+				description: trueGray-800 #262626
+			prop: _900
+				type: string
+				description: trueGray-900 #171717
+		name: warmGray
+			type: object
+			description: warmGray colors
+			prop: _50
+				type: string
+				description: warmGray-50 #FAFAF9
+			prop: _100
+				type: string
+				description: warmGray-100 #F5F5F4
+			prop: _200
+				type: string
+				description: warmGray-200 #E7E5E4
+			prop: _300
+				type: string
+				description: warmGray-300 #D6D3D1
+			prop: _400
+				type: string
+				description: warmGray-400 #A8A29E
+			prop: _500
+				type: string
+				description: warmGray-500 #78716C
+			prop: _600
+				type: string
+				description: warmGray-600 #57534E
+			prop: _700
+				type: string
+				description: warmGray-700 #44403C
+			prop: _800
+				type: string
+				description: warmGray-800 #292524
+			prop: _900
+				type: string
+				description: warmGray-900 #1C1917
+		name: red
+			type: object
+			description: red colors
+			prop: _50
+				type: string
+				description: red-50 #FEF2F2
+			prop: _100
+				type: string
+				description: red-100 #FEE2E2
+			prop: _200
+				type: string
+				description: red-200 #FECACA
+			prop: _300
+				type: string
+				description: red-300 #FCA5A5
+			prop: _400
+				type: string
+				description: red-400 #F87171
+			prop: _500
+				type: string
+				description: red-500 #EF4444
+			prop: _600
+				type: string
+				description: red-600 #DC2626
+			prop: _700
+				type: string
+				description: red-700 #B91C1C
+			prop: _800
+				type: string
+				description: red-800 #991B1B
+			prop: _900
+				type: string
+				description:red-50 900
+		name: orange
+			type: object
+			description: orange colors
+			prop: _50
+				type: string
+				description: orange-50 #FFF7ED
+			prop: _100
+				type: string
+				description: orange-100 #FFEDD5
+			prop: _200
+				type: string
+				description: orange-200 #FED7AA
+			prop: _300
+				type: string
+				description: orange-300 #FDBA74
+			prop: _400
+				type: string
+				description: orange-400 #FB923C
+			prop: _500
+				type: string
+				description: orange-500 #F97316
+			prop: _600
+				type: string
+				description: orange-600 #EA580C
+			prop: _700
+				type: string
+				description: orange-700 #C2410C
+			prop: _800
+				type: string
+				description: orange-800 #9A3412
+			prop: _900
+				type: string
+				description: orange-900 #7C2D12
+		name: amber
+			type: object
+			description: amber colors
+			prop: _50
+				type: string
+				description: amber-50 #FFFBEB
+			prop: _100
+				type: string
+				description: amber-100 #FEF3C7
+			prop: _200
+				type: string
+				description: amber-200 #FDE68A
+			prop: _300
+				type: string
+				description: amber-300 #FCD34D
+			prop: _400
+				type: string
+				description: amber-400 #FBBF24
+			prop: _500
+				type: string
+				description: amber-500 #F59E0B
+			prop: _600
+				type: string
+				description: amber-600 #D97706
+			prop: _700
+				type: string
+				description: amber-700 #B45309
+			prop: _800
+				type: string
+				description: amber-800 #92400E
+			prop: _900
+				type: string
+				description: amber-900 #78350F
+		name: yellow
+			type: object
+			description: yellow colors
+			prop: _50
+				type: string
+				description: yellow-50 #FEFCE8
+			prop: _100
+				type: string
+				description: yellow-100 #FEF9C3
+			prop: _200
+				type: string
+				description: yellow-200 #FEF08A
+			prop: _300
+				type: string
+				description: yellow-300 #FDE047
+			prop: _400
+				type: string
+				description: yellow-400 #FACC15
+			prop: _500
+				type: string
+				description: yellow-500 #EAB308
+			prop: _600
+				type: string
+				description: yellow-600 #CA8A04
+			prop: _700
+				type: string
+				description: yellow-700 #A16207
+			prop: _800
+				type: string
+				description: yellow-800 #854D0E
+			prop: _900
+				type: string
+				description: yellow-900 #713F12
+		name: lime
+			type: object
+			description: lime colors
+			prop: _50
+				type: string
+				description: lime-50 #F7FEE7
+			prop: _100
+				type: string
+				description: lime-100 #ECFCCB
+			prop: _200
+				type: string
+				description: lime-200 #D9F99D
+			prop: _300
+				type: string
+				description: lime-300 #BEF264
+			prop: _400
+				type: string
+				description: lime-400 #A3E635
+			prop: _500
+				type: string
+				description: lime-500 #84CC16
+			prop: _600
+				type: string
+				description: lime-600 #65A30D
+			prop: _700
+				type: string
+				description: lime-700 #4D7C0F
+			prop: _800
+				type: string
+				description: lime-800 #3F6212
+			prop: _900
+				type: string
+				description: lime-900 #365314
+		name: green
+			type: object
+			description: green colors
+			prop: _50
+				type: string
+				description: green-50 #F0FDF4
+			prop: _100
+				type: string
+				description: green-100 #DCFCE7
+			prop: _200
+				type: string
+				description: green-200 #BBF7D0
+			prop: _300
+				type: string
+				description: green-300 #86EFAC
+			prop: _400
+				type: string
+				description: green-400 #4ADE80
+			prop: _500
+				type: string
+				description: green-500 #22C55E
+			prop: _600
+				type: string
+				description: green-600 #16A34A
+			prop: _700
+				type: string
+				description: green-700 #15803D
+			prop: _800
+				type: string
+				description: green-800 #166534
+			prop: _900
+				type: string
+				description: green-900 #14532D
+		name: emerald
+			type: object
+			description: emerald colors
+			prop: _50
+				type: string
+				description: emerald-50 #ECFDF5
+			prop: _100
+				type: string
+				description: emerald-100 #D1FAE5
+			prop: _200
+				type: string
+				description: emerald-200 #A7F3D0
+			prop: _300
+				type: string
+				description: emerald-300 #6EE7B7
+			prop: _400
+				type: string
+				description: emerald-400 #34D399
+			prop: _500
+				type: string
+				description: emerald-500 #10B981
+			prop: _600
+				type: string
+				description: emerald-600 #059669
+			prop: _700
+				type: string
+				description: emerald-700 #047857
+			prop: _800
+				type: string
+				description: emerald-800 #065F46
+			prop: _900
+				type: string
+				description: emerald-900 #064E3B
+		name: teal
+			type: object
+			description: teal colors
+			prop: _50
+				type: string
+				description: teal-50 #F0FDFA
+			prop: _100
+				type: string
+				description: teal-100 #CCFBF1
+			prop: _200
+				type: string
+				description: teal-200 #99F6E4
+			prop: _300
+				type: string
+				description: teal-300 #5EEAD4
+			prop: _400
+				type: string
+				description: teal-400 #2DD4BF
+			prop: _500
+				type: string
+				description: teal-500 #14B8A6
+			prop: _600
+				type: string
+				description: teal-600 #0D9488
+			prop: _700
+				type: string
+				description: teal-700 #0F766E
+			prop: _800
+				type: string
+				description: teal-800 #115E59
+			prop: _900
+				type: string
+				description: teal-900 #134E4A
+		name: cyan
+			type: object
+			description: cyan colors
+			prop: _50
+				type: string
+				description: cyan-50 #ECFEFF
+			prop: _100
+				type: string
+				description: cyan-100 #CFFAFE
+			prop: _200
+				type: string
+				description: cyan-200 #A5F3FC
+			prop: _300
+				type: string
+				description: cyan-300 #67E8F9
+			prop: _400
+				type: string
+				description: cyan-400 #22D3EE
+			prop: _500
+				type: string
+				description: cyan-500 #06B6D4
+			prop: _600
+				type: string
+				description: cyan-600 #0891B2
+			prop: _700
+				type: string
+				description: cyan-700 #0E7490
+			prop: _800
+				type: string
+				description: cyan-800 #155E75
+			prop: _900
+				type: string
+				description: cyan-900 #164E63
+		name: sky
+			type: object
+			description: sky colors
+			prop: _50
+				type: string
+				description: sky-50 #F0F9FF
+			prop: _100
+				type: string
+				description: sky-100 #E0F2FE
+			prop: _200
+				type: string
+				description: sky-200 #BAE6FD
+			prop: _300
+				type: string
+				description: sky-300 #7DD3FC
+			prop: _400
+				type: string
+				description: sky-400 #38BDF8
+			prop: _500
+				type: string
+				description: sky-500 #0EA5E9
+			prop: _600
+				type: string
+				description: sky-600 #0284C7
+			prop: _700
+				type: string
+				description: sky-700 #0369A1
+			prop: _800
+				type: string
+				description: sky-800 #075985
+			prop: _900
+				type: string
+				description:sky-50 900
+		name: blue
+			type: object
+			description: blue colors
+			prop: _50
+				type: string
+				description: blue-50 #EFF6FF
+			prop: _100
+				type: string
+				description: blue-100 #DBEAFE
+			prop: _200
+				type: string
+				description: blue-200 #BFDBFE
+			prop: _300
+				type: string
+				description: blue-300 #93C5FD
+			prop: _400
+				type: string
+				description: blue-400 #60A5FA
+			prop: _500
+				type: string
+				description: blue-500 #3B82F6
+			prop: _600
+				type: string
+				description: blue-600 #2563EB
+			prop: _700
+				type: string
+				description: blue-700 #1D4ED8
+			prop: _800
+				type: string
+				description: blue-800 #1E40AF
+			prop: _900
+				type: string
+				description: blue-900 #1E3A8A
+		name: indigo
+			type: object
+			description: indigo colors
+			prop: _50
+				type: string
+				description: indigo-50 #EEF2FF
+			prop: _100
+				type: string
+				description: indigo-100 #E0E7FF
+			prop: _200
+				type: string
+				description: indigo-200 #C7D2FE
+			prop: _300
+				type: string
+				description: indigo-300 #A5B4FC
+			prop: _400
+				type: string
+				description: indigo-400 #818CF8
+			prop: _500
+				type: string
+				description: indigo-500 #6366F1
+			prop: _600
+				type: string
+				description: indigo-600 #4F46E5
+			prop: _700
+				type: string
+				description: indigo-700 #4338CA
+			prop: _800
+				type: string
+				description: indigo-800 #3730A3
+			prop: _900
+				type: string
+				description: indigo-900 #312E81
+		name: violet
+			type: object
+			description: violet colors
+			prop: _50
+				type: string
+				description: violet-50 #F5F3FF
+			prop: _100
+				type: string
+				description: violet-100 #EDE9FE
+			prop: _200
+				type: string
+				description: violet-200 #DDD6FE
+			prop: _300
+				type: string
+				description: violet-300 #C4B5FD
+			prop: _400
+				type: string
+				description: violet-400 #A78BFA
+			prop: _500
+				type: string
+				description: violet-500 #8B5CF6
+			prop: _600
+				type: string
+				description: violet-600 #7C3AED
+			prop: _700
+				type: string
+				description: violet-700 #6D28D9
+			prop: _800
+				type: string
+				description: violet-800 #5B21B6
+			prop: _900
+				type: string
+				description: violet-900 #4C1D95
+		name: purple
+			type: object
+			description: purple colors
+			prop: _50
+				type: string
+				description: purple-50 #FAF5FF
+			prop: _100
+				type: string
+				description: purple-100 #F3E8FF
+			prop: _200
+				type: string
+				description: purple-200 #E9D5FF
+			prop: _300
+				type: string
+				description: purple-300 #D8B4FE
+			prop: _400
+				type: string
+				description: purple-400 #C084FC
+			prop: _500
+				type: string
+				description: purple-500 #A855F7
+			prop: _600
+				type: string
+				description: purple-600 #9333EA
+			prop: _700
+				type: string
+				description: purple-700 #7E22CE
+			prop: _800
+				type: string
+				description: purple-800 #6B21A8
+			prop: _900
+				type: string
+				description: purple-900 #581C87
+		name: fuchsia
+			type: object
+			description: fuchsia colors
+			prop: _50
+				type: string
+				description: fuchsia-50 #FDF4FF
+			prop: _100
+				type: string
+				description: fuchsia-100 #FAE8FF
+			prop: _200
+				type: string
+				description: fuchsia-200 #F5D0FE
+			prop: _300
+				type: string
+				description: fuchsia-300 #F0ABFC
+			prop: _400
+				type: string
+				description: fuchsia-400 #E879F9
+			prop: _500
+				type: string
+				description: fuchsia-500 #D946EF
+			prop: _600
+				type: string
+				description: fuchsia-600 #C026D3
+			prop: _700
+				type: string
+				description: fuchsia-700 #A21CAF
+			prop: _800
+				type: string
+				description: fuchsia-800 #86198F
+			prop: _900
+				type: string
+				description: fuchsia-900 #701A75
+		name: pink
+			type: object
+			description: pink colors
+			prop: _50
+				type: string
+				description: pink-50 #FDF2F8
+			prop: _100
+				type: string
+				description: pink-100 #FCE7F3
+			prop: _200
+				type: string
+				description: pink-200 #FBCFE8
+			prop: _300
+				type: string
+				description: pink-300 #F9A8D4
+			prop: _400
+				type: string
+				description: pink-400 #F472B6
+			prop: _500
+				type: string
+				description: pink-500 #EC4899
+			prop: _600
+				type: string
+				description: pink-600 #DB2777
+			prop: _700
+				type: string
+				description: pink-700 #BE185D
+			prop: _800
+				type: string
+				description: pink-800 #9D174D
+			prop: _900
+				type: string
+				description: pink-900 #831843
+		name: rose
+			type: object
+			description: rose colors
+			prop: _50
+				type: string
+				description: rose-50 #FFF1F2
+			prop: _100
+				type: string
+				description: rose-100 #FFE4E6
+			prop: _200
+				type: string
+				description: rose-200 #FECDD3
+			prop: _300
+				type: string
+				description: rose-300 #FDA4AF
+			prop: _400
+				type: string
+				description: rose-400 #FB7185
+			prop: _500
+				type: string
+				description: rose-500 #F43F5E
+			prop: _600
+				type: string
+				description: rose-600 #E11D48
+			prop: _700
+				type: string
+				description: rose-700 #BE123C
+			prop: _800
+				type: string
+				description: rose-800 #9F1239
+			prop: _900
+				type: string
+				description: rose-900 #881337

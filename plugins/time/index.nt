@@ -81,7 +81,7 @@ plugin.AdvancedTimer = AdvancedTimer;
 
 
 plugin.interval = function(duration, event){
-	setTimeout(event, duration);
+	setInterval(event, duration);
 };
 
 

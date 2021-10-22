@@ -1,5 +1,99 @@
-plugin.gamepad = {};
+scope {
+	plugin.gamepad = {
+		gamepads: [{},{},{},{}],
+	};
 
-window.addEventListener('gamepadconnected', @(e)->{
-	console.log("gamepad connected: " + e.gamepad.index);
-});
+
+	window.addEventListener('gamepadconnected', @(e)->{
+		console.log("gamepad connected: " + e.gamepad.index);
+	});
+
+
+	local loop_gamepads = function(event){
+		local gamepads = navigator.getGamepads();
+
+		forKeys gamepads(key, gamepad){
+			if((['0', '1', '2', '3'] includes key)){
+				event(parseInt(key), gamepad);
+			};
+		};
+	};
+
+
+
+	plugin.gamepad.eventTrigger = function(){
+		loop_gamepads(@(id, gamepad)->{
+			if(gamepad != null){
+				local pad = plugin.gamepad.gamepads[id];
+				pad.leftX = gamepad.axes[0];
+				pad.leftY = gamepad.axes[1];
+				pad.rightX = gamepad.axes[2];
+				pad.rightY = gamepad.axes[3];
+
+				forKeys gamepad.buttons(i, button){
+
+					if(INPUT_DOWN[i] == false && button.pressed){
+						INPUT_DOWN[i] = true;
+
+						local events = DOWN_EVENTS[i];
+						itterate events(key, event){
+							event();
+						};
+					}else if(INPUT_DOWN[i]){
+						if(button.pressed == false){
+							INPUT_DOWN[i] = false;
+
+							local events = UP_EVENTS[i];
+							itterate events(key, event){
+								event();
+							};
+						}else{
+							INPUT_DOWN[i] = true;
+
+							local events = PRESS_EVENTS[i];
+							itterate events(key, event){
+								event();
+							};
+						};
+					}else{
+						INPUT_DOWN[i] = false;
+					};
+
+				};
+
+				pad.leftTrigger = gamepad.buttons[6].value;
+				pad.rightTrigger = gamepad.buttons[7].value;
+			}else{
+				plugin.gamepad.gamepads[id] == {};
+			};
+		});
+	};
+
+	plugin.gamepad.connected = function(){
+		local output = [];
+		loop_gamepads(@(id, gamepad)->{
+			output.push(gamepad != null);
+		});
+		return output;
+	};
+
+
+	plugin.gamepad.vibrate = function(id, duration, weak, strong){
+		if(duration > 5000){
+			Error (|"maximum gamepad vibration duration is 5000, got (" duration ")"|);
+		}else if(weak < 0 || weak > 1){
+			Error (|"weak magnitude must be [0,1], got (" weak ")"|);
+		}else if(strong < 0 || strong > 1){
+			Error (|"strong magnitude must be [0,1], got (" strong ")"|);
+		};
+
+		local gamepads = navigator.getGamepads();
+		gamepads[id].vibrationActuator.playEffect('dual-rumble', {
+		    startDelay: 0,
+		    duration: duration,
+		    weakMagnitude: weak,
+		    strongMagnitude: strong,
+		});
+	};
+};
+

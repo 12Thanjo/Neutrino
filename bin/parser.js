@@ -48,10 +48,10 @@ var Parser = function(tokens, macro_map, config){
 	}
 
 	this.error = function(type, msg){
-		var line = this.peek()?.position?.line;
-		var col = this.peek()?.position?.collumn;
-		var line_str = this.peek()?.position?.line_str;
-		var file = this.peek()?.position?.file;
+		var line = this.peek()?.position?.line || this.look(-1)?.position?.line;
+		var col = this.peek()?.position?.collumn || this.look(-1)?.position?.collumn;
+		var line_str = this.peek()?.position?.line_str || this.look(-1)?.position?.line_str;
+		var file = this.peek()?.position?.file || this.look(-1)?.position?.file;
 
 		var output = "\n\n" + colors.red + type + ":";
 		output += "\n\t" + msg;
@@ -106,6 +106,13 @@ var Parser = function(tokens, macro_map, config){
 	            self.error("Syntax Error", `Expecting punctuation: "${punctuation}", got "${self.peek().value}"`);
 	        }
 	    },
+	    id: (id)=>{
+	        if(self.is.id(id)){
+	            self.next();
+	        }else{
+	            self.error("Syntax Error", `Expecting id: "${id}", got "${self.peek().value}"`);
+	        }
+	    },
 	    keyword: (keyword)=>{
 	        if(self.is.keyword(keyword)){
 	            self.next();
@@ -113,11 +120,11 @@ var Parser = function(tokens, macro_map, config){
 	            self.error("Syntax Error", `Expecting keyword: "${keyword}", got "${self.peek().value}"`);
 	        }
 	    },
-	    id: (id)=>{
-	        if(self.is.id(id)){
+	    type: (type)=>{
+	        if(self.is.type(type)){
 	            self.next();
 	        }else{
-	            self.error("Syntax Error", `Expecting id: "${id}", got "${self.peek().value}"`);
+	            self.error("Syntax Error", `Expecting type: "${type}", got "${self.peek().value}"`);
 	        }
 	    },
 	    operation: (operation)=>{
@@ -138,6 +145,14 @@ var Parser = function(tokens, macro_map, config){
 	            self.error("Syntax Error", `Expecting punctuation, got "${token} (${self.peek().type})"`);
 	        }
 	    },
+	    id: ()=>{
+	    	var token = self.peek().value;
+	        if(self.is.id(token)){
+	            return self.next();
+	        }else{
+	            self.error("Syntax Error", `Expecting id, got "${token} (${self.peek().type})"`);
+	        }
+	    },
 	    keyword: ()=>{
 	    	var token = self.peek().value;
 	        if(self.is.keyword(token)){
@@ -146,12 +161,12 @@ var Parser = function(tokens, macro_map, config){
 	            self.error("Syntax Error", `Expecting keyword, got "${token} (${self.peek().type})"`);
 	        }
 	    },
-	    id: ()=>{
+	    type: ()=>{
 	    	var token = self.peek().value;
-	        if(self.is.id(token)){
+	        if(self.is.type(token)){
 	            return self.next();
 	        }else{
-	            self.error("Syntax Error", `Expecting id, got "${token} (${self.peek().type})"`);
+	            self.error("Syntax Error", `Expecting type, got "${token} (${self.peek().type})"`);
 	        }
 	    },
 	    operation: ()=>{
@@ -208,12 +223,12 @@ var Parser = function(tokens, macro_map, config){
 			var PRECEDENCE = {
 			    "=": 1, "+=": 1, "-=": 1, "*=": 1, "/=": 1, "%=": 1,
 			    "=>": 1, "=<": 1, "=+": 1, "=-": 1, "=*": 1, "=/": 1, "=%": 1,
-			    "default": 2, "typeof": 2, "instanceof": 2, "includes": 2,
+			    "default": 2, "typeof": 2, "instanceof": 2, "includes": 2, 'swap': 2,
 			    "&&": 3, "||": 3,
 			    "<": 4, ">": 4, "<=": 4, ">=": 4, "==": 4, "!=": 4,
 			    "+": 5, "-": 5,
 			    "*": 6, "/": 6, "%": 6,
-			    '<<': 7, '>>': 7,
+			    'x>': 7, '>>': 7, "->": 7,
 			    // "&": 7, "|": 7,
 			};
 
@@ -232,8 +247,10 @@ var Parser = function(tokens, macro_map, config){
                         type = "reverse assign";
                     }else if(["=>", "=<"].includes(token.value)){
                         type = "special assign";
-                    }else if(["default", 'typeof', 'instanceof', 'includes'].includes(token.value)){
+                    }else if(["default", 'typeof', 'instanceof', 'includes', 'swap'].includes(token.value)){
                         type = token.value;
+                    }else if([">>", "->"].includes(token.value)){
+                    	type = "OCS";
                     }
 
                     return this.maybe.binary({
@@ -270,12 +287,12 @@ var Parser = function(tokens, macro_map, config){
 
 
 		const: ()=>{
-			self.skip.keyword("substitute");
+			self.skip.keyword("define");
 			var expr = self.parse.expression();
 			self.skip.punctuation(";");
 
 			if(const_dict.has(expr.left.value)){
-				self.error("Syntax Error", `substitute ${expr.left.value} has already been declared`);
+				self.error("Syntax Error", `define ${expr.left.value} has already been declared`);
 			}
 
 			const_dict.set(expr.left.value, expr.right);
@@ -326,8 +343,13 @@ var Parser = function(tokens, macro_map, config){
 			
 
 			var accessors = [];
+			var accessors_type;
 			if(self.is.punctuation("(")){
-				accessors = self.parse.call().params;
+				accessors = self.delimited("(", ")", ",", self.parse.expression);
+				accessors_type = "()";
+			}else if(self.is.punctuation('[')){
+				accessors = self.delimited("[", "]", ",", self.parse.expression);
+				accessors_type = "[]";
 			}
 
 			position.file = file.value.value;
@@ -335,7 +357,8 @@ var Parser = function(tokens, macro_map, config){
 				type: "import",
 				value: file,
 				position: position,
-				accessors: accessors
+				accessors: accessors,
+				accessors_type: accessors_type
 			};
 		},
 
@@ -344,18 +367,22 @@ var Parser = function(tokens, macro_map, config){
 			var value = self.next();
 
 			var accessor;
-			var attachment;
+			var attachments = [];
 
-			if(self.is.punctuation('[')){
-				attachment = {
-					type: "index",
-					value: self.capture('[', ']')
-				};
-			}else if(self.is.punctuation("(")){
-				attachment = {
-					type: "call",
-					value: self.delimited("(", ")", ",", self.parse.expression)
-				};
+			while(true){
+				if(self.is.punctuation('[')){
+					attachments.push({
+						type: "index",
+						value: self.capture('[', ']')
+					});
+				}else if(self.is.punctuation("(")){
+					attachments.push({
+						type: "call",
+						value: self.delimited("(", ")", ",", self.parse.expression)
+					});
+				}else{
+					break;
+				}
 			}
 
 			if(self.is.punctuation('.')){
@@ -366,7 +393,7 @@ var Parser = function(tokens, macro_map, config){
 			var output = {
 				type: "id",
 				value: value.value,
-				attachment: attachment,
+				attachments: attachments,
 				accessor: accessor,
 				position: value.position
 			};
@@ -380,14 +407,19 @@ var Parser = function(tokens, macro_map, config){
 			var value = self.next();
 
 			var accessor;
-			var attachment;
+			var attachments = [];
 
-			if(self.is.punctuation('[')){
-				attachment = {
-					type: "index",
-					value: self.capture('[', ']')
-				};
+			while(true){
+				if(self.is.punctuation('[')){
+					attachments.push({
+						type: "index",
+						value: self.capture('[', ']')
+					});
+				}else{
+					break;
+				}
 			}
+
 
 			if(self.is.punctuation('.')){
 				self.skip.punctuation('.');
@@ -397,7 +429,7 @@ var Parser = function(tokens, macro_map, config){
 			var output = {
 				type: "id",
 				value: value.value,
-				attachment: attachment,
+				attachments: attachments,
 				accessor: accessor,
 				position: value.position
 			};
@@ -419,10 +451,12 @@ var Parser = function(tokens, macro_map, config){
 
 
 		array: ()=>{
+			var position = self.peek().position;
 			var array = self.delimited("[", "]", ",", self.parse.expression);
 			return {
 				type: "array",
-				array: array
+				array: array,
+				position: position
 			}
 		},
 
@@ -543,7 +577,7 @@ var Parser = function(tokens, macro_map, config){
 
 			if(self.is.keyword("local") || self.is.keyword("regional") || self.is.keyword("global")){
 				return self.parse.initialization();
-			}else if(self.is.keyword("substitute")){
+			}else if(self.is.keyword("define")){
 				return self.parse.const();
 			}else if(self.is.keyword("access")){
 				return self.parse.access();
@@ -608,6 +642,20 @@ var Parser = function(tokens, macro_map, config){
 
 			if(self.is.keyword('Error') || self.is.keyword('SyntaxError') || self.is.keyword('ReferenceError') || self.is.keyword('RangeError')){
 				return self.parse.error();
+			}
+
+			if(self.is.type("Environment")){
+				return self.parse.environment();
+			}else if(self.is.type("Entity")){
+				return self.parse.entity();
+			}else if(self.is.type("Component")){
+				return self.parse.component();
+			}else if(self.is.type("Query")){
+				return self.parse.query();
+			}else if(self.is.type("Prop")){
+				return self.parse.prop();
+			}else if(self.is.type("System")){
+				return self.parse.system();
 			}
 
 
@@ -899,6 +947,120 @@ var Parser = function(tokens, macro_map, config){
 			}
 		},
 
+
+
+		// OCS /////////////////////////////////////////////////////
+
+		environment: ()=>{
+			var position = self.peek().position;
+			self.skip.type("Environment");
+			var type = "env create";
+
+
+			if(self.is.operation("x>")){
+				self.skip.operation("x>");
+				type = "env destroy";
+			}
+			
+
+			var id = self.get.id();
+
+
+			return {
+				type: type,
+				id: id,
+				position: position
+			}
+		},
+
+		entity: ()=>{
+			var position = self.peek().position;
+			self.skip.type("Entity");
+			var id = self.get.id();
+			var name;
+
+			if(self.is.punctuation("(")){
+				self.skip.punctuation('(');
+				name = self.parse.expression();
+				self.skip.punctuation(")");
+			}
+
+
+			return {
+				type: "entity",
+				id: id,
+				name: name,
+				position: position
+			}
+		},
+
+		component: ()=>{
+			var position = self.peek().position;
+			self.skip.type('Component');
+			var id = self.parse.id();
+			var builder = self.parse.object();
+
+			return {
+				type: "component",
+				id: id,
+				builder: builder,
+				position: position
+			}
+		},
+
+		prop: ()=>{
+			var position = self.peek().position;
+			self.skip.type("Prop");
+			self.skip.punctuation('(');
+			var value = self.parse.expression();
+			self.skip.punctuation(")");
+
+
+			return {
+				type: "prop",
+				value: value,
+				position: position
+			}
+		},
+
+
+		query: ()=>{
+			var position = self.peek().position;
+			self.skip.type("Query");
+			var id = self.parse.id();
+
+			return {
+				type: "query",
+				id: id,
+				position: position
+			};
+		},
+
+
+		system: ()=>{
+			var position = self.peek().position;
+			self.skip.type("System");
+			var id = self.parse.id();
+			if(id.attachments[0].value.length != 1){
+				self.error("Syntax Error", "System got incorrect number of queries\n\tshould have 1, got (" + id.attachments[0].value.length + ")");
+			}
+
+
+			var query = id.attachments[0].value[0];
+			id.attachments = [];
+
+			var program = self.parse.program();
+
+
+			return {
+				type: 'system',
+				id: id,
+				query: query,
+				program: program,
+				position: position
+			}
+		},
+
 	};
 
 
@@ -910,7 +1072,7 @@ var Parser = function(tokens, macro_map, config){
 		try{
 		    var expr = this.parse.expression();
 		}catch(e){
-			// console.log(e);
+			console.log(e);
 		    this.error("Uncaught Error", e.message);
 		}
 
