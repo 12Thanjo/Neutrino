@@ -131,7 +131,7 @@ var Compiler = function(input, const_dict, config){
 					left = second_pass(expr.left);
 					right = second_pass(expr.right);
 				}else{
-					if(expr.right.type == "id" && expr.left.type == "DIGIT"){
+					if(expr.right.type == "id" && expr.left.type == "DIGIT" && ["+", "*"].includes(expr.operator)){
 						left = second_pass(expr.right);
 						right = second_pass(expr.left);
 					}else{
@@ -154,6 +154,9 @@ var Compiler = function(input, const_dict, config){
 						var left = expr.left.left;
 						var right = eval(expr.left.right.value + expr.left.operator + expr.right.value);
 						expr.left = left;
+						if(parseFloat(right) < 0 && expr.operator == "-"){
+							right = (parseFloat(right) * -1).toString();
+						}
 						expr.right = {
 							type: "DIGIT",
 							value: right + ""
@@ -189,26 +192,29 @@ var Compiler = function(input, const_dict, config){
 
 		// the first pass simplifies a much as possible in the current structure
 		var first_pass_output = first_pass(expr_init);
+		// console.log(first_pass_output);
 
 		// the second pass makes the variable left and the digit right (if applicable)
 		var second_pass_output = second_pass(first_pass_output);
+		// console.log(second_pass_output);
 
 		// the third pass makes simplifies further
 		var third_pass_output = third_pass(second_pass_output);	
+		// console.log(third_pass_output);
 
 		return third_pass_output;
 	}
-	
+
 	var traverse = function(expr){
 		if(expr.type == "binary"){
 			var simplified = simplify_expression(expr);
 			var simplified_string;
 
 			try{
-				while(simplify(simplified.left, simplified.operator, simplified.right) != simplified_string){
+				// while(simplify(simplified.left, simplified.operator, simplified.right) != simplified_string){
 					simplified_string = simplify(simplified.left, simplified.operator, simplified.right);
-					simplified = simplify_expression(simplified);
-				}
+					// simplified = simplify_expression(simplified);
+				// }
 			}catch{}
 			
 
@@ -683,7 +689,7 @@ var Compiler = function(input, const_dict, config){
 		output += evaluate(expr.program);
 		tab_depth -= 1;
 		output += t() + "};" + comment(expr.position);
-		output += t() + `${id}.$i=0;${id}.$map=new Map();${id}.get=function(id){return ${id}.$map.get(id);};${id}.has=function(id){return ${id}.$map.has(id);};${id}.forEach=function(cb){${id}.$map.forEach(cb);};${id}.delete=function(cb){${id}.$map.delete(cb);};` + comment(expr.position);
+		output += t() + `${id}.$i=0;${id}.resetI=function(){${id}.$i=0;};${id}.$map=new Map();${id}.get=function(id){return ${id}.$map.get(id);};${id}.has=function(id){return ${id}.$map.has(id);};${id}.forEach=function(cb){${id}.$map.forEach(cb);};${id}.delete=function(cb){${id}.$map.delete(cb);};` + comment(expr.position);
 
 
 		return output;

@@ -74,21 +74,20 @@ plugin.getFileNameWithoutExtention = function(path){
     };
 };
 
-plugin.getFilePath = function(path){
-    if(plugin.getFileExtention(path) != ""){
-        local forward = path.lastIndexOf("/");
-        local backward = path.lastIndexOf("\\");
-        return path.substring(0, stats.max(forward, backward) + 1);
-    }else{
-        return path;
-    };
-};
-
 plugin.normalize = function(path, forwards){
     if(forwards == null || forwards == false){
         return path.replaceAll("\\", "/");
     }else{
         return path.replaceAll("/", "\\");
+    };
+};
+
+plugin.getFilePath = function(path){
+    if(plugin.getFileExtention(path) != ""){
+        path = plugin.normalize(path);
+        return path.substring(0, path.lastIndexOf("/") + 1);
+    }else{
+        return path;
     };
 };
 
@@ -98,10 +97,10 @@ plugin.getFilePathUpDirectory = function(path, number){
         number += 1;
     };
 
+    path = plugin.normalize(path);
+
     forNum(i, number){
-        local forward = path.lastIndexOf("/");
-        local backward = path.lastIndexOf("\\");
-        path = path.substring(stats.max(forward, backward)+1);  
+        path = path.substring(0, path.lastIndexOf("/")+1);
     };
 
     return path;

@@ -1,0 +1,28 @@
+// plugin: collision
+// description: calculate collision
+// author: 12Thanjo
+
+
+
+struct Point(x, y){
+	this.x = x;
+	this.y = y;
+};
+plugin.Point = Point;
+
+struct Box(x, y, width, height){
+	this.x = x;
+	this.y = y;
+	this.width = width;
+	this.height = height;
+};
+plugin.Box = Box;
+
+
+plugin.boxPoint = function(a, b){
+	return b.x >= a.x && b.x <= a.x + a.width && b.y >= a.y && b.y <= a.y + a.height;
+};
+
+plugin.pointBox = function(a, b){
+	return a.x >= b.x && a.x <= b.x + b.width && a.y >= b.y && a.y <= b.y + b.height;
+};

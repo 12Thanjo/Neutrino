@@ -1,0 +1,8 @@
+{
+    "name": "collision",
+    "version": "0.1.0",
+    "description": "calculate collision",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}

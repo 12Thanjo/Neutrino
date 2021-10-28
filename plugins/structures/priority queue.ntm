@@ -15,7 +15,7 @@ scope {
 			return this.array[1];
 		};
 
-		this.size = function(){
+		this.length = function(){
 			return private.array.length;
 		};
 
@@ -94,7 +94,7 @@ scope {
 			return this.array[1];
 		};
 
-		this.size = function(){
+		this.length = function(){
 			return private.array.length;
 		};
 

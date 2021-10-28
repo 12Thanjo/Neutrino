@@ -6,7 +6,7 @@ scope {
 
 	struct LinkedList(){
 		access head = null;
-		access size = 0;
+		access length = 0;
 
 		this.push = function(data){
 			if(private.head == null){
@@ -19,15 +19,15 @@ scope {
 				target.next = new Node(data);
 			};
 
-			private.size += 1;
+			private.length += 1;
 		};
 
 
 		this.delete = function(i){
-			if(i > private.size - 1 || i < 0){
+			if(i > private.length - 1 || i < 0){
 				return null;
 			}else{
-				private.size -= 1;
+				private.length -= 1;
 				if(i == 0){
 					local output = private.head.data;
 					private.head = private.head.next;
@@ -46,7 +46,7 @@ scope {
 		};
 
 		this.get = function(i){
-			if(i > private.size - 1 || i < 0){
+			if(i > private.length - 1 || i < 0){
 				return null;
 			}else{
 				local target = private.head;
@@ -87,7 +87,7 @@ scope {
 	struct DoublyLinkedList(){
 		private.front = null;
 		private.rear = null;
-		access size = 0;
+		access length = 0;
 
 		this.push = function(data){
 			if(private.front == null){
@@ -99,37 +99,37 @@ scope {
 				new_node.previous = private.rear;
 				private.rear = new_node;
 			};
-			private.size += 1;
+			private.length += 1;
 		};
 
 
 		this.delete = function(i){
-			if(i > private.size - 1 || i < 0){
+			if(i > private.length - 1 || i < 0){
 				return null;
 			}else if(i == 0){
-				private.size -= 1;
+				private.length -= 1;
 				
 				local output = private.front.data;
 				private.front = private.front.next;
 				private.front.previous = null;
 				return output;
-			}else if(i == private.size - 1){
-				private.size -= 1;
+			}else if(i == private.length - 1){
+				private.length -= 1;
 
 				local output = private.rear.data;
 				private.rear = private.rear.previous;
 				private.rear.next = null;
 				return output;
 			}else{
-				private.size -= 1;
+				private.length -= 1;
 				local target = null;
-				if(i / private.size < 0.5){
+				if(i / private.length < 0.5){
 					target = private.front;
 					forNum(j, i){
 						target = target.next;
 					};
 				}else{
-					i = private.size - i - 1;
+					i = private.length - i - 1;
 					target = private.rear;
 					forNum(j, i){
 						target = target.previous;
@@ -147,17 +147,17 @@ scope {
 
 
 		this.get = function(i){
-			if(i > private.size - 1 || i < 0){
+			if(i > private.length - 1 || i < 0){
 				return null;
 			}else{
 				local target = null;
-				if(i / private.size < 0.5){
+				if(i / private.length < 0.5){
 					target = private.front;
 					forNum(j, i){
 						target = target.next;
 					};
 				}else{
-					i = private.size - i - 1;
+					i = private.length - i - 1;
 					target = private.rear;
 					forNum(j, i){
 						target = target.previous;

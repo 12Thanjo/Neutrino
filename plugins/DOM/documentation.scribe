@@ -37,6 +37,12 @@ name: DOM
 		param: appendTarget
 			type: HTML-element
 			description: the HTML element to append the new element to
+	name: deleteElement
+		type: function
+		description: delete an HTML element
+		param: element
+			type: HTML-element
+			description: the HTML element to delete
 	name: get
 		type: function
 		description: a function to get a single element
@@ -88,6 +94,12 @@ name: DOM
 			param: className
 				type: string
 				description: the name of the class
+		name: child
+			type: function
+			description: set to the first child
+		name: getChild
+			type: function
+			description: get the first child
 		name: getStyle
 			type: function
 			description: get the value of a style property of the element
@@ -121,6 +133,9 @@ name: DOM
 		prop: innerHTML
 			type: string
 			description: the value of the inner html of the element
+		prop: value
+			type: string
+			description: the value of the element
 		prop: width
 			type: number
 			description: the width of the element
@@ -133,6 +148,18 @@ name: DOM
 		prop: y
 			type: number
 			description: the y position of the element
+		prop: id
+			type: string
+			description: id of the element
+		prop: hidden
+			type: boolean
+			description: if the element is hidden
+		prop: display
+			type: string
+			description: display type of the element
+		name: focus
+			type: function
+			description: focus the element
 		name: appendChild
 			type: function
 			description: add a child node to the element

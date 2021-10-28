@@ -7,18 +7,18 @@ scope {
 
 	struct Stack(){
 		private.top = null;
-		access size = 0;
+		access length = 0;
 
 		this.push = function(data){
 			local new_top = new Node(data);
 			new_top.next = private.top;
 			private.top = new_top;
-			private.size += 1;
+			private.length += 1;
 		};
 
 		this.pop = function(){
-			if(private.size != 0){
-				private.size -= 1;
+			if(private.length != 0){
+				private.length -= 1;
 				local output = private.top;
 				private.top = private.top.next;
 				return output.data;

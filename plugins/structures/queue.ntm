@@ -7,24 +7,24 @@ scope {
 	struct Queue(){
 		private.front = null;
 		private.back = null;
-		access size = 0;
+		access length = 0;
 
 		this.push = function(data){
 			local new_back = new Node(data);
-			if(private.size != 0){
+			if(private.length != 0){
 				private.back.next = new_back;
 				private.back = new_back;
 			}else{
 				private.front = new_back;
 				private.back = new_back;
 			};
-			private.size += 1;
+			private.length += 1;
 		};
 
 		this.pop = function(){
-			if(private.size != 0){
+			if(private.length != 0){
 				local output = private.front;
-				private.size -= 1;
+				private.length -= 1;
 				private.front = output.next;
 				return output.data;
 			}else{
