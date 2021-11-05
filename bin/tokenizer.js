@@ -83,27 +83,38 @@ var Tokenizer = function(stream, config){
 	this.read = {
 		operation: function(){
 			// look 10 becasue thats length of the longest word
-			var look = self.get(10);
-			var words = [
+			var look = self.get(11);
+			var words = ['instanceof', 'includes', 'default', 'typeof', 'swap', 'toggle'];
+			for(var i = words.length - 1; i>=0; i--){
+				var word = words[i];
+				if(look.indexOf(word) == 0 && !self.is.id(look[word.length])){
+					self.move(word.length);
+					read_operation = word;
+					stream.add_to_line_str(word);
+					return word;
+				}
+			}
+
+
+			var symbols = [
 				'=', '+', '-', '/', '*', '%', '<', '>',
 
 				'==', "+=", "-=", "*=", "/=", "%=", "!=",
 				"=+", "=-", "=*", "=/", "=%", '=>', "=<",
 				'>=', "<=",
 				"&&", "||",
-				">>", '->', "x>",
-
-				'instanceof', 'includes', 'default', 'typeof', 'swap',
+				">>", '->', "x>",	
 			];
-
-			for(var i = words.length - 1; i>=0; i--){
-				if(look.indexOf(words[i]) == 0){
-					self.move(words[i].length);
-					read_operation = words[i];
-					stream.add_to_line_str(words[i]);
-					return words[i];
+			for(var i = symbols.length - 1; i>=0; i--){
+				var symbol = symbols[i];
+				if(look.indexOf(symbol) == 0){
+					self.move(symbol.length);
+					read_operation = symbol;
+					stream.add_to_line_str(symbol);
+					return symbol;
 				}
 			}
+
 
 			return false;
 		},

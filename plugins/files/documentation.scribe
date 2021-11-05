@@ -1,6 +1,28 @@
 name: files
 	type: object
 	description: interaction with the file system - an expansion to the built in "fs" module
+	name: properties
+		type: function
+		description: get the properties of a file
+		param: path
+			type: string
+			description: path of the file to get the properties of
+		return>
+			prop: size
+				type: integer
+				description: size of the file in bytes
+			prop: accessTime
+				type: integer
+				description: the last time the file was accessed
+			prop: createdTime
+				type: integer
+				description: the time the file was created
+			prop: modifyTime
+				type: integer
+				description: the last time the file was modified
+			prop: inodeNum
+				type: integer
+				description: the inode number of the file
 	name: readFile
 		type: function
 		description: read a file

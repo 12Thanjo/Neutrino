@@ -1,1 +1,361 @@
-$pending_plugins.set('steel',()=>{let plugin={};plugin.name="steel";plugin.metadata={"name":"steel","version":"0.1.0","description":"a game engine written in neutrino","main":"index.nt","author":"12Thanjo","dependancies":[]};return plugin;});
+$pending_plugins.set('steel',()=>{let plugin={metadata:{"name":"steel","version":"0.1.0","description":"a game engine written in neutrino","main":"index.nt","author":"12Thanjo","dependancies":["BABYLON","DOM"]}};let BABYLON=$get_plugin('BABYLON'); //5:7
+let DOM=$get_plugin('DOM'); //6:7
+let Engine=function(name,config){
+	let private={};Engine.$map.set(name,this);
+	private.name=name; //9:16 | index.nt
+	Object.defineProperty(this, "name", {get: ()=>{return private.name;}}); //9:11 | index.nt
+	if(config==null){config={};}; //12:11 | index.nt
+	if(config.canvas==null){
+		this.canvas=DOM.createElement("canvas",document.body); //14:13 | index.nt
+		this.canvas.css({
+			width:DOM.w,
+			height:DOM.h
+		}); //15:24 | index.nt
+	}else{
+		this.canvas=config.canvas; //20:13 | index.nt
+	}; //13:7 | index.nt
+	private.engine=new BABYLON.Engine(this.canvas,true,{
+preserveDrawingBuffer:true,
+stencil:true,
+disableWebGL2Support:false
+}); //25:12 | index.nt
+	private.scene=new BABYLON.Scene(private.engine); //26:12 | index.nt
+	let camera=new BABYLON.FreeCamera("camera1",new BABYLON.Vector3(0,5,-10),private.scene); //27:17 | index.nt
+	camera.setTarget(BABYLON.Vector3.Zero()); //28:21 | index.nt
+	camera.fov=1.566; //29:11 | index.nt
+	camera.attachControl(this.canvas,true); //31:25 | index.nt
+	let light=new BABYLON.HemisphericLight("light",new BABYLON.Vector3(0,1,0),private.scene); //33:16 | index.nt
+	light.intensity=0.7; //35:10 | index.nt
+	let sphere=BABYLON.MeshBuilder.CreateSphere("sphere",{
+diameter:2,
+segments:32
+},private.scene); //37:17 | index.nt
+	sphere.position.y=1; //39:11 | index.nt
+	let ground=BABYLON.MeshBuilder.CreateGround("ground",{
+width:6,
+height:6
+},private.scene); //41:17 | index.nt
+	let pipeline=new BABYLON.DefaultRenderingPipeline("default",true,private.scene,[camera]); //1:15 | post processing.ntm
+	pipeline.fxaaEnabled=false; //4:9 | post processing.ntm
+	pipeline.samples=1; //7:9 | post processing.ntm
+	pipeline.sharpenEnabled=false; //10:9 | post processing.ntm
+	pipeline.sharpen.edgeAmount=1.2; //11:9 | post processing.ntm
+	pipeline.sharpen.colorAmount=1; //12:9 | post processing.ntm
+	pipeline.depthOfFieldEnabled=false; //15:9 | post processing.ntm
+	pipeline.depthOfFieldBlurLevel=1; //16:9 | post processing.ntm
+	pipeline.depthOfField.focusDistance=2000; //17:9 | post processing.ntm
+	pipeline.depthOfField.focalLength=50; //18:9 | post processing.ntm
+	pipeline.depthOfField.fStop=1.4; //19:9 | post processing.ntm
+	pipeline.bloomEnabled=false; //22:9 | post processing.ntm
+	pipeline.bloomKernel=200; //23:9 | post processing.ntm
+	pipeline.bloomWeight=0.8; //24:9 | post processing.ntm
+	pipeline.bloomThreshold=0.2; //25:9 | post processing.ntm
+	pipeline.bloomScale=0.7; //26:9 | post processing.ntm
+	let curve=new BABYLON.ColorCurves(); //29:12 | post processing.ntm
+	curve.globalHue=200; //30:6 | post processing.ntm
+	curve.globalDensity=80; //31:6 | post processing.ntm
+	curve.globalSaturation=80; //32:6 | post processing.ntm
+	curve.highlightsHue=20; //33:6 | post processing.ntm
+	curve.highlightsDensity=80; //34:6 | post processing.ntm
+	curve.highlightsSaturation=-80; //35:6 | post processing.ntm
+	curve.shadowsHue=2; //36:6 | post processing.ntm
+	curve.shadowsDensity=80; //37:6 | post processing.ntm
+	curve.shadowsSaturation=40; //38:6 | post processing.ntm
+	pipeline.imageProcessing.colorCurves=curve; //39:9 | post processing.ntm
+	pipeline.imageProcessing.colorCurvesEnabled=false; //40:9 | post processing.ntm
+	pipeline.imageProcessing.toneMappingEnabled=false; //43:9 | post processing.ntm
+	pipeline.imageProcessing.contrast=2; //44:9 | post processing.ntm
+	pipeline.imageProcessing.exposure=2; //45:9 | post processing.ntm
+	pipeline.imageProcessing.vignetteEnabled=true; //49:9 | post processing.ntm
+	pipeline.imageProcessing.vignetteColor=new BABYLON.Color3(0,0,0); //50:9 | post processing.ntm
+	pipeline.imageProcessing.vignetteWeight=2; //51:9 | post processing.ntm
+	pipeline.grainEnabled=false; //55:9 | post processing.ntm
+	pipeline.grain.intensity=40; //56:9 | post processing.ntm
+	pipeline.grain.animated=true; //57:9 | post processing.ntm
+	this.pipeline={}; //63:5 | post processing.ntm
+	Object.defineProperty(this.pipeline,'FXAA',{
+		get:function(){ //67:18 | post processing.ntm
+			return pipeline.fxaaEnabled; //68:15 | post processing.ntm
+		},
+		set:function(val){ //70:18 | post processing.ntm
+			pipeline.fxaaEnabled=val; //71:17 | post processing.ntm
+		}
+	}); //66:22 | post processing.ntm
+	Object.defineProperty(this.pipeline,'MSAA',{
+		get:function(){ //78:18 | post processing.ntm
+			return pipeline.samples; //79:15 | post processing.ntm
+		},
+		set:function(val){ //81:18 | post processing.ntm
+			pipeline.samples=val; //82:17 | post processing.ntm
+		}
+	}); //77:22 | post processing.ntm
+	this.pipeline.sharpening={}; //89:5 | post processing.ntm
+	Object.defineProperty(this.pipeline.sharpening,'enabled',{
+		get:function(){ //91:18 | post processing.ntm
+			return pipeline.sharpenEnabled; //92:15 | post processing.ntm
+		},
+		set:function(val){ //94:18 | post processing.ntm
+			pipeline.sharpenEnabled=val; //95:17 | post processing.ntm
+		}
+	}); //90:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.sharpening,'edge',{
+		get:function(){ //99:18 | post processing.ntm
+			return pipeline.sharpen.edgeAmount; //100:15 | post processing.ntm
+		},
+		set:function(val){ //102:18 | post processing.ntm
+			pipeline.sharpen.edgeAmount=val; //103:17 | post processing.ntm
+		}
+	}); //98:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.sharpening,'color',{
+		get:function(){ //107:18 | post processing.ntm
+			return pipeline.sharpen.colorAmount; //108:15 | post processing.ntm
+		},
+		set:function(val){ //110:18 | post processing.ntm
+			pipeline.sharpen.colorAmount=val; //111:17 | post processing.ntm
+		}
+	}); //106:22 | post processing.ntm
+	this.pipeline.depthOfField={}; //117:5 | post processing.ntm
+	Object.defineProperty(this.pipeline.depthOfField,'enabled',{
+		get:function(){ //119:18 | post processing.ntm
+			return pipeline.depthOfFieldEnabled; //120:15 | post processing.ntm
+		},
+		set:function(val){ //122:18 | post processing.ntm
+			pipeline.depthOfFieldEnabled=val; //123:17 | post processing.ntm
+		}
+	}); //118:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.depthOfField,'strength',{
+		get:function(){ //127:18 | post processing.ntm
+			return pipeline.depthOfFieldBlurLevel; //128:15 | post processing.ntm
+		},
+		set:function(val){ //130:18 | post processing.ntm
+			pipeline.depthOfFieldBlurLevel=val; //131:17 | post processing.ntm
+		}
+	}); //126:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.depthOfField,'focusDistance',{
+		get:function(){ //135:18 | post processing.ntm
+			return pipeline.depthOfField.focusDistance; //136:15 | post processing.ntm
+		},
+		set:function(val){ //138:18 | post processing.ntm
+			pipeline.depthOfField.focusDistance=val; //139:17 | post processing.ntm
+		}
+	}); //134:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.depthOfField,'focalLength',{
+		get:function(){ //143:18 | post processing.ntm
+			return pipeline.depthOfField.focalLength; //144:15 | post processing.ntm
+		},
+		set:function(val){ //146:18 | post processing.ntm
+			pipeline.depthOfField.focalLength=val; //147:17 | post processing.ntm
+		}
+	}); //142:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.depthOfField,'fStop',{
+		get:function(){ //151:18 | post processing.ntm
+			return pipeline.depthOfField.fStop; //152:15 | post processing.ntm
+		},
+		set:function(val){ //154:18 | post processing.ntm
+			pipeline.depthOfField.fStop=val; //155:17 | post processing.ntm
+		}
+	}); //150:22 | post processing.ntm
+	this.pipeline.bloom={}; //161:5 | post processing.ntm
+	Object.defineProperty(this.pipeline.bloom,'enabled',{
+		get:function(){ //163:18 | post processing.ntm
+			return pipeline.bloomEnabled; //164:15 | post processing.ntm
+		},
+		set:function(val){ //166:18 | post processing.ntm
+			pipeline.bloomEnabled=val; //167:17 | post processing.ntm
+		}
+	}); //162:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.bloom,'kernel',{
+		get:function(){ //171:18 | post processing.ntm
+			return pipeline.bloomKernel; //172:15 | post processing.ntm
+		},
+		set:function(val){ //174:18 | post processing.ntm
+			pipeline.bloomKernel=val; //175:17 | post processing.ntm
+		}
+	}); //170:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.bloom,'weight',{
+		get:function(){ //179:18 | post processing.ntm
+			return pipeline.bloomWeight; //180:15 | post processing.ntm
+		},
+		set:function(val){ //182:18 | post processing.ntm
+			pipeline.bloomWeight=val; //183:17 | post processing.ntm
+		}
+	}); //178:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.bloom,'threshold',{
+		get:function(){ //187:18 | post processing.ntm
+			return pipeline.bloomThreshold; //188:15 | post processing.ntm
+		},
+		set:function(val){ //190:18 | post processing.ntm
+			pipeline.bloomThreshold=val; //191:17 | post processing.ntm
+		}
+	}); //186:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.bloom,'scale',{
+		get:function(){ //195:18 | post processing.ntm
+			return pipeline.bloomScale; //196:15 | post processing.ntm
+		},
+		set:function(val){ //198:18 | post processing.ntm
+			pipeline.bloomScale=val; //199:17 | post processing.ntm
+		}
+	}); //194:22 | post processing.ntm
+	this.pipeline.colorMap={}; //205:5 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'enabled',{
+		get:function(){ //207:18 | post processing.ntm
+			return pipeline.imageProcessing.colorCurvesEnabled; //208:15 | post processing.ntm
+		},
+		set:function(val){ //210:18 | post processing.ntm
+			pipeline.imageProcessing.colorCurvesEnabled=val; //211:17 | post processing.ntm
+		}
+	}); //206:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'globalHue',{
+		get:function(){ //215:18 | post processing.ntm
+			return curve.globalHue; //216:15 | post processing.ntm
+		},
+		set:function(val){ //218:18 | post processing.ntm
+			curve.globalHue=val; //219:14 | post processing.ntm
+		}
+	}); //214:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'globalDensity',{
+		get:function(){ //223:18 | post processing.ntm
+			return curve.globalDensity; //224:15 | post processing.ntm
+		},
+		set:function(val){ //226:18 | post processing.ntm
+			curve.globalDensity=val; //227:14 | post processing.ntm
+		}
+	}); //222:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'globalSaturation',{
+		get:function(){ //231:18 | post processing.ntm
+			return curve.globalSaturation; //232:15 | post processing.ntm
+		},
+		set:function(val){ //234:18 | post processing.ntm
+			curve.globalSaturation=val; //235:14 | post processing.ntm
+		}
+	}); //230:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'highlightsHue',{
+		get:function(){ //239:18 | post processing.ntm
+			return curve.highlightsHue; //240:15 | post processing.ntm
+		},
+		set:function(val){ //242:18 | post processing.ntm
+			curve.highlightsHue=val; //243:14 | post processing.ntm
+		}
+	}); //238:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'highlightsDensity',{
+		get:function(){ //247:18 | post processing.ntm
+			return curve.highlightsDensity; //248:15 | post processing.ntm
+		},
+		set:function(val){ //250:18 | post processing.ntm
+			curve.highlightsDensity=val; //251:14 | post processing.ntm
+		}
+	}); //246:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'highlightsSaturation',{
+		get:function(){ //255:18 | post processing.ntm
+			return curve.highlightsSaturation; //256:15 | post processing.ntm
+		},
+		set:function(val){ //258:18 | post processing.ntm
+			curve.highlightsSaturation=val; //259:14 | post processing.ntm
+		}
+	}); //254:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'shadowsHue',{
+		get:function(){ //263:18 | post processing.ntm
+			return curve.shadowsHue; //264:15 | post processing.ntm
+		},
+		set:function(val){ //266:18 | post processing.ntm
+			curve.shadowsHue=val; //267:14 | post processing.ntm
+		}
+	}); //262:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'shadowsDensity',{
+		get:function(){ //271:18 | post processing.ntm
+			return curve.shadowsDensity; //272:15 | post processing.ntm
+		},
+		set:function(val){ //274:18 | post processing.ntm
+			curve.shadowsDensity=val; //275:14 | post processing.ntm
+		}
+	}); //270:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.colorMap,'shadowsSaturation',{
+		get:function(){ //279:18 | post processing.ntm
+			return curve.shadowsSaturation; //280:15 | post processing.ntm
+		},
+		set:function(val){ //282:18 | post processing.ntm
+			curve.shadowsSaturation=val; //283:14 | post processing.ntm
+		}
+	}); //278:22 | post processing.ntm
+	this.pipeline.toneMap={}; //288:5 | post processing.ntm
+	Object.defineProperty(this.pipeline.toneMap,'enabled',{
+		get:function(){ //290:18 | post processing.ntm
+			return pipeline.imageProcessing.toneMappingEnabled; //291:15 | post processing.ntm
+		},
+		set:function(val){ //293:18 | post processing.ntm
+			pipeline.imageProcessing.toneMappingEnabled=val; //294:17 | post processing.ntm
+		}
+	}); //289:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.toneMap,'contrast',{
+		get:function(){ //298:18 | post processing.ntm
+			return pipeline.imageProcessing.contrast; //299:15 | post processing.ntm
+		},
+		set:function(val){ //301:18 | post processing.ntm
+			pipeline.imageProcessing.contrast=val; //302:17 | post processing.ntm
+		}
+	}); //297:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.toneMap,'exposure',{
+		get:function(){ //306:18 | post processing.ntm
+			return pipeline.imageProcessing.exposure; //307:15 | post processing.ntm
+		},
+		set:function(val){ //309:18 | post processing.ntm
+			pipeline.imageProcessing.exposure=val; //310:17 | post processing.ntm
+		}
+	}); //305:22 | post processing.ntm
+	this.pipeline.vignette={}; //316:5 | post processing.ntm
+	Object.defineProperty(this.pipeline.vignette,'enabled',{
+		get:function(){ //318:18 | post processing.ntm
+			return pipeline.imageProcessing.vignetteEnabled; //319:15 | post processing.ntm
+		},
+		set:function(val){ //321:18 | post processing.ntm
+			pipeline.imageProcessing.vignetteEnabled=val; //322:17 | post processing.ntm
+		}
+	}); //317:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.vignette,'color',{
+		get:function(){ //326:18 | post processing.ntm
+			return pipeline.imageProcessing.vignetteColor; //327:15 | post processing.ntm
+		},
+		set:function(val){ //329:18 | post processing.ntm
+			pipeline.imageProcessing.vignetteColor=val; //330:17 | post processing.ntm
+		}
+	}); //325:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.vignette,'weight',{
+		get:function(){ //334:18 | post processing.ntm
+			return pipeline.imageProcessing.vignetteWeight; //335:15 | post processing.ntm
+		},
+		set:function(val){ //337:18 | post processing.ntm
+			pipeline.imageProcessing.vignetteWeight=val; //338:17 | post processing.ntm
+		}
+	}); //333:22 | post processing.ntm
+	this.pipeline.filmGrain={}; //344:5 | post processing.ntm
+	Object.defineProperty(this.pipeline.filmGrain,'enabled',{
+		get:function(){ //346:18 | post processing.ntm
+			return pipeline.grainEnabled; //347:15 | post processing.ntm
+		},
+		set:function(val){ //349:18 | post processing.ntm
+			pipeline.grainEnabled=val; //350:17 | post processing.ntm
+		}
+	}); //345:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.filmGrain,'intensity',{
+		get:function(){ //354:18 | post processing.ntm
+			return pipeline.grain.intensity; //355:15 | post processing.ntm
+		},
+		set:function(val){ //357:18 | post processing.ntm
+			pipeline.grain.intensity=val; //358:17 | post processing.ntm
+		}
+	}); //353:22 | post processing.ntm
+	Object.defineProperty(this.pipeline.filmGrain,'animated',{
+		get:function(){ //362:18 | post processing.ntm
+			return pipeline.grain.animated; //363:15 | post processing.ntm
+		},
+		set:function(val){ //365:18 | post processing.ntm
+			pipeline.grain.animated=val; //366:17 | post processing.ntm
+		}
+	}); //361:22 | post processing.ntm
+	private.engine.runRenderLoop(()=>{
+		private.scene.render(); //47:32 | index.nt
+	}); //46:33 | index.nt
+}; //8:8 | index.nt
+Engine.$map=new Map();Engine.get=function(id){return Engine.$map.get(id);};Engine.has=function(id){return Engine.$map.has(id);};Engine.forEach=function(cb){Engine.$map.forEach(cb);};Engine.delete=function(cb){Engine.$map.delete(cb);}; //8:8 | index.nt
+plugin.Engine=Engine; //50:7 | index.nt
+;return plugin;});

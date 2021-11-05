@@ -202,6 +202,24 @@ struct DOMElement(elem){
 		},
 	});
 
+	Object.defineProperty(this, 'src', {
+		get: function(){
+			return this.element.src;
+		},
+		set: function(val){
+			this.element.src = val;
+		},
+	});
+
+	Object.defineProperty(this, 'href', {
+		get: function(){
+			return this.element.href;
+		},
+		set: function(val){
+			this.element.href = val;
+		},
+	});
+
 
 	this.focus = function(){
 		this.element.focus();
@@ -431,6 +449,86 @@ struct DOMCollection(arr){
 			elem.destroy();
 		};
 	};
+
+	Object.defineProperty(this, 'href', {
+		get: function(){
+			local output = [];
+			itterate this.array(i, elem){
+				output.push(elem.href);
+			};
+			return output;
+		},
+		set: function(val){
+			itterate this.array(i, elem){
+				elem.href = val;
+			};
+		},
+	});
+
+	Object.defineProperty(this, 'src', {
+		get: function(){
+			local output = [];
+			itterate this.array(i, elem){
+				output.push(elem.src);
+			};
+			return output;
+		},
+		set: function(val){
+			itterate this.array(i, elem){
+				elem.src = val;
+			};
+		},
+	});
+
+	Object.defineProperty(this, 'id', {
+		get: function(){
+			local output = [];
+			itterate this.array(i, elem){
+				output.push(elem.id);
+			};
+			return output;
+		},
+		set: function(val){
+			itterate this.array(i, elem){
+				elem.id = val;
+			};
+		},
+	});
+
+	Object.defineProperty(this, 'hidden', {
+		get: function(){
+			local output = [];
+			itterate this.array(i, elem){
+				output.push(elem.hidden);
+			};
+			return output;
+		},
+		set: function(val){
+			itterate this.array(i, elem){
+				elem.hidden = val;
+			};
+		},
+	});
+
+	Object.defineProperty(this, 'display', {
+		get: function(){
+			local output = [];
+			itterate this.array(i, elem){
+				output.push(elem.display);
+			};
+			return output;
+		},
+		set: function(val){
+			itterate this.array(i, elem){
+				elem.display = val;
+			};
+		},
+	});
+
+
+
+
+
 };
 
 

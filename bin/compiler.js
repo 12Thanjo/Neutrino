@@ -105,7 +105,7 @@ var Compiler = function(input, const_dict, config){
 
 				if(left.type == "DIGIT" && right.type == "DIGIT"){
 					first = false;
-					var value = eval(left.value + expr.operator + right.value) + "";
+					var value = fix_floating_point(eval(left.value + expr.operator + right.value)) + "";
 					return {
 						type: "DIGIT",
 						value: value
@@ -152,7 +152,7 @@ var Compiler = function(input, const_dict, config){
 				if(['+', "-"].includes(expr.operator)){
 					if(expr.left.type == "binary" && ["+", "-"].includes(expr.left.operator) && expr.left.right.type == "DIGIT" && expr.right.type == "DIGIT"){
 						var left = expr.left.left;
-						var right = eval(expr.left.right.value + expr.left.operator + expr.right.value);
+						var right = fix_floating_point(eval(expr.left.right.value + expr.left.operator + expr.right.value));
 						expr.left = left;
 						if(parseFloat(right) < 0 && expr.operator == "-"){
 							right = (parseFloat(right) * -1).toString();
@@ -165,7 +165,7 @@ var Compiler = function(input, const_dict, config){
 				}else if(expr.operator == "*"){
 					if(expr.left.type == "binary" && expr.left.operator == "*" && expr.left.right.type == "DIGIT" && expr.right.type == "DIGIT"){
 						var left = expr.left.left;
-						var right = eval(expr.left.right.value + "*" + expr.right.value);
+						var right = fix_floating_point(eval(expr.left.right.value + "*" + expr.right.value));
 						expr.left = left;
 						expr.right = {
 							type: "DIGIT",
@@ -175,7 +175,7 @@ var Compiler = function(input, const_dict, config){
 				}else if(expr.operator == "/"){
 					if(expr.left.type == "binary" && expr.left.operator == "/" && expr.left.right.type == "DIGIT" && expr.right.type == "DIGIT"){
 						var left = expr.left.left;
-						var right = eval(expr.left.right.value + "/" + expr.right.value);
+						var right = fix_floating_point(eval(expr.left.right.value + "/" + expr.right.value));
 						expr.left = left;
 						expr.right = {
 							type: "DIGIT",
@@ -311,6 +311,20 @@ var Compiler = function(input, const_dict, config){
 		var b = no_tab_evaluate(expr.right);
 
 		return t() + `let $save=${a};${a}=${b};${b}=$save;` + comment(expr.left.position);
+	});
+
+
+	evaluators.set('toggle', (expr)=>{
+		if(expr.right.type != "call" || expr.right.params.length != 2){
+			error("Syntax Error: Invalid Righthand Side\n\tright hand side of toggle must be a two parameter call (a, b)", expr.left.position);
+		}
+
+		var id = no_tab_evaluate(expr.left);
+		var a = no_tab_evaluate(expr.right.params[0]);
+		var b = no_tab_evaluate(expr.right.params[1]);
+
+
+		return t() + `if(${id}==${a}){${id}=${b};}else{${id}=${a};};` + comment(expr.left.position);
 	});
 
 

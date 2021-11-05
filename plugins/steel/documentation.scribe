@@ -1,0 +1,176 @@
+name: steel
+	type: object
+	description: steel 3d game engine
+	name: Engine
+		type: class
+		description: create an instance of the Engine
+		param: name
+			type: string
+			description: unique name of the instance of the Engine
+		param: config
+			type: obj
+			description: configuration of the Engine
+			prop: canvas
+				type: DOMElement
+				description: the canvas element to use (if not specified, the Engine will create its own)
+		prop: canvas
+			type: DOMElement
+			description: the canvas the engine renders to
+		prop: pipeline
+			type: object
+			description: adjust setting of the render pipeline (Post Processing Effects)
+			prop: FXAA
+				type: boolean
+				description: if the Engine should use FXAA (Fast Approximate Anti-Aliasing)
+				default: false
+			prop: MSAA
+				type: integer
+				description: the level of MSAA to use (Multi-Sample Anti-Aliasing)
+				default: 1
+			prop: sharpening
+				type: object
+				description: sharpening filter
+				prop: enabled
+					type: boolean
+					description: if the Engine should use a sharpening filter
+					default: false
+				prop: edge
+					type: number
+					description: edge ammount
+					default: 1.2
+				prop: color
+					type: number
+					description: color ammount
+			prop: depthOfField
+				type: object
+				description: depth-of-field settings
+				prop: enabled
+					type: boolean
+					description: if the Engine should use depth-of-field
+					default: false
+				prop: strength
+					type: integer
+					description: strength (1, 2, or 3)
+					default: 1
+				prop: focusDistance
+					type: number
+					description: focus distance of the depth-of-field
+					default: 2000
+				prop: focalLength
+					type: number
+					description: focal length of the depth-of-field
+					default: 50
+				prop: fStop
+					type: number
+					description: f-stop of the depth-of-field
+					default: 1.4
+			prop: bloom
+				type: object
+				description: bloom settings
+				prop: enabled
+					type: number
+					description: if the Engine should use bloom
+					default: false
+				prop: kernel
+					type: number
+					description: kernel of the bloom
+					default: 200
+				prop: weight
+					type: number
+					description: weight of the bloom
+					default: 0.8
+				prop: threshold
+					type: number
+					description: threshold of the bloom
+					default: 0.2
+				prop: scale
+					type: number
+					description: scale of the bloom (0, 1)
+					default: 0.7
+			prop: colorMap
+				type: object
+				description: color map filter
+				prop: enabled
+					type: boolean
+					description: if the Engine should use a color map filter
+				prop: globalHue
+					type: number
+					description: global hue of the color map
+					default: 200
+				prop: globalDensity
+					type: number
+					description: global density of the color map
+					default: 80
+				prop: globalSaturation
+					type: number
+					description: global saturation of the color map
+					default: 80
+				prop: highlightsHue
+					type: number
+					description: highlights hue of the color map
+					default: 20
+				prop: highlightsDensity
+					type: number
+					description: highlights density of the color map
+					default: 80
+				prop: highlightsSaturation
+					type: number
+					description: highlights saturation of the color map
+					default: -80
+				prop: shadowsHue
+					type: number
+					description: shadows hue of the color map
+					default: 2
+				prop: shadowsDensity
+					type: number
+					description: shadows density of the color map
+					default: 80
+				prop: shadowsSaturation
+					type: number
+					description: shadows saturation of the color map
+					default: 40
+			prop: toneMap
+				type: object
+				description: tone map filter
+				prop: enabled
+					type: number
+					description: enabled of the tone map
+					default: false
+				prop: contrast
+					type: number
+					description: contrast of the tone map (generally 0-4)
+					default: 2
+				prop: exposure
+					type: number
+					description: exposure of the tone map (generally 0-4)
+					default: 2
+			prop: vignette
+				type: object
+				description: vignette filter
+				prop: enabled
+					type: boolean
+					description: if the Engine should use a vignette
+					default: false
+				prop: color
+					type: BABYLON.Color3
+					description: color of vignette
+					default: BABYLON.Color3(0,0,0)
+				prop: weight
+					type: number
+					description: weight of the vignette
+					default: 2
+			prop: filmGrain
+				type: object
+				description: film grain filter
+				prop: enabled
+					type: boolean
+					description: if the engine uses film grain
+					default: false
+				prop: intensity
+					type: boolean
+					description: the intensity of the film grain
+					default: 40
+				prop: animated
+					type: boolean
+					description: if the film grain is animated (generally 0-100)
+					default: true

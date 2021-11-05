@@ -1,0 +1,8 @@
+{
+    "name": "BABYLON",
+    "version": "5.0.0",
+    "description": "Neutrino port of BabylonJS",
+    "main": "index.js",
+    "author": "12Thanjo",
+    "dependancies": []
+}

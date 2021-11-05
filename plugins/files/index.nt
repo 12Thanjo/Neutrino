@@ -5,6 +5,17 @@
 import stats;
 local fs = require('fs');
 
+plugin.properties = function(path){
+    local properties = fs.statSync(path);
+    return {
+        size: properties.size,
+        accessTime: properties.atimeMs,
+        createTime: properties.ctimeMs,
+        modifyTime: properties.mtimeMs,
+        inodeNum: properties.ino
+    };
+};
+
 plugin.readFile = function(path){
 	//if(async == null || async == false){
         return fs.readFileSync(path, 'utf8');
@@ -65,8 +76,8 @@ plugin.getFileName = function(path){
 
 
 plugin.getFileNameWithoutExtention = function(path){
-    local name = get_file_name(path);
-    local ext = get_file_extention(path);
+    local name = plugin.getFileName(path);
+    local ext = plugin.getFileExtention(path);
     if(ext != ""){
         return name.slice(0, name.length - ext.length - 1);
     }else{
@@ -100,6 +111,9 @@ plugin.getFilePathUpDirectory = function(path, number){
     path = plugin.normalize(path);
 
     forNum(i, number){
+        if(["/", "\\"] includes path[path.length - 1]){
+            path = path.substring(0, path.length-1);      
+        };
         path = path.substring(0, path.lastIndexOf("/")+1);
     };
 
@@ -136,9 +150,7 @@ plugin.deleteDirectory = function(path){
 
 
 plugin.getFiles = function(path, depth){
-    if(depth == null){
-        depth = Infinity;
-    };
+    depth default Infinity;
     return get_files_recursive(path, depth);
 };
 
@@ -154,12 +166,13 @@ local get_files_recursive = function(path, depth){
                     output.push({
                         name: file.name,
                         type: "directory",
-                        dir: get_files_recursive(path + "/" + file.name, depth - 1)
+                        dir: get_files_recursive(path + "/" + file.name, depth - 1),
                     });
                 }else{//file
                     output.push({
                         name: plugin.getFileNameWithoutExtention(file.name),
-                        type: plugin.getFileExtention(file.name)
+                        type: plugin.getFileExtention(file.name),
+                        properties: plugin.properties(path + "/" + file.name)
                     });
                 };
             });

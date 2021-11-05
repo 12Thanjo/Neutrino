@@ -157,6 +157,12 @@ name: DOM
 		prop: display
 			type: string
 			description: display type of the element
+		prop: src
+			type: string
+			description: src of the element
+		prop: href
+			type: string
+			description: href of the element
 		name: focus
 			type: function
 			description: focus the element

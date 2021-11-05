@@ -1,1 +1,0 @@
-local bar = foo - 4 - 20;

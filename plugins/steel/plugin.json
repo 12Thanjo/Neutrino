@@ -4,5 +4,8 @@
     "description": "a game engine written in neutrino",
     "main": "index.nt",
     "author": "12Thanjo",
-    "dependancies": []
+    "dependancies": [
+        "BABYLON",
+        "DOM"
+    ]
 }

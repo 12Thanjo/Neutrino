@@ -298,6 +298,19 @@ assert('instanceof', true, @()->{
 
 	return foo instanceof Spec;
 });
+assert('swap', true, @()->{
+	local a = "foo";
+	local b = "bar";
+
+	a swap b;
+
+	return a == "bar" && b == "foo";
+});
+assert('toggle', true, @()->{
+	local foo = false;
+	foo toggle (false, true);
+	return foo;
+});
 assert('break', 1, @()->{
 	local count = 0;
 	forNum(i, 3){

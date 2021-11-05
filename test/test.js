@@ -168,28 +168,28 @@ assert('else if',true,()=>{
 	}; //143:7 | test.nt
 }); //142:7 | test.nt
 assert('equals (==)',true,()=>{
-	return true; //151:39 | test.nt
+	return 1; //151:39 | test.nt
 }); //151:7 | test.nt
 assert('not equals (!=)',true,()=>{
-	return true; //152:43 | test.nt
+	return 1; //152:43 | test.nt
 }); //152:7 | test.nt
 assert('greater than (>)',true,()=>{
-	return true; //153:44 | test.nt
+	return 1; //153:44 | test.nt
 }); //153:7 | test.nt
 assert('less than (<)',true,()=>{
-	return true; //154:41 | test.nt
+	return 1; //154:41 | test.nt
 }); //154:7 | test.nt
 assert('greater than or equal to (<=)',true,()=>{
-	return true; //155:57 | test.nt
+	return 1; //155:57 | test.nt
 }); //155:7 | test.nt
 assert('less than or equal to (>=)',true,()=>{
-	return true; //156:54 | test.nt
+	return 1; //156:54 | test.nt
 }); //156:7 | test.nt
 assert('and (&&)',false,()=>{
-	return false&&"foo"=="foo"; //157:37 | test.nt
+	return 0&&"foo"=="foo"; //157:37 | test.nt
 }); //157:7 | test.nt
 assert('or (||)',true,()=>{
-	return false||"foo"=="foo"; //158:35 | test.nt
+	return 0||"foo"=="foo"; //158:35 | test.nt
 }); //158:7 | test.nt
 console.log(); //159:12 | test.nt
 console.log("Loops:"); //162:12 | test.nt
@@ -260,7 +260,7 @@ assert('class',true,()=>{
 		this.param=param; //231:13 | test.nt
 		private.priv_prop="hi"; //232:16 | test.nt
 	}; //229:10 | test.nt
-	GenericClass.$i=0;GenericClass.$map=new Map();GenericClass.get=function(id){return GenericClass.$map.get(id);};GenericClass.has=function(id){return GenericClass.$map.has(id);};GenericClass.forEach=function(cb){GenericClass.$map.forEach(cb);};GenericClass.delete=function(cb){GenericClass.$map.delete(cb);}; //229:10 | test.nt
+	GenericClass.$i=0;GenericClass.resetI=function(){GenericClass.$i=0;};GenericClass.$map=new Map();GenericClass.get=function(id){return GenericClass.$map.get(id);};GenericClass.has=function(id){return GenericClass.$map.has(id);};GenericClass.forEach=function(cb){GenericClass.$map.forEach(cb);};GenericClass.delete=function(cb){GenericClass.$map.delete(cb);}; //229:10 | test.nt
 new GenericClass("foo"); //235:10 | test.nt
 new GenericClass("bar"); //236:10 | test.nt
 	return GenericClass.has(0)&&GenericClass.get(0).param=="foo"&&GenericClass.get(1).param=="bar"; //238:11 | test.nt
@@ -321,85 +321,96 @@ assert('instanceof',true,()=>{
 	let foo=new Spec(); //297:14 | test.nt
 	return foo instanceof Spec; //299:11 | test.nt
 }); //294:7 | test.nt
-assert('break',1,()=>{
-	let count=0; //302:16 | test.nt
-	for(var i=0;i<3;i++){
-		count+=i+1; //304:14 | test.nt
-		break; //305:14 | test.nt
-	}; //303:11 | test.nt
-	return count; //307:11 | test.nt
+assert('swap',true,()=>{
+	let a="foo"; //302:12 | test.nt
+	let b="bar"; //303:12 | test.nt
+	let $save=a;a=b;b=$save; //305:6 | test.nt
+	return a=="bar"&&b=="foo"; //307:11 | test.nt
 }); //301:7 | test.nt
-assert('default',2,()=>{
-	let foo=null; //310:14 | test.nt
-	if(foo==null){foo=2;}; //311:8 | test.nt
+assert('toggle',true,()=>{
+	let foo=false; //310:14 | test.nt
+	if(foo==false){foo=true;}else{foo=false;}; //311:8 | test.nt
 	return foo; //312:11 | test.nt
 }); //309:7 | test.nt
+assert('break',1,()=>{
+	let count=0; //315:16 | test.nt
+	for(var i=0;i<3;i++){
+		count+=i+1; //317:14 | test.nt
+		break; //318:14 | test.nt
+	}; //316:11 | test.nt
+	return count; //320:11 | test.nt
+}); //314:7 | test.nt
+assert('default',2,()=>{
+	let foo=null; //323:14 | test.nt
+	if(foo==null){foo=2;}; //324:8 | test.nt
+	return foo; //325:11 | test.nt
+}); //322:7 | test.nt
 assert('delete',null,()=>{
 	let foo={
 		bar:"asdf"
-	}; //315:14 | test.nt
-	delete foo.bar; //318:11 | test.nt
-	return foo.bar; //319:11 | test.nt
-}); //314:7 | test.nt
+	}; //328:14 | test.nt
+	delete foo.bar; //331:11 | test.nt
+	return foo.bar; //332:11 | test.nt
+}); //327:7 | test.nt
 assert('includes',true,()=>{
-	let foo="foo"; //322:14 | test.nt
-	return (['asdf','foo'].includes('foo')); //323:11 | test.nt
-}); //321:7 | test.nt
+	let foo="foo"; //335:14 | test.nt
+	return (['asdf','foo'].includes('foo')); //336:11 | test.nt
+}); //334:7 | test.nt
 assert('scope',true,()=>{
-	let foo=true; //326:14 | test.nt
-	let bar=false; //327:14 | test.nt
+	let foo=true; //339:14 | test.nt
+	let bar=false; //340:14 | test.nt
 	{
-		let foo=false; //329:18 | test.nt
-		bar=true; //330:12 | test.nt
-	}; //328:10 | test.nt
-	return foo&&bar; //332:11 | test.nt
-}); //325:7 | test.nt
-console.log(); //334:12 | test.nt
-console.log("Errors:"); //337:12 | test.nt
+		let foo=false; //342:18 | test.nt
+		bar=true; //343:12 | test.nt
+	}; //341:10 | test.nt
+	return foo&&bar; //345:11 | test.nt
+}); //338:7 | test.nt
+console.log(); //347:12 | test.nt
+console.log("Errors:"); //350:12 | test.nt
 assert('Error','message',()=>{
 	try{
 		throw Error("message");
 	}catch(e){
-		return e.message; //342:15 | test.nt
+		return e.message; //355:15 | test.nt
 	};
-}); //338:7 | test.nt
+}); //351:7 | test.nt
 assert('SyntaxError','message',()=>{
 	try{
 		throw SyntaxError("message");
 	}catch(e){
-		return e.message; //349:15 | test.nt
+		return e.message; //362:15 | test.nt
 	};
-}); //345:7 | test.nt
+}); //358:7 | test.nt
 assert('ReferenceError','message',()=>{
 	try{
 		throw ReferenceError("message");
 	}catch(e){
-		return e.message; //356:15 | test.nt
+		return e.message; //369:15 | test.nt
 	};
-}); //352:7 | test.nt
+}); //365:7 | test.nt
 assert('RangeError','message',()=>{
 	try{
 		throw RangeError("message");
 	}catch(e){
-		return e.message; //363:15 | test.nt
+		return e.message; //376:15 | test.nt
 	};
-}); //359:7 | test.nt
-console.log(); //366:12 | test.nt
-console.log("Multithreading:"); //372:12 | test.nt
+}); //372:7 | test.nt
+console.log(); //379:12 | test.nt
+console.log("Multithreading:"); //385:12 | test.nt
 assert("Thread",true,()=>{
-}); //373:7 | test.nt
+}); //386:7 | test.nt
 assert("Thread Pool",true,()=>{
-}); //374:7 | test.nt
-console.log(); //375:12 | test.nt
-console.log("OCS:"); //402:12 | test.nt
+}); //387:7 | test.nt
+console.log(); //388:12 | test.nt
+console.log("OCS:"); //415:12 | test.nt
 assert("Environment",false,()=>{
-}); //403:7 | test.nt
+}); //416:7 | test.nt
 assert("Entity",false,()=>{
-}); //404:7 | test.nt
+}); //417:7 | test.nt
 assert("Component",false,()=>{
-}); //405:7 | test.nt
+}); //418:7 | test.nt
 assert("Query",false,()=>{
-}); //406:7 | test.nt
+}); //419:7 | test.nt
 assert("System",false,()=>{
-}); //407:7 | test.nt
-console.log(); //408:12 | test.nt
+}); //420:7 | test.nt
+console.log(); //421:12 | test.nt

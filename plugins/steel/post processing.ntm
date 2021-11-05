@@ -1,0 +1,368 @@
+local pipeline = new BABYLON.DefaultRenderingPipeline("default", true, private.scene, [camera]);
+
+// FXAA
+pipeline.fxaaEnabled = false;
+
+// MSAA
+pipeline.samples = 1;
+
+// sharpening
+pipeline.sharpenEnabled = false;
+pipeline.sharpen.edgeAmount = 1.2; //generally 0-2
+pipeline.sharpen.colorAmount = 1; // 1 is normal
+
+// depth of field
+pipeline.depthOfFieldEnabled = false;
+pipeline.depthOfFieldBlurLevel = 1; //1, 2, 3
+pipeline.depthOfField.focusDistance  = 2000;
+pipeline.depthOfField.focalLength  = 50;
+pipeline.depthOfField.fStop  = 1.4;
+
+// bloom
+pipeline.bloomEnabled = false;
+pipeline.bloomKernel = 200;
+pipeline.bloomWeight = 0.8;
+pipeline.bloomThreshold = 0.2; // [0, 1]
+pipeline.bloomScale = 0.7; // (0, 1), and this errors
+
+// Color Curves (uses the above curve)
+local curve = new BABYLON.ColorCurves();
+curve.globalHue = 200;
+curve.globalDensity = 80;
+curve.globalSaturation = 80;
+curve.highlightsHue = 20;
+curve.highlightsDensity = 80;
+curve.highlightsSaturation = -80;
+curve.shadowsHue = 2;
+curve.shadowsDensity = 80;
+curve.shadowsSaturation = 40;
+pipeline.imageProcessing.colorCurves = curve;
+pipeline.imageProcessing.colorCurvesEnabled = false;
+
+// Tone Mapping
+pipeline.imageProcessing.toneMappingEnabled = false;
+pipeline.imageProcessing.contrast = 2; //generally 0-4
+pipeline.imageProcessing.exposure = 2; //generally 0-4
+
+
+// Vignette
+pipeline.imageProcessing.vignetteEnabled = true;
+pipeline.imageProcessing.vignetteColor = new BABYLON.Color3(0,0,0);
+pipeline.imageProcessing.vignetteWeight = 2;
+
+
+// Film Grain
+pipeline.grainEnabled = false;
+pipeline.grain.intensity = 40; //generally, [0, 100]
+pipeline.grain.animated = true;
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+this.pipeline = {};
+
+// FXAA
+Object.defineProperty(this.pipeline, 'FXAA', {
+	get: function(){
+		return pipeline.fxaaEnabled;
+	},
+	set: function(val){
+		pipeline.fxaaEnabled = val;
+	},
+});
+
+
+// MSAA
+Object.defineProperty(this.pipeline, 'MSAA', {
+	get: function(){
+		return pipeline.samples;
+	},
+	set: function(val){
+		pipeline.samples = val;
+	},
+});
+
+
+
+// sharpening
+this.pipeline.sharpening = {};
+Object.defineProperty(this.pipeline.sharpening, 'enabled', {
+	get: function(){
+		return pipeline.sharpenEnabled;
+	},
+	set: function(val){
+		pipeline.sharpenEnabled = val;	
+	},
+});
+Object.defineProperty(this.pipeline.sharpening, 'edge', {
+	get: function(){
+		return pipeline.sharpen.edgeAmount;
+	},
+	set: function(val){
+		pipeline.sharpen.edgeAmount = val;	
+	},
+});
+Object.defineProperty(this.pipeline.sharpening, 'color', {
+	get: function(){
+		return pipeline.sharpen.colorAmount;
+	},
+	set: function(val){
+		pipeline.sharpen.colorAmount = val;	
+	},
+});
+
+
+// depth of field
+this.pipeline.depthOfField = {};
+Object.defineProperty(this.pipeline.depthOfField, 'enabled', {
+	get: function(){
+		return pipeline.depthOfFieldEnabled;
+	},
+	set: function(val){
+		pipeline.depthOfFieldEnabled = val;
+	},
+});
+Object.defineProperty(this.pipeline.depthOfField, 'strength', {
+	get: function(){
+		return pipeline.depthOfFieldBlurLevel;
+	},
+	set: function(val){
+		pipeline.depthOfFieldBlurLevel = val;
+	},
+});
+Object.defineProperty(this.pipeline.depthOfField, 'focusDistance', {
+	get: function(){
+		return pipeline.depthOfField.focusDistance;
+	},
+	set: function(val){
+		pipeline.depthOfField.focusDistance = val;	
+	},
+});
+Object.defineProperty(this.pipeline.depthOfField, 'focalLength', {
+	get: function(){
+		return pipeline.depthOfField.focalLength;
+	},
+	set: function(val){
+		pipeline.depthOfField.focalLength = val;	
+	},
+});
+Object.defineProperty(this.pipeline.depthOfField, 'fStop', {
+	get: function(){
+		return pipeline.depthOfField.fStop;
+	},
+	set: function(val){
+		pipeline.depthOfField.fStop = val;	
+	},
+});
+
+
+// bloom
+this.pipeline.bloom = {};
+Object.defineProperty(this.pipeline.bloom, 'enabled', {
+	get: function(){
+		return pipeline.bloomEnabled;
+	},
+	set: function(val){
+		pipeline.bloomEnabled = val;
+	},
+});
+Object.defineProperty(this.pipeline.bloom, 'kernel', {
+	get: function(){
+		return pipeline.bloomKernel;
+	},
+	set: function(val){
+		pipeline.bloomKernel = val;
+	},
+});
+Object.defineProperty(this.pipeline.bloom, 'weight', {
+	get: function(){
+		return pipeline.bloomWeight;
+	},
+	set: function(val){
+		pipeline.bloomWeight = val;
+	},
+});
+Object.defineProperty(this.pipeline.bloom, 'threshold', {
+	get: function(){
+		return pipeline.bloomThreshold;
+	},
+	set: function(val){
+		pipeline.bloomThreshold = val;
+	},
+});
+Object.defineProperty(this.pipeline.bloom, 'scale', {
+	get: function(){
+		return pipeline.bloomScale;
+	},
+	set: function(val){
+		pipeline.bloomScale = val;
+	},
+});
+
+
+// Color Curves (uses the above curve)
+this.pipeline.colorMap = {};
+Object.defineProperty(this.pipeline.colorMap, 'enabled', {
+	get: function(){
+		return pipeline.imageProcessing.colorCurvesEnabled;
+	},
+	set: function(val){
+		pipeline.imageProcessing.colorCurvesEnabled = val;
+	},
+});
+Object.defineProperty(this.pipeline.colorMap, 'globalHue', {
+	get: function(){
+		return curve.globalHue;
+	},
+	set: function(val){
+		curve.globalHue = val;	
+	},
+});
+Object.defineProperty(this.pipeline.colorMap, 'globalDensity', {
+	get: function(){
+		return curve.globalDensity;
+	},
+	set: function(val){
+		curve.globalDensity = val;	
+	},
+});
+Object.defineProperty(this.pipeline.colorMap, 'globalSaturation', {
+	get: function(){
+		return curve.globalSaturation;
+	},
+	set: function(val){
+		curve.globalSaturation = val;	
+	},
+});
+Object.defineProperty(this.pipeline.colorMap, 'highlightsHue', {
+	get: function(){
+		return curve.highlightsHue;
+	},
+	set: function(val){
+		curve.highlightsHue = val;	
+	},
+});
+Object.defineProperty(this.pipeline.colorMap, 'highlightsDensity', {
+	get: function(){
+		return curve.highlightsDensity;
+	},
+	set: function(val){
+		curve.highlightsDensity = val;	
+	},
+});
+Object.defineProperty(this.pipeline.colorMap, 'highlightsSaturation', {
+	get: function(){
+		return curve.highlightsSaturation;
+	},
+	set: function(val){
+		curve.highlightsSaturation = val;	
+	},
+});
+Object.defineProperty(this.pipeline.colorMap, 'shadowsHue', {
+	get: function(){
+		return curve.shadowsHue;
+	},
+	set: function(val){
+		curve.shadowsHue = val;	
+	},
+});
+Object.defineProperty(this.pipeline.colorMap, 'shadowsDensity', {
+	get: function(){
+		return curve.shadowsDensity;
+	},
+	set: function(val){
+		curve.shadowsDensity = val;	
+	},
+});
+Object.defineProperty(this.pipeline.colorMap, 'shadowsSaturation', {
+	get: function(){
+		return curve.shadowsSaturation;
+	},
+	set: function(val){
+		curve.shadowsSaturation = val;	
+	},
+});
+
+// Tone Mapping
+this.pipeline.toneMap = {};
+Object.defineProperty(this.pipeline.toneMap, 'enabled', {
+	get: function(){
+		return pipeline.imageProcessing.toneMappingEnabled;
+	},
+	set: function(val){
+		pipeline.imageProcessing.toneMappingEnabled = val;	
+	},
+});
+Object.defineProperty(this.pipeline.toneMap, 'contrast', {
+	get: function(){
+		return pipeline.imageProcessing.contrast;
+	},
+	set: function(val){
+		pipeline.imageProcessing.contrast = val;	
+	},
+});
+Object.defineProperty(this.pipeline.toneMap, 'exposure', {
+	get: function(){
+		return pipeline.imageProcessing.exposure;
+	},
+	set: function(val){
+		pipeline.imageProcessing.exposure = val;	
+	},
+});
+
+
+// Vignette
+this.pipeline.vignette = {};
+Object.defineProperty(this.pipeline.vignette, 'enabled', {
+	get: function(){
+		return pipeline.imageProcessing.vignetteEnabled;
+	},
+	set: function(val){
+		pipeline.imageProcessing.vignetteEnabled = val;
+	},
+});
+Object.defineProperty(this.pipeline.vignette, 'color', {
+	get: function(){
+		return pipeline.imageProcessing.vignetteColor;
+	},
+	set: function(val){
+		pipeline.imageProcessing.vignetteColor = val;
+	},
+});
+Object.defineProperty(this.pipeline.vignette, 'weight', {
+	get: function(){
+		return pipeline.imageProcessing.vignetteWeight;
+	},
+	set: function(val){
+		pipeline.imageProcessing.vignetteWeight = val;
+	},
+});
+
+
+// Film Grain
+this.pipeline.filmGrain = {};
+Object.defineProperty(this.pipeline.filmGrain, 'enabled', {
+	get: function(){
+		return pipeline.grainEnabled;
+	},
+	set: function(val){
+		pipeline.grainEnabled = val;
+	},
+});
+Object.defineProperty(this.pipeline.filmGrain, 'intensity', {
+	get: function(){
+		return pipeline.grain.intensity;
+	},
+	set: function(val){
+		pipeline.grain.intensity = val;
+	},
+});
+Object.defineProperty(this.pipeline.filmGrain, 'animated', {
+	get: function(){
+		return pipeline.grain.animated;
+	},
+	set: function(val){
+		pipeline.grain.animated = val;
+	},
+});

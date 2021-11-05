@@ -223,7 +223,7 @@ var Parser = function(tokens, macro_map, config){
 			var PRECEDENCE = {
 			    "=": 1, "+=": 1, "-=": 1, "*=": 1, "/=": 1, "%=": 1,
 			    "=>": 1, "=<": 1, "=+": 1, "=-": 1, "=*": 1, "=/": 1, "=%": 1,
-			    "default": 2, "typeof": 2, "instanceof": 2, "includes": 2, 'swap': 2,
+			    "default": 2, "typeof": 2, "instanceof": 2, "includes": 2, 'swap': 2, 'toggle': 2,
 			    "&&": 3, "||": 3,
 			    "<": 4, ">": 4, "<=": 4, ">=": 4, "==": 4, "!=": 4,
 			    "+": 5, "-": 5,
@@ -247,7 +247,7 @@ var Parser = function(tokens, macro_map, config){
                         type = "reverse assign";
                     }else if(["=>", "=<"].includes(token.value)){
                         type = "special assign";
-                    }else if(["default", 'typeof', 'instanceof', 'includes', 'swap'].includes(token.value)){
+                    }else if(["default", 'typeof', 'instanceof', 'includes', 'swap', 'toggle'].includes(token.value)){
                         type = token.value;
                     }else if([">>", "->"].includes(token.value)){
                     	type = "OCS";

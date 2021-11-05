@@ -2,4 +2,49 @@
 // description: a game engine written in neutrino
 // author: 12Thanjo
 
-plugin.name = "steel";
+import BABYLON;
+import DOM;
+
+species Engine(name, config){
+	access name = name;
+
+	// config
+	config default {};
+	if(config.canvas == null){
+		this.canvas = DOM.createElement("canvas", document.body);
+		this.canvas.css({
+			width: DOM.w,
+			height: DOM.h
+		});
+	}else{
+		this.canvas = config.canvas;
+	};
+
+
+
+	private.engine = new BABYLON.Engine(this.canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false});
+	private.scene = new BABYLON.Scene(private.engine);
+	local camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), private.scene);
+	camera.setTarget(BABYLON.Vector3.Zero());
+	camera.fov = 2 * 3.14 / 360 * 90;
+
+	camera.attachControl(this.canvas, true);
+
+	local light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), private.scene);
+
+	light.intensity = 0.7;
+
+	local sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, private.scene);
+
+	sphere.position.y = 1;
+
+	local ground = BABYLON.MEshBuilder.CreateGround("ground", {width: 6, height: 6}, private.scene);
+
+	macro "post processing";
+
+
+	private.engine.runRenderLoop(@()->{
+	   	private.scene.render();
+	});
+};
+plugin.Engine = Engine;
