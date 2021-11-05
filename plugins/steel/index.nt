@@ -38,7 +38,7 @@ species Engine(name, config){
 
 	sphere.position.y = 1;
 
-	local ground = BABYLON.MEshBuilder.CreateGround("ground", {width: 6, height: 6}, private.scene);
+	local ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, private.scene);
 
 	macro "post processing";
 

@@ -84,7 +84,7 @@ var Tokenizer = function(stream, config){
 		operation: function(){
 			// look 10 becasue thats length of the longest word
 			var look = self.get(11);
-			var words = ['instanceof', 'includes', 'default', 'typeof', 'swap', 'toggle'];
+			var words = ['instanceof', 'is', 'default', 'typeof', 'swap', 'toggle'];
 			for(var i = words.length - 1; i>=0; i--){
 				var word = words[i];
 				if(look.indexOf(word) == 0 && !self.is.id(look[word.length])){

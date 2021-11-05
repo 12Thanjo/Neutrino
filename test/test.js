@@ -1,6 +1,8 @@
 let $plugins=new Map();let $pending_plugins=new Map();let $get_plugin=function(name){if($plugins.has(name)){return $plugins.get(name);}else{var output=$pending_plugins.get(name)();$plugins.set(name,output);$pending_plugins.delete(name);return output;};};
 $pending_plugins.set('assert',()=>{let plugin={};let cmd=$get_plugin('cmd');let check="✓";let x='✘';plugin=function(title,value,condition){if(condition()==value){cmd.log(check+" "+title,cmd.color.green);}else{cmd.log(x+" "+title,cmd.color.red);};};plugin.metadata={"name":"assert","version":"0.1.0","description":"assert module","main":"index.nt","author":"12Thanjo","dependancies":["cmd"]};return plugin;}); //34:7
 $pending_plugins.set('cmd',()=>{let plugin={};plugin.color={black:"\x1b[30m",red:"\x1b[31m",yellow:"\x1b[33m",green:"\x1b[32m",blue:"\x1b[34m",magenta:"\x1b[35m",cyan:"\x1b[36m",white:"\x1b[37m"};plugin.backgroundColor={black:"\x1b[40m",red:"\x1b[41m",green:"\x1b[42m",yellow:"\x1b[43m",blue:"\x1b[44m",magenta:"\x1b[45m",cyan:"\x1b[46m",white:"\x1b[47m"};plugin.style={reset:"\x1b[0m",bright:"\x1b[1m",dim:"\x1b[2m",underscore:"\x1b[4m",blink:"\x1b[5m",reverse:"\x1b[7m",hidden:"\x1b[8m"};plugin.log=function(string,color,backgroundColor){string=string||"";color=color||"";backgroundColor=backgroundColor||"";console.log(color+backgroundColor+string+plugin.color.white+plugin.backgroundColor.black+plugin.style.reset);};plugin.specialLog=function(data){if(typeof data=="string"==false){console.log(data);console.log();}else{if(isNaN(data)==false){console.log(plugin.color.orange+data+plugin.color.white+"\n");}else{console.log(plugin.color.green+"'"+data+"'"+plugin.color.white+"\n");};};};plugin.metadata={"name":"cmd","version":"0.1.0","description":"command line interaction","main":"index.nt","author":"12Thanjo","dependancies":[]};return plugin;}); //34:7
+$pending_plugins.set('OCS',()=>{let plugin={metadata:{"name":"OCS","version":"0.1.0","description":"ECS architecture thats feature rich and incredibly fast","main":"index.nt","author":"12Thanjo","dependancies":["multithread"]}};let multithread=$get_plugin('multithread');let OCS=function(){console.log('%c OCS Initialized | v0.1.0',"background-color: #00667f ; color: #cccccc ; font-size: 16px ; font-family: 'american typewriter';");let all=function(...conditionals){return {test:(entity)=>{let pass=true;for(var[i,comp]of conditionals.entries()){if(typeof comp=="string"){if(entity[comp]==null){pass=false;break;};}else{if(entity[comp.id]==null){pass=false;break;};};};return pass;}};};let none=function(...conditionals){return {test:(entity)=>{let pass=true;for(var[i,comp]of conditionals.entries()){if(typeof comp=="string"){if(entity[comp]!=null){pass=false;break;};}else{if(entity[comp.id]!=null){pass=false;break;};};};return pass;}};};let some=function(...conditionals){return {test:(entity)=>{let pass=false;for(var[i,comp]of conditionals.entries()){if(typeof comp=="string"){if(entity[comp]!=null){pass=true;break;};}else{if(entity[comp.id]!=null){pass=true;break;};};};return pass;}};};let _Prop_=function(auto){let private={};_Prop_.$map.set(auto,this);this.auto=auto;};_Prop_.$map=new Map();_Prop_.get=function(id){return _Prop_.$map.get(id);};_Prop_.has=function(id){return _Prop_.$map.has(id);};_Prop_.forEach=function(cb){_Prop_.$map.forEach(cb);};_Prop_.delete=function(cb){_Prop_.$map.delete(cb);};let _Component_=function(id,builder){let private={};_Component_.$map.set(id,this);this.id=id;this.builder=builder;};_Component_.$map=new Map();_Component_.get=function(id){return _Component_.$map.get(id);};_Component_.has=function(id){return _Component_.$map.has(id);};_Component_.forEach=function(cb){_Component_.$map.forEach(cb);};_Component_.delete=function(cb){_Component_.$map.delete(cb);};let _Environment_=function(id){let private={};_Environment_.$map.set(id,this);private.id=id;private.entity_id=0;private.entity_lookup=new Map();private.removed=new Set();private.entities=[];let env_priv=private;let _Entity_=function(id,name){let private={};env_priv.entities[id]=this;private.id=id;Object.defineProperty(this, "id", {get: ()=>{return private.id;}});private.name=name;Object.defineProperty(this, "name", {get: ()=>{return private.name;}});if(name!=null){env_priv.entity_lookup.set(private.name,this);this.destroy=function(){_Query_.forEach((query)=>{query.remove(this);});env_priv.entity_lookup.delete(private.name);env_priv.removed.add(private.id);env_priv.entities[private.id]=null;};}else{this.destroy=function(){_Query_.forEach((query)=>{query.remove(this);});env_priv.removed.add(private.id);env_priv.entities[private.id]=null;};};this.bindComponent=function(component,...params){if(component instanceof _Component_||component instanceof EnvComponent){component=component.id;};if(EnvComponent.has(component)==false){throw ReferenceError("Environment ("+(env_priv.id)+") does not have component ("+(component)+")");};let component_target=EnvComponent.get(component);;if(component_target.builder instanceof _Prop_){if(params[0]==null){params[0]=component_target.builder.auto;};this[component]=params[0];}else{let builder_obj=Object.assign({},component_target.builder);;let i=0;let create_component_props=function(builder,depth_arr){if(builder instanceof _Prop_){if(params[i]==null){params[i]=builder.auto;};let target=builder_obj;for(var j=0;j<depth_arr.length-1;j++){target=target[depth_arr[j]];};target[depth_arr[depth_arr.length-1]]=params[i];i+=1;}else{for(let key in builder){let value=builder[key];create_component_props(value,[...depth_arr,key]);};};};create_component_props(builder_obj,[]);this[component]=builder_obj;};_Query_.forEach((query)=>{query.audit(this);});return this;};};let EnvComponent=function(id,builder){let private={};EnvComponent.$map.set(id,this);private.id=id;Object.defineProperty(this, "id", {get: ()=>{return private.id;}});this.builder=builder;};EnvComponent.$map=new Map();EnvComponent.get=function(id){return EnvComponent.$map.get(id);};EnvComponent.has=function(id){return EnvComponent.$map.has(id);};EnvComponent.forEach=function(cb){EnvComponent.$map.forEach(cb);};EnvComponent.delete=function(cb){EnvComponent.$map.delete(cb);};let _Query_=function(id,conditionals){let private={};_Query_.$map.set(id,this);this.entities=new Set();private.conditionals=conditionals;this.audit=function(entity){let pass=true;for(var[i,conditional]of private.conditionals.entries()){if(conditional.test(entity)==false){pass=false;break;};};if(pass){this.entities.add(entity.id);}else{this.entities.delete(entity.id);};};this.remove=function(entity){this.entities.delete(entity.id);};for(var[i,entity]of env_priv.entities.entries()){if(entity!=null){this.audit(entity);};};this.forEach=function(event){for(var[i,id]of this.entities.entries()){event(env_priv.entities[id],i);};};};_Query_.$map=new Map();_Query_.get=function(id){return _Query_.$map.get(id);};_Query_.has=function(id){return _Query_.$map.has(id);};_Query_.forEach=function(cb){_Query_.$map.forEach(cb);};_Query_.delete=function(cb){_Query_.$map.delete(cb);};let _System_=function(id,query,event){let private={};_System_.$map.set(id,this);private.query=_Query_.get(query);private.event=event;this.run=function(){private.query.forEach((entity,i)=>{private.event(entity,i);});};this.setupCluster=function(threads){event_str="evnt=($data)=>{$data.data=("+(event.toString())+")($data.data, $data.i);return $data;};";let evnt=null;eval(event_str);private.cluster=new multithread.cluster.forEach(threads,evnt);};this.runThreaded=function(components,callback){let array=[];private.query.forEach((entity)=>{let obj={};for(var[i,component]of components.entries()){obj[component]=entity[component];};array.push(obj);});private.cluster.run(array,(i,data)=>{private.query.forEach((entity)=>{for(var[j,component]of components.entries()){entity[component]=data[component];};});},callback);};this.runThreadedSafe=function(components,callback){let array=[];let entities=[];private.query.forEach((entity)=>{let obj={};for(var[i,component]of components.entries()){obj[component]=entity[component];entities.push(i);};array.push(obj);entities.push(entity);});private.cluster.run(array,(i,data)=>{for(var[j,entity]of entities.entries()){for(var[k,component]of components.entries()){entity[component]=data[component];};};},callback);};};_System_.$map=new Map();_System_.get=function(id){return _System_.$map.get(id);};_System_.has=function(id){return _System_.$map.has(id);};_System_.forEach=function(cb){_System_.$map.forEach(cb);};_System_.delete=function(cb){_System_.$map.delete(cb);};this.bindComponent=function(component){return new EnvComponent(component.id,component.builder);};this.getComponent=function(id){return EnvComponent.get(id);};this.createEntity=function(name){let new_entity=null;if(private.removed.size==0){new_entity=new _Entity_(private.entity_id,name);private.entity_id+=1;}else{let entity_id=private.removed.values().next().value;private.removed.delete(entity_id);new_entity=new _Entity_(entity_id,name);};return new_entity;};this.getEntity=function(name){return private.entity_lookup.get(name);};this.createQuery=function(id,...conditionals){new _Query_(id,conditionals)};this.deleteQuery=function(id){_Query_.delete(id);};this.createSystem=function(id,query,event){return new _System_(id,query,event);};this.getSystem=function(id){return _System_.get(id);};this.deleteSystem=function(id){_System_.delete(id);};};_Environment_.$map=new Map();_Environment_.get=function(id){return _Environment_.$map.get(id);};_Environment_.has=function(id){return _Environment_.$map.has(id);};_Environment_.forEach=function(cb){_Environment_.$map.forEach(cb);};_Environment_.delete=function(cb){_Environment_.$map.delete(cb);};let EventLoop=function(name){let private={};EventLoop.$map.set(name,this);private.name=name;Object.defineProperty(this, "name", {get: ()=>{return private.name;}});private.i=0;private.queue=[];this.add=function(event){private.queue.push(event);};this.next=function(){private.i+=1;try{private.queue[private.i](this.next);}catch{};};this.start=function(){private.i=-1;this.next();};};EventLoop.$map=new Map();EventLoop.get=function(id){return EventLoop.$map.get(id);};EventLoop.has=function(id){return EventLoop.$map.has(id);};EventLoop.forEach=function(cb){EventLoop.$map.forEach(cb);};EventLoop.delete=function(cb){EventLoop.$map.delete(cb);};return {_Environment_:_Environment_,_Component_:_Component_,_Prop_:_Prop_,all:all,none:none,some:some,EventLoop:EventLoop};};plugin=new OCS();;return plugin;}); //409:7
+$pending_plugins.set('multithread',()=>{let plugin={metadata:{"name":"multithread","version":"0.1.0","description":"multithreading","main":"index.nt","author":"12Thanjo","dependancies":[]}};let worker=null;try{if(Worker!=null){worker=Worker;}else{worker=require('worker_threads').Worker;};}catch{worker=require('worker_threads').Worker;};let Thread=function(event,callback){let private={};let str="let $event="+event.toString();;str+=";this.onmessage=(e)=>{this.postMessage($event(e.data));};";let blob=new Blob([str]);let obj_url=URL.createObjectURL(blob,{type:'text/javascript'});;let new_worker=new worker(obj_url);new_worker.onmessage=(e)=>{callback(e.data);};return new_worker;};plugin.Thread=Thread;let num_CPUs=require('os').cpus().length;let forAll=function(threads,event){let private={};if(threads>num_CPUs-1){console.error("there are only "+(num_CPUs-1)+" threads available | got "+(threads)+"\ndefualting to "+(num_CPUs)+" threads");threads=num_CPUs;};private.threads=[];private.data_set=[];private.output=[];private.callback=()=>{};private.data_set_length=0;private.data_set_i=-1;private.threads_left=threads;for(var i=0;i<threads;i++){let new_thread=new Thread(event,(e)=>{private.data_set_i+=1;private.data_set_length-=1;if(private.data_set_length>threads){private.data_set_length-=1;new_thread.postMessage({i:private.data_set_i,data:private.data_set[private.data_set_i]});private.output[e.i]=e.data;}else{private.output[e.i]=e.data;private.threads_left-=1;if(private.threads_left==0){private.callback(private.output);};};});private.threads.push(new_thread);};this.run=function(dataSet,callback){private.data_set=dataSet;private.output=[];private.callback=callback;private.data_set_length=dataSet.length;private.data_set_i=-1;private.threads_left=threads;for(var[i,thread]of private.threads.entries()){private.data_set_i+=1;thread.postMessage({i:private.data_set_i,data:private.data_set[private.data_set_i]});};};};let forEach=function(threads,event){let private={};if(threads==null){threads=num_CPUs-1;};if(threads>num_CPUs-1){console.error("there are only "+(num_CPUs-1)+" threads available | got ("+(threads)+")\n\tdefaulting to "+(num_CPUs-1)+" threads");threads=num_CPUs;};private.threads=[];private.data_set=[];private.output=[];private.event=()=>{};private.callback=()=>{};private.data_set_length=0;private.data_set_i=-1;private.threads_left=threads;for(var i=0;i<threads;i++){let new_thread=new Thread(event,(e)=>{private.data_set_i+=1;if(private.data_set_length>threads){private.data_set_length-=1;new_thread.postMessage({i:private.data_set_i,data:private.data_set[private.data_set_i]});private.event(e.i,e.data);}else{private.threads_left-=1;private.event(e.i,e.data);if(private.threads_left==0){private.callback(private.output);};};});private.threads.push(new_thread);};this.run=function(dataSet,event,callback){private.data_set=dataSet;private.event=event;private.callback=callback;let data_set_length=dataSet.length;private.data_set_length=data_set_length;private.data_set_i=-1;private.threads_left=threads;for(var[i,thread]of private.threads.entries()){private.data_set_i+=1;if(private.data_set_i<data_set_length){thread.postMessage({i:private.data_set_i,data:private.data_set[private.data_set_i]});}else{private.threads_left-=1;};};};};plugin.cluster={forAll:forAll,forEach:forEach};;return plugin;}); //409:7
 for(var[$key,$value]of $pending_plugins.entries()){$get_plugin($key);};
 let foo=-1; //4:10 | test.nt
 let integer=12; //6:14 | test.nt
@@ -352,65 +354,143 @@ assert('delete',null,()=>{
 	delete foo.bar; //331:11 | test.nt
 	return foo.bar; //332:11 | test.nt
 }); //327:7 | test.nt
-assert('includes',true,()=>{
+assert('is',true,()=>{
 	let foo="foo"; //335:14 | test.nt
-	return (['asdf','foo'].includes('foo')); //336:11 | test.nt
+	let search=['asdf','foo']; //336:17 | test.nt
+	return (['asdf','foo'].includes('foo'))&&(search.includes('foo')); //337:11 | test.nt
 }); //334:7 | test.nt
 assert('scope',true,()=>{
-	let foo=true; //339:14 | test.nt
-	let bar=false; //340:14 | test.nt
+	let foo=true; //340:14 | test.nt
+	let bar=false; //341:14 | test.nt
 	{
-		let foo=false; //342:18 | test.nt
-		bar=true; //343:12 | test.nt
-	}; //341:10 | test.nt
-	return foo&&bar; //345:11 | test.nt
-}); //338:7 | test.nt
-console.log(); //347:12 | test.nt
-console.log("Errors:"); //350:12 | test.nt
+		let foo=false; //343:18 | test.nt
+		bar=true; //344:12 | test.nt
+	}; //342:10 | test.nt
+	return foo&&bar; //346:11 | test.nt
+}); //339:7 | test.nt
+console.log(); //348:12 | test.nt
+console.log("Errors:"); //351:12 | test.nt
 assert('Error','message',()=>{
 	try{
 		throw Error("message");
 	}catch(e){
-		return e.message; //355:15 | test.nt
+		return e.message; //356:15 | test.nt
 	};
-}); //351:7 | test.nt
+}); //352:7 | test.nt
 assert('SyntaxError','message',()=>{
 	try{
 		throw SyntaxError("message");
 	}catch(e){
-		return e.message; //362:15 | test.nt
+		return e.message; //363:15 | test.nt
 	};
-}); //358:7 | test.nt
+}); //359:7 | test.nt
 assert('ReferenceError','message',()=>{
 	try{
 		throw ReferenceError("message");
 	}catch(e){
-		return e.message; //369:15 | test.nt
+		return e.message; //370:15 | test.nt
 	};
-}); //365:7 | test.nt
+}); //366:7 | test.nt
 assert('RangeError','message',()=>{
 	try{
 		throw RangeError("message");
 	}catch(e){
-		return e.message; //376:15 | test.nt
+		return e.message; //377:15 | test.nt
 	};
-}); //372:7 | test.nt
-console.log(); //379:12 | test.nt
-console.log("Multithreading:"); //385:12 | test.nt
-assert("Thread",true,()=>{
-}); //386:7 | test.nt
-assert("Thread Pool",true,()=>{
-}); //387:7 | test.nt
-console.log(); //388:12 | test.nt
-console.log("OCS:"); //415:12 | test.nt
-assert("Environment",false,()=>{
-}); //416:7 | test.nt
-assert("Entity",false,()=>{
-}); //417:7 | test.nt
-assert("Component",false,()=>{
-}); //418:7 | test.nt
-assert("Query",false,()=>{
-}); //419:7 | test.nt
-assert("System",false,()=>{
+}); //373:7 | test.nt
+console.log(); //380:12 | test.nt
+let OCS=$plugins.get('OCS'); //409:7
+console.log("OCS:"); //411:12 | test.nt
+assert("Environment",true,()=>{
+	let main=new OCS._Environment_("main"); //414:16 | test.nt
+	let remove=new OCS._Environment_("remove"); //415:16 | test.nt
+	OCS._Environment_.delete('remove'); //416:16 | test.nt
+	return OCS._Environment_.has('main')&&OCS._Environment_.has('remove')==false; //418:11 | test.nt
+}); //412:7 | test.nt
+assert("Entity",true,()=>{
+	let main=OCS._Environment_.get("main"); //421:15 | test.nt
+	let foo=main.createEntity("foo"); //424:17 | test.nt
+	let bar=main.createEntity(); //425:17 | test.nt
+	bar.destroy(); //426:11 | test.nt
+	return main.getEntity('foo')!=null; //427:11 | test.nt
 }); //420:7 | test.nt
-console.log(); //421:12 | test.nt
+assert("Component",true,()=>{
+	let main=OCS._Environment_.get("main"); //431:15 | test.nt
+	let foo=main.getEntity('foo'); //432:14 | test.nt
+	let position=new OCS._Component_("position",{
+		x:new OCS._Prop_(0),
+		y:new OCS._Prop_(0),
+		z:0
+	}); //435:14 | test.nt
+	main.bindComponent(position); //442:19 | test.nt
+	foo.bindComponent(position,1); //445:18 | test.nt
+	let success=foo.position.x==1&&foo.position.y==0&&foo.position.z==0; //447:18 | test.nt
+	return success; //451:11 | test.nt
+}); //429:7 | test.nt
+assert("Query",true,()=>{
+	let main=OCS._Environment_.get("main"); //456:15 | test.nt
+	let position=main.getComponent("position"); //457:19 | test.nt
+	let rotation=new OCS._Component_("rotation",{
+		x:new OCS._Prop_(0),
+		y:new OCS._Prop_(0)
+	}); //460:14 | test.nt
+	main.bindComponent(rotation); //464:19 | test.nt
+	let alpha=new OCS._Component_("alpha",{
+		alpha:new OCS._Prop_(1)
+	}); //466:14 | test.nt
+	main.bindComponent(alpha); //469:16 | test.nt
+	let a=main.createEntity("a"); //472:17 | test.nt
+	a.bindComponent(position); //473:16 | test.nt
+	a.bindComponent(rotation); //474:16 | test.nt
+	let b=main.createEntity("b"); //477:17 | test.nt
+	b.bindComponent(position); //478:16 | test.nt
+	let c=main.createEntity("c"); //481:17 | test.nt
+	c.bindComponent(alpha); //482:13 | test.nt
+	main.createQuery("query_all",OCS.all("position")); //486:16 | test.nt
+	main.createQuery("query_some",OCS.some("rotation","alpha")); //487:16 | test.nt
+	main.createQuery("query_none",OCS.none("position")); //488:16 | test.nt
+	main.createQuery("query_multiple",OCS.all(OCS.some("position"),"rotation"),OCS.none("alpha")); //489:16 | test.nt
+	return true; //499:11 | test.nt
+}); //454:7 | test.nt
+assert("System",true,()=>{
+	let main=OCS._Environment_.get("main"); //503:15 | test.nt
+	main.getEntity('foo').destroy(); //504:34 | test.nt
+	let success=true; //505:18 | test.nt
+	let should_pass=function(val){ //506:32 | test.nt
+		if(val==false){
+			success=false; //508:20 | test.nt
+		}; //507:11 | test.nt
+	}; //506:22 | test.nt
+	let should_fail=function(val){ //511:32 | test.nt
+		if(val==true){
+			success=false; //513:20 | test.nt
+		}; //512:11 | test.nt
+	}; //511:22 | test.nt
+	let system_all=main.createSystem("system_all","query_all",(entity,i)=>{
+		entity.position.x+=1; //520:15 | test.nt
+		should_pass(["a","b"].includes(entity.name)); //521:20 | test.nt
+		should_fail(["c"].includes(entity.name)); //522:20 | test.nt
+		return entity;
+	}); //519:17 | test.nt
+	system_all.run(); //524:19 | test.nt
+	let system_some=main.createSystem("system_some","query_some",(entity,i)=>{
+		should_pass(["a","c"].includes(entity.name)); //527:20 | test.nt
+		should_fail(["b"].includes(entity.name)); //528:20 | test.nt
+		return entity;
+	}); //526:17 | test.nt
+	system_some.run(); //530:20 | test.nt
+	let system_none=main.createSystem("system_none","query_none",(entity,i)=>{
+		should_pass(["c"].includes(entity.name)); //533:20 | test.nt
+		should_fail(["a","b"].includes(entity.name)); //534:20 | test.nt
+		return entity;
+	}); //532:17 | test.nt
+	system_none.run(); //536:20 | test.nt
+	let system_multiple=main.createSystem("system_multiple","query_multiple",(entity,i)=>{
+		should_pass(["a"].includes(entity.name)); //539:20 | test.nt
+		should_fail(["b","c"].includes(entity.name)); //540:20 | test.nt
+		return entity;
+	}); //538:17 | test.nt
+	system_multiple.run(); //542:24 | test.nt
+	return success; //545:11 | test.nt
+}); //501:7 | test.nt
+console.log(); //547:12 | test.nt

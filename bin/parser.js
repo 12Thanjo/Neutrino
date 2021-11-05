@@ -223,7 +223,7 @@ var Parser = function(tokens, macro_map, config){
 			var PRECEDENCE = {
 			    "=": 1, "+=": 1, "-=": 1, "*=": 1, "/=": 1, "%=": 1,
 			    "=>": 1, "=<": 1, "=+": 1, "=-": 1, "=*": 1, "=/": 1, "=%": 1,
-			    "default": 2, "typeof": 2, "instanceof": 2, "includes": 2, 'swap': 2, 'toggle': 2,
+			    "default": 2, "typeof": 2, "instanceof": 2, "is": 2, 'swap': 2, 'toggle': 2,
 			    "&&": 3, "||": 3,
 			    "<": 4, ">": 4, "<=": 4, ">=": 4, "==": 4, "!=": 4,
 			    "+": 5, "-": 5,
@@ -247,9 +247,9 @@ var Parser = function(tokens, macro_map, config){
                         type = "reverse assign";
                     }else if(["=>", "=<"].includes(token.value)){
                         type = "special assign";
-                    }else if(["default", 'typeof', 'instanceof', 'includes', 'swap', 'toggle'].includes(token.value)){
+                    }else if(["default", 'typeof', 'instanceof', 'is', 'swap', 'toggle'].includes(token.value)){
                         type = token.value;
-                    }else if([">>", "->"].includes(token.value)){
+                    }else if([">>", "->", "x>"].includes(token.value)){
                     	type = "OCS";
                     }
 
@@ -976,6 +976,14 @@ var Parser = function(tokens, macro_map, config){
 		entity: ()=>{
 			var position = self.peek().position;
 			self.skip.type("Entity");
+
+			var type = "entity";
+
+			if(self.is.operation("x>")){
+				self.skip.operation("x>");
+				type = "entity destroy";
+			}
+
 			var id = self.get.id();
 			var name;
 
@@ -987,7 +995,7 @@ var Parser = function(tokens, macro_map, config){
 
 
 			return {
-				type: "entity",
+				type: type,
 				id: id,
 				name: name,
 				position: position
@@ -1027,12 +1035,15 @@ var Parser = function(tokens, macro_map, config){
 		query: ()=>{
 			var position = self.peek().position;
 			self.skip.type("Query");
-			var id = self.parse.id();
+			var id = self.get.id();
+			var conditionals = self.parse.array();
+
 
 			return {
 				type: "query",
 				id: id,
-				position: position
+				position: position,
+				conditionals: conditionals.array
 			};
 		},
 

@@ -302,8 +302,8 @@ var Compiler = function(input, const_dict, config){
 		return "typeof " + evaluate(expr.left) + "==" + no_tab_evaluate(expr.right);
 	});
 
-	evaluators.set('includes', (expr)=>{
-		return evaluate(expr.left) + ".includes(" + no_tab_evaluate(expr.right) + ")";
+	evaluators.set('is', (expr)=>{
+		return evaluate(expr.right) + ".includes(" + no_tab_evaluate(expr.left) + ")";
 	});
 
 	evaluators.set('swap', (expr)=>{
@@ -576,9 +576,13 @@ var Compiler = function(input, const_dict, config){
 	});
 
 
-	evaluators.set('program', (program)=>{
+	evaluators.set('program', (program, use_t)=>{
+		use_t ?? false;
 		var output = "";
 		program.program.forEach((expr)=>{
+			if(use_t){
+				output += t();
+			}
 			output += evaluate(expr);
 		});
 
@@ -848,6 +852,12 @@ var Compiler = function(input, const_dict, config){
 	});
 
 
+	evaluators.set('env destroy', (expr)=>{
+		var id = no_tab_evaluate(expr.id);
+		return t() + "OCS._Environment_.delete('" + id + "');" + comment(expr.position);
+	});
+
+
 	evaluators.set('component', (expr)=>{
 		var id = no_tab_evaluate(expr.id);
 		var builder = no_tab_evaluate(expr.builder);
@@ -856,6 +866,11 @@ var Compiler = function(input, const_dict, config){
 
 	evaluators.set("prop", (expr)=>{
 		return t() + `new OCS._Prop_(${no_tab_evaluate(expr.value)})`;
+	});
+
+	evaluators.set('entity destroy', (expr)=>{
+		var id = no_tab_evaluate(expr.id);
+		return t() + `${id}.destroy();` + comment(expr.position);
 	});
 
 
@@ -875,16 +890,25 @@ var Compiler = function(input, const_dict, config){
 		create_query: function(expr){
 			var environment = no_tab_evaluate(expr.left);
 			var name = expr.right.id.value;
-			expr.right.id.attachments[0].value.forEach((conditional)=>{
-				if(!['All', 'Some', 'None'].includes(conditional.value)){
-					error("Query conditionals can only use All, Some, or None\n\tgot (" + conditional.value + ")", conditional.position);
-				}
 
-				conditional.value = "OCS." + conditional.value.toLowerCase();
-			});
+			var convert_conditional_names_recursive = function(target, first){
+				target.forEach((conditional)=>{
+					if(first || conditional.type == "id"){
+						if(!['All', 'Some', 'None'].includes(conditional.value)){
+							error("Query conditionals can only use All, Some, or None\n\tgot (" + conditional.value + ")", conditional.position);
+						}
+						conditional.value = "OCS." + conditional.value.toLowerCase();
+						convert_conditional_names_recursive(conditional.attachments[0].value, false);
+					}
+
+				});
+			}
+
+			convert_conditional_names_recursive(expr.right.conditionals, true);
+
 			
 			add_semi();
-			var call = parse_call(expr.right.id.attachments[0].value);
+			var call = parse_call(expr.right.conditionals);
 			call = call.substring(1, call.length-1);
 			remove_semi();
 			return t() + `${environment}.createQuery("${name}",${call});` + comment(expr.right.position);
@@ -911,13 +935,14 @@ var Compiler = function(input, const_dict, config){
 			var system = no_tab_evaluate(expr.right.id);
 			var query = no_tab_evaluate(expr.right.query);
 
-			var program = evaluate(expr.right.program);
+			var program = evaluate(expr.right.program, true);
 
-			var output = `let ${system}=${environment}.createSystem("${system}",${query},(entity,i)=>{`;
+			var output = t() + `let ${system}=${environment}.createSystem("${system}","${query}",(entity,i)=>{` + n;
 			tab_depth += 1;
 			output += program;
+			output += t() + "return entity;" + n;
 			tab_depth -= 1;
-			output += "return entity;});" + comment(expr.right.position);
+			output += t() + "});" + comment(expr.right.position);
 
 			return output;
 		},
@@ -945,9 +970,9 @@ var Compiler = function(input, const_dict, config){
 
 	var count = 0;
 	var tab_depth = 0;
-	var evaluate = function(expr){
+	var evaluate = function(expr, param){
 		if(evaluators.has(expr.type)){
-			var output = evaluators.get(expr.type)(expr);
+			var output = evaluators.get(expr.type)(expr, param);
 			return output;
 		}else{
 			// console.error("\x1b[31m" + `compiler >\n\tunknown type: ${expr.type}` + "\x1b[37m", expr.position);

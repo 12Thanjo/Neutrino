@@ -100,32 +100,30 @@ local OCS = function(){
 			access name = name;
 			if(name != null){
 				env_priv.entity_lookup.set(private.name, this);
-				local destroy = this.destroy;
 				this.destroy = function(){
+					_Query_.forEach(@(query)->{
+						query.remove(this);
+					});
 					env_priv.entity_lookup.delete(private.name);
 					env_priv.removed.add(private.id);
-					_Query_.forEach(@(query)->{
-						query.audit(this);
-					});
-					destroy();
+					env_priv.entities[private.id] = null;
 				};
 			}else{
-				local destroy = this.destroy;
 				this.destroy = function(){
-					env_priv.removed.add(private.id);
 					_Query_.forEach(@(query)->{
-						query.audit(this);
+						query.remove(this);
 					});
-					destroy();
+					env_priv.removed.add(private.id);
+					env_priv.entities[private.id] = null;
 				};
 			};
 
 			this.bindComponent = function(component, ~params){
-				if(component instanceof _Component_){
+				if(component instanceof _Component_ || component instanceof EnvComponent){
 					component = component.id;
 				};
 				if(EnvComponent.has(component) == false){
-					ReferenceError "Environment (" + env_priv + ") does not have component (" + component + ")";
+					ReferenceError |"Environment (" env_priv.id  ") does not have component ("  component  ")"|;
 				};
 
 				local component_target = EnvComponent.get(component);
@@ -172,7 +170,7 @@ local OCS = function(){
 		};
 
 		species EnvComponent(id, builder){
-			// private.id = id;
+			access id = id;
 			this.builder = builder;
 		};
 
@@ -197,6 +195,10 @@ local OCS = function(){
 				};
 			};
 
+			this.remove = function(entity){
+				this.entities.delete(entity.id);
+			};
+
 			//Entity.forEach(@(entity)->{
 			//	this.audit(entity);
 			//});
@@ -209,7 +211,7 @@ local OCS = function(){
 
 			this.forEach = function(event){
 				itterate this.entities(i, id){
-					event(env_priv.entities[id]);
+					event(env_priv.entities[id], i);
 				};
 			};
 
@@ -219,8 +221,8 @@ local OCS = function(){
 			private.query = _Query_.get(query);
 			private.event = event;
 			this.run = function(){
-				private.query.forEach(@(entity)->{
-					private.event(entity);
+				private.query.forEach(@(entity, i)->{
+					private.event(entity, i);
 				});
 			};
 

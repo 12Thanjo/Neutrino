@@ -7,10 +7,15 @@
 local worker = null;
 
 
-if(Worker != null){
-	worker = Worker;
-}else{
-	worker = require('worker_threads').Worker;
+
+try{
+    if(Worker != null){
+    	worker = Worker;
+    }else{
+    	worker = require('worker_threads').Worker;
+    };
+}catch{
+    worker = require('worker_threads').Worker;
 };
 
 

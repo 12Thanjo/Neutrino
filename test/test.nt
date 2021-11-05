@@ -331,9 +331,10 @@ assert('delete', null, @()->{
 	delete foo.bar;
 	return foo.bar;
 });
-assert('includes', true, @()->{
+assert('is', true, @()->{
 	local foo = "foo";
-	return (['asdf', 'foo'] includes 'foo');
+	local search = ['asdf', 'foo'];
+	return ('foo' is ['asdf', 'foo']) && ('foo' is search);
 });
 assert('scope', true, @()->{
 	local foo = true;
@@ -379,43 +380,143 @@ assert('RangeError', 'message', @()->{
 console.log();
 
 
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-console.log("Multithreading:");
-assert("Thread", true, @()->{});
-assert("Thread Pool", true, @()->{});
-console.log();
-
-
-
-
-// Environment main;
-
-// main -> Entity foo;
-// main -> Entity bar('bar');
-
-// Component position{
-// 	x: Prop(0),
-// 	y: Prop(0)
-// };
-
-// position >> main;
-
-// Query physics[All(position)];
-
-// physics >> main;
-
-// physics >> foo;
-
-// main -> System physics_system(physics){
-// 	entity.x += 1;
-// };
+import OCS;
 
 console.log("OCS:");
-assert("Environment", false, @()->{});
-assert("Entity", false, @()->{});
-assert("Component", false, @()->{});
-assert("Query", false, @()->{});
-assert("System", false, @()->{});
+assert("Environment", true, @()->{
+	// create Environment
+	Environment main;
+	Environment env_to_remove;
+	Environment x> env_to_remove;//delete env_to_remove
+
+	return OCS._Environment_.has('main') && OCS._Environment_.has('env_to_remove') == false;
+});
+assert("Entity", true, @()->{
+	local main = OCS._Environment_.get("main");
+
+	// create entities
+	main -> Entity foo("foo"); //has a string identifier
+	main -> Entity bar; //doesn't have an string identifier
+	Entity x> bar; //delete Entity bar
+	// bar.destroy(); //alternative to the above line
+	return main.getEntity('foo') != null;
+});
+assert("Component", true, @()->{
+	// setup for test
+	local main = OCS._Environment_.get("main");
+	local foo = main.getEntity('foo');
+
+	// create component
+	Component position{
+		x: Prop(0), //settable property with default 0
+		y: Prop(0), //settable property with default 0
+		z: 0 //unsettable property with default 0
+	};
+
+	// bind Component position to Environment main
+	position >> main;
+
+	// bind Component position to Entity foo
+	position >> foo(1);
+
+	local success = foo.position.x == 1 && foo.position.y == 0 && foo.position.z == 0;
+
+	// Entity foo x> main;
+
+	return success;
+
+});
+assert("Query", true, @()->{
+	// setup for test
+	local main = OCS._Environment_.get("main");
+	local position = main.getComponent("position");
+
+	// create component rotation
+	Component rotation{
+		x: Prop(0),
+		y: Prop(0),
+	};
+	rotation >> main;
+
+	Component alpha{
+		alpha: Prop(1),
+	};
+	alpha >> main;
+
+	// test entity a
+	main -> Entity a("a");
+	position >> a;
+	rotation >> a;
+
+	// test entity b
+	main -> Entity b("b");
+	position >> b;
+
+	// test entity c
+	main -> Entity c("c");
+	alpha >> c;
+
+	///////////////////////////////////////////////////////////
+	// create queries
+	main -> Query query_all[All("position")];
+	main -> Query query_some[Some("rotation", "alpha")];
+	main -> Query query_none[None("position")];
+	main -> Query query_multiple[
+		All(
+			Some("position"),
+			"rotation"
+		),
+		None("alpha")
+	];
+
+	// no real tests can be made
+	// basically if this runs without error and the System test passes, then it's correct
+	return true;
+});
+assert("System", true, @()->{
+	// setup
+	local main = OCS._Environment_.get("main");
+	main.getEntity('foo').destroy();//delete foo from earlier tests
+	local success = true;
+	local should_pass = function(val){
+		if(val == false){
+			success = false;
+		};
+	};
+	local should_fail = function(val){
+		if(val == true){
+			success = false;
+		};
+	};
+
+	/////////////////////////////////////////////////////////
+
+	main -> System system_all(query_all){
+		entity.position.x += 1; //this is how interact with values of a component that is bound to an entity
+		should_pass(entity.name is ["a", "b"]);
+		should_fail(entity.name is ["c"]);
+	};
+	system_all.run();
+
+	main -> System system_some(query_some){
+		should_pass(entity.name is ["a", "c"]);
+		should_fail(entity.name is ["b"]);
+	};
+	system_some.run();
+
+	main -> System system_none(query_none){
+		should_pass(entity.name is ["c"]);
+		should_fail(entity.name is ["a", "b"]);
+	};
+	system_none.run();
+
+	main -> System system_multiple(query_multiple){
+		should_pass(entity.name is ["a"]);
+		should_fail(entity.name is ["b", "c"]);
+	};
+	system_multiple.run();
+
+
+	return success;
+});
 console.log();
