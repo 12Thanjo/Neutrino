@@ -1,5 +1,5 @@
 	const {cmd} = require('virtuosity-server');
-var neutrino = require("../bin/index.js");
+var neutrino = require("../lib/index.js");
 
 var vm = require('vm');
 var context = {

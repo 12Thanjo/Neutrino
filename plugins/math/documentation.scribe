@@ -1,6 +1,21 @@
 name: math
 	type: object
 	description: advanced math types and functions
+	name: apply
+		type: function
+		description: apply the math functions to the built in Math object
+	name: clamp
+		type: function
+		description: clamp values
+		param: value
+			type: number
+			description: value to clamp
+		param: min
+			type: number
+			description: minimum value of clamp
+		param: max
+			type: number
+			description: maximum value of clamp
 	name: Vector2
 		type: class
 		description: 2d vector

@@ -1,4 +1,4 @@
-var neutrino = require('../bin/index.js');
+var neutrino = require('../lib/index.js');
 var {cmd, files} = require('virtuosity-server');
 
 
@@ -7,10 +7,8 @@ var {cmd, files} = require('virtuosity-server');
 
 
 module.exports = function(args, dirname, compile_target, output_target){
-	var debug = args.includes("--debug");
-	var verbose = args.includes('--verbose');
 	var log = function(msg, color){
-		if(verbose){
+		if(args.includes('--verbose')){
 			cmd.log(msg, color);
 		}
 	}
@@ -25,7 +23,7 @@ module.exports = function(args, dirname, compile_target, output_target){
 	var build_files_recursive = function(dir, path, relative){
 		dir.forEach((item)=>{
 			if(item.type == "folder"){
-				if(item.dir != null){
+				if(item.dir != null && item.name != "neutrino_plugins"){
 					build_files_recursive(item.dir, path + "/" + item.name, relative + item.name + "/");
 				}
 			}else{
@@ -90,6 +88,13 @@ module.exports = function(args, dirname, compile_target, output_target){
 	});
 
 
+	var build_path = process.argv[2];
+
+
+	if(args.includes('--package') == false){
+		files.deleteFolder("location")
+	}
+
 
 	nt_tokens.forEach((file)=>{
 		var parsed = neutrino.Parser(file.tokens, ntm_tokens, {});
@@ -101,9 +106,12 @@ module.exports = function(args, dirname, compile_target, output_target){
 		}
 
 		var compiled = neutrino.Compiler(parsed.output, parsed.const_dict, {
-			debug: debug,
+			debug: args.includes('--debug'),
+			package: args.includes('--package'),
 			plugin: args.includes('--plugin'),
+			relative: file.relative.replaceAll("\\", "/"),
 		});
+
 		files.writeFile(file.path + "/" + file.name + ".js", compiled);
 		log(`> Compiled: ${cmd.color.yellow + file.relative.replaceAll("\\", "/") + cmd.color.blue + file.name}.nt`, cmd.color.green);
 	});

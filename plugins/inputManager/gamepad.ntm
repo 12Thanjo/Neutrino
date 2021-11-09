@@ -13,7 +13,7 @@ scope {
 		local gamepads = navigator.getGamepads();
 
 		forKeys gamepads(key, gamepad){
-			if((['0', '1', '2', '3'] includes key)){
+			if((key is ['0', '1', '2', '3'])){
 				event(parseInt(key), gamepad);
 			};
 		};

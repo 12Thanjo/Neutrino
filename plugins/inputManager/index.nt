@@ -65,115 +65,88 @@ macro "gamepad";
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-species Event(id, trigger, event){
+species Event(id, trigger, events){
 	private.id = id;
-	this.event = event;
-	this.trigger = trigger;
 
 	private.inputs = [];
-	if(trigger.input typeof "string"){
-		private.inputs.push(INPUT_MAP.get(trigger.input) + 22);
+	if(trigger typeof "string"){
+		if(INPUT_MAP.has(trigger) == false){
+			ReferenceError |"("trigger") is not a valid input trigger"|;
+		};
+		private.inputs.push(INPUT_MAP.get(trigger) + 22);
 	}else{
-		itterate trigger.input(key, value){
+		itterate trigger(key, value){
+			if(INPUT_MAP.has(value) == false){
+				ReferenceError |"("value") is not a valid input trigger"|;
+			};	
 			private.inputs.push(INPUT_MAP.get(value) + 22);
 		};
 	};
 
 
-	if(trigger.type == "wheel"){
-		WHEEL_EVENTS.set(private.id, event);
-	}else{
-		local event_arr = null;
-		local event_insert = function(){};
-		if(trigger.type == "down"){
-			event_arr = DOWN_EVENTS;
-			event_insert = function(){
-				local pass = true;
-				itterate private.inputs(key, value){
-					if(INPUT_DOWN[value] == false){
-						pass = false;
-						break;
-					};
-				};
+	events.down default @()->{};
+	events.up default @()->{};
+	events.press default @()->{};
 
-				if(pass){
-					event();
+
+	this.events = events;
+
+
+
+	itterate private.inputs(key, value){
+		DOWN_EVENTS[value].set(private.id, @()->{
+			local pass = true;
+			itterate private.inputs(key, value){
+				if(INPUT_DOWN[value] == false){
+					pass = false;
+					break;
 				};
 			};
-		}else if(trigger.type == "up"){
-			event_arr = UP_EVENTS;
-			event_insert = function(){
-				local pass = 1;
-				itterate private.inputs(key, value){
-					if(INPUT_DOWN[value] == false){
-						pass -= 1;
-					};
-				};
 
-				if(pass == 0){
-					event();
+			if(pass){
+				this.events.down();
+			};
+		});
+
+
+		UP_EVENTS[value].set(private.id, @()->{
+			local pass = 1;
+			itterate private.inputs(key, value){
+				if(INPUT_DOWN[value] == false){
+					pass -= 1;
 				};
 			};
-		}else if(trigger.type == "press"){
-			event_arr = PRESS_EVENTS;
-			event_insert = function(){
-				local pass = true;
-				itterate private.inputs(key, value){
-					if(INPUT_DOWN[value] == false){
-						pass = false;
-						break;
-					};
-				};
 
-				if(pass){
-					event();
+			if(pass == 0){
+				this.events.up();
+			};
+		});
+
+		PRESS_EVENTS[value].set(private.id, @()->{
+			local pass = true;
+			itterate private.inputs(key, value){
+				if(INPUT_DOWN[value] == false){
+					pass = false;
+					break;
 				};
 			};
-		}else{
-			ReferenceError |"\n\tinputManager: trigger type (" trigger.type ") is invalid"|;	
-		};
 
-
-		itterate private.inputs(key, value){
-			event_arr[value].set(private.id, event_insert);
-		};
+			if(pass){
+				this.events.press();
+			};
+		});
 	};
-
-
-
-
 };
 
-plugin.event = {};
 
-plugin.event.add = function(id, trigger, event){
-	spawn Event(id, trigger, event);
-};
+plugin.Event = Event;
 
-//plugin.event.getEvent = function(id){
-//	return Event.get(id).event;
-//};
-//plugin.event.getTrigger = function(id){
-//	return Event.get(id).trigger;
-//};
 
-//plugin.event.setEvent = function(id, event){
-//	Event.get(id).event = event;
-//};
-//plugin.event.setTrigger = function(id, trigger){
-//	Event.get(id).trigger = trigger;
-//};
-
-plugin.event.delete = function(id){
-	local trigger = Event.get(id).trigger;
-	if(trigger.type == "down"){
-		DOWN_EVENTS[INPUT_MAP.get(trigger.input) + 22].delete(id);
-	}else if(trigger.type == "up"){
-		UP_EVENTS[INPUT_MAP.get(trigger.input) + 22].delete(id);
-	}else if(trigger.type == "press"){
-		PRESS_EVENTS[INPUT_MAP.get(trigger.input) + 22].delete(id);
-	}else if(trigger.type == "wheel"){
-		WHEEL_EVENTS.delete(id);
-	};
-	Event.delete(id);
+plugin.wheel = {
+	add: function(id, event){
+		WHEEL_EVENTS.set(id, event);
+	},
+	remove: function(id){
+		WHEEL_EVENTS.set(id);
+	},
 };

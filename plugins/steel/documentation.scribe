@@ -155,7 +155,7 @@ name: steel
 					type: BABYLON.Color3
 					description: color of vignette
 					default: BABYLON.Color3(0,0,0)
-				prop: weight
+				prop: weight weight
 					type: number
 					description: weight of the vignette
 					default: 2

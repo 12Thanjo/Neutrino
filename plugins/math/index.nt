@@ -3,3 +3,21 @@
 // author: 12Thanjo
 
 macro "Vector2";
+
+plugin.clamp = function(value, min, max){
+	if(value < min){
+		return min;
+	}else if(value > max){
+		return max
+	}else{
+		return value;
+	};
+};
+
+plugin.apply = function(){
+	forKeys plugin(key, value){
+		if(key != "apply"){
+			Math[key] = value;
+		};
+	};
+};

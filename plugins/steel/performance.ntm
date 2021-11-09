@@ -1,0 +1,54 @@
+private.fpsTimer = process.hrtime();
+access fpsMax = -1 * Infinity;
+access fpsMin = Infinity;
+private.fpsBoundsWaitCounter = 120;
+access fps = 0;
+access frameTime = 0;
+
+define MAXSAMPLES = 1000;
+
+private.tickindex = 0;
+private.ticksum = 0;
+private.ticklist = [MAXSAMPLES];
+private.ticklist_size = 0;
+access fpsAvg = 0;
+
+local calc_average_tick = function(newtick){
+    if(private.ticklist_size == MAXSAMPLES){
+        private.ticksum -= private.ticklist[private.tickindex];  //subtract value falling off
+    }else{
+        private.ticklist_size += 1;
+    };
+    private.ticksum += newtick;              // add new value
+    private.ticklist[private.tickindex] = newtick;  // save new value so it can be subtracted later
+    private.tickindex += 1;
+    if(private.tickindex == MAXSAMPLES){ //inc buffer index
+        private.tickindex = 0;
+    };  
+
+    // return average
+    if(private.ticklist_size == MAXSAMPLES){
+        return Math.floor(private.ticksum/MAXSAMPLES);
+    }else{
+        return Math.floor(private.ticksum/private.ticklist_size);
+    };
+};
+ 
+
+define BILLION = 1000000000;
+local calc_performance = function(){
+    local diff = process.hrtime(private.fpsTimer);
+    private.frameTime = diff[0] * BILLION + diff[1];
+    private.fps = Math.floor(BILLION / private.frameTime);
+
+    private.frameTime = Math.floor(private.frameTime / 1000) / 1000;
+
+    private.fpsAvg = calc_average_tick(private.fps);
+    if(private.fpsBoundsWaitCounter == 0){
+        private.fpsMax => private.fps;
+        private.fpsMin =< private.fps;
+    }else{
+        private.fpsBoundsWaitCounter -= 1;
+    };
+    private.fpsTimer = process.hrtime();
+};

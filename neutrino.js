@@ -1,9 +1,9 @@
-var neutrino = require('./bin/index.js');
+var neutrino = require('./lib/index.js');
 var {cmd, files} = require('virtuosity-server');
 
 
 var args = process.argv.slice(3);
-var dirname = process.argv[2].replaceAll("?", " ");
+var dirname = process.argv[2];
 
 if(args.length == 0){
 	require('./neutrino/runtime.js');
@@ -47,6 +47,7 @@ if(args.length == 0){
 		help_log('--debug', 'Compiled output in debug mode');
 		help_log('--run', 'run the program after it compiled if it compiled successfully (only used with the "compile" command)');
 		help_log('--module', 'compile without imports (for internal use of Tau)');
+		help_log('--packaged', 'Plugins will be written into the file instead of a separate folder');
 		help_log('--verbose', 'logs to the console');
 		help_log('--view', 'will ouput the parsed program to the console (for the purpose of debugging the compiler)');
 

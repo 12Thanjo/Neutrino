@@ -14,28 +14,47 @@ let Engine=function(name,config){
 	}else{
 		this.canvas=config.canvas; //20:13 | index.nt
 	}; //13:7 | index.nt
+	if(config.fov==null){config.fov=75;}; //22:11 | index.nt
+	if(config.shadowResolution==null){config.shadowResolution=2048;}; //23:11 | index.nt
+	if(config.MSAA==null){config.MSAA=1;}; //24:11 | index.nt
+	if(config.poll==null){config.poll=15.625;}; //25:11 | index.nt
+	if(config.update==null){config.update=()=>{
+	};}; //26:11 | index.nt
+	if(config.render==null){config.render=()=>{
+	};}; //27:11 | index.nt
 	private.engine=new BABYLON.Engine(this.canvas,true,{
 preserveDrawingBuffer:true,
 stencil:true,
 disableWebGL2Support:false
-}); //25:12 | index.nt
-	private.scene=new BABYLON.Scene(private.engine); //26:12 | index.nt
-	let camera=new BABYLON.FreeCamera("camera1",new BABYLON.Vector3(0,5,-10),private.scene); //27:17 | index.nt
-	camera.setTarget(BABYLON.Vector3.Zero()); //28:21 | index.nt
-	camera.fov=1.566; //29:11 | index.nt
-	camera.attachControl(this.canvas,true); //31:25 | index.nt
-	let light=new BABYLON.HemisphericLight("light",new BABYLON.Vector3(0,1,0),private.scene); //33:16 | index.nt
-	light.intensity=0.7; //35:10 | index.nt
+}); //34:12 | index.nt
+	private.scene=new BABYLON.Scene(private.engine); //35:12 | index.nt
+	private.camera=new BABYLON.FreeCamera("camera1",new BABYLON.Vector3(0,5,-10),private.scene); //36:18 | index.nt
+	Object.defineProperty(this, "camera", {get: ()=>{return private.camera;}}); //36:11 | index.nt
+	private.camera.setTarget(BABYLON.Vector3.Zero()); //37:29 | index.nt
+	private.camera.fov=config.fov*0.0174; //38:12 | index.nt
+	private.camera.minZ=0.1; //39:12 | index.nt
+	private.scene.clearColor=new BABYLON.Color3(0.05,0.05,0.06); //43:12 | index.nt
+	let light=new BABYLON.DirectionalLight("ambient light",new BABYLON.Vector3(-1,-2,-1),private.scene); //44:16 | index.nt
+	light.position=new BABYLON.Vector3(20,40,20); //45:10 | index.nt
+	light.intensity=0.6; //46:10 | index.nt
+	shadowGenerator=new BABYLON.ShadowGenerator(config.shadowResolution,light); //49:20 | index.nt
+	shadowGenerator.usePoissonSampling=true; //51:20 | index.nt
 	let sphere=BABYLON.MeshBuilder.CreateSphere("sphere",{
 diameter:2,
-segments:32
-},private.scene); //37:17 | index.nt
-	sphere.position.y=1; //39:11 | index.nt
-	let ground=BABYLON.MeshBuilder.CreateGround("ground",{
-width:6,
-height:6
-},private.scene); //41:17 | index.nt
-	let pipeline=new BABYLON.DefaultRenderingPipeline("default",true,private.scene,[camera]); //1:15 | post processing.ntm
+segments:512
+},private.scene); //54:17 | index.nt
+	sphere.position.y=1; //55:11 | index.nt
+	shadowGenerator.getShadowMap().renderList.push(sphere); //56:51 | index.nt
+	sphere.receiveShadows=true; //57:11 | index.nt
+	sphere.material=new BABYLON.StandardMaterial("mat",private.scene); //58:11 | index.nt
+	sphere.material.diffuseColor=new BABYLON.Color3(0,0.8,1); //59:11 | index.nt
+	sphere.material.emissiveColor=new BABYLON.Color3(0,0.8/5,1/5); //61:11 | index.nt
+	let new_box=new BABYLON.Mesh.CreateBox("box",1,private.scene); //63:18 | index.nt
+	new_box.scaling.set(5,1,5); //64:24 | index.nt
+	new_box.position.y=-1; //65:12 | index.nt
+	shadowGenerator.getShadowMap().renderList.push(new_box); //66:51 | index.nt
+	new_box.receiveShadows=true; //67:12 | index.nt
+	let pipeline=new BABYLON.DefaultRenderingPipeline("default",true,private.scene,[private.camera]); //1:15 | post processing.ntm
 	pipeline.fxaaEnabled=false; //4:9 | post processing.ntm
 	pipeline.samples=1; //7:9 | post processing.ntm
 	pipeline.sharpenEnabled=false; //10:9 | post processing.ntm
@@ -352,10 +371,65 @@ height:6
 			pipeline.grain.animated=val; //366:17 | post processing.ntm
 		}
 	}); //361:22 | post processing.ntm
+	this.pipeline.MSAA=config.MSAA; //71:9 | index.nt
+	private.update=new time.AdvancedInterval(config.poll,()=>{
+config.update(); //75:22 | index.nt
+}); //74:12 | index.nt
+	private.update.start(); //77:25 | index.nt
+	private.fpsTimer=process.hrtime(); //1:8 | performance.ntm
+	private.fpsMax=Infinity*-1; //2:14 | performance.ntm
+	Object.defineProperty(this, "fpsMax", {get: ()=>{return private.fpsMax;}}); //2:7 | performance.ntm
+	private.fpsMin=Infinity; //3:14 | performance.ntm
+	Object.defineProperty(this, "fpsMin", {get: ()=>{return private.fpsMin;}}); //3:7 | performance.ntm
+	private.fpsBoundsWaitCounter=120; //4:8 | performance.ntm
+	private.fps=0; //5:11 | performance.ntm
+	Object.defineProperty(this, "fps", {get: ()=>{return private.fps;}}); //5:7 | performance.ntm
+	private.frameTime=0; //6:17 | performance.ntm
+	Object.defineProperty(this, "frameTime", {get: ()=>{return private.frameTime;}}); //6:7 | performance.ntm
+	private.tickindex=0; //10:8 | performance.ntm
+	private.ticksum=0; //11:8 | performance.ntm
+	private.ticklist=[1000]; //12:8 | performance.ntm
+	private.ticklist_size=0; //13:8 | performance.ntm
+	private.fpsAvg=0; //14:14 | performance.ntm
+	Object.defineProperty(this, "fpsAvg", {get: ()=>{return private.fpsAvg;}}); //14:7 | performance.ntm
+	let calc_average_tick=function(newtick){ //16:34 | performance.ntm
+		if(private.ticklist_size==1000){
+			private.ticksum-=private.ticklist[private.tickindex]; //18:16 | performance.ntm
+		}else{
+			private.ticklist_size+=1; //20:16 | performance.ntm
+		}; //17:7 | performance.ntm
+		private.ticksum+=newtick; //22:12 | performance.ntm
+		private.ticklist[private.tickindex]=newtick; //23:12 | performance.ntm
+		private.tickindex+=1; //24:12 | performance.ntm
+		if(private.tickindex==1000){
+			private.tickindex=0; //26:16 | performance.ntm
+		}; //25:7 | performance.ntm
+		if(private.ticklist_size==1000){
+			return Math.floor(private.ticksum/1000); //31:15 | performance.ntm
+		}else{
+			return Math.floor(private.ticksum/private.ticklist_size); //33:15 | performance.ntm
+		}; //30:7 | performance.ntm
+	}; //16:24 | performance.ntm
+	let calc_performance=function(){ //39:33 | performance.ntm
+		let diff=process.hrtime(private.fpsTimer); //40:15 | performance.ntm
+		private.frameTime=diff[0]*1000000000+diff[1]; //41:12 | performance.ntm
+		private.fps=Math.floor(1000000000/private.frameTime); //42:12 | performance.ntm
+		private.frameTime=Math.floor(private.frameTime/1000)/1000; //44:12 | performance.ntm
+		private.fpsAvg=calc_average_tick(private.fps); //46:12 | performance.ntm
+		if(private.fpsBoundsWaitCounter==0){
+			if(private.fps>private.fpsMax){private.fpsMax=private.fps}; //48:16 | performance.ntm
+			if(private.fps<private.fpsMin){private.fpsMin=private.fps}; //49:16 | performance.ntm
+		}else{
+			private.fpsBoundsWaitCounter-=1; //51:16 | performance.ntm
+		}; //47:7 | performance.ntm
+		private.fpsTimer=process.hrtime(); //53:12 | performance.ntm
+	}; //39:23 | performance.ntm
 	private.engine.runRenderLoop(()=>{
-		private.scene.render(); //47:32 | index.nt
-	}); //46:33 | index.nt
+		calc_performance(); //82:25 | index.nt
+		config.render(); //83:22 | index.nt
+		private.scene.render(); //84:32 | index.nt
+	}); //81:33 | index.nt
 }; //8:8 | index.nt
 Engine.$map=new Map();Engine.get=function(id){return Engine.$map.get(id);};Engine.has=function(id){return Engine.$map.has(id);};Engine.forEach=function(cb){Engine.$map.forEach(cb);};Engine.delete=function(cb){Engine.$map.delete(cb);}; //8:8 | index.nt
-plugin.Engine=Engine; //50:7 | index.nt
+plugin.Engine=Engine; //87:7 | index.nt
 ;return plugin;});

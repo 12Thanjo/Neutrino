@@ -1,4 +1,4 @@
-local pipeline = new BABYLON.DefaultRenderingPipeline("default", true, private.scene, [camera]);
+local pipeline = new BABYLON.DefaultRenderingPipeline("default", true, private.scene, [private.camera]);
 
 // FXAA
 pipeline.fxaaEnabled = false;

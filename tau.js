@@ -1,4 +1,4 @@
-var neutrino = require('./bin/index.js');
+var neutrino = require('./lib/index.js');
 var {cmd, files} = require('virtuosity-server');
 
 

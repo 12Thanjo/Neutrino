@@ -19,31 +19,68 @@ species Engine(name, config){
 	}else{
 		this.canvas = config.canvas;
 	};
+	config.fov default 75;
+	config.shadowResolution default 2048;
+	config.MSAA default 1;
+	config.poll default 1000 / 64;
+	config.update default @()->{};
+	config.render default @()->{};
+
+
+	//////////////////////////////////////////////////////////////////////
 
 
 
 	private.engine = new BABYLON.Engine(this.canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false});
 	private.scene = new BABYLON.Scene(private.engine);
-	local camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), private.scene);
-	camera.setTarget(BABYLON.Vector3.Zero());
-	camera.fov = 2 * 3.14 / 360 * 90;
+	access camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), private.scene);
+	private.camera.setTarget(BABYLON.Vector3.Zero());
+	private.camera.fov = 2 * 3.14 / 360 * config.fov;
+	private.camera.minZ = 0.1;
 
-	camera.attachControl(this.canvas, true);
 
-	local light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), private.scene);
+	
+	private.scene.clearColor = new BABYLON.Color3(0.05,0.05,0.06);
+	local light = new BABYLON.DirectionalLight("ambient light", new BABYLON.Vector3(-1, -2, -1), private.scene);
+	light.position = new BABYLON.Vector3(20, 40, 20);
+	light.intensity = 0.6;
 
-	light.intensity = 0.7;
 
-	local sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, private.scene);
+	shadowGenerator = new BABYLON.ShadowGenerator(config.shadowResolution, light);
+    // shadowGenerator.setDarkness(0.5);
+    shadowGenerator.usePoissonSampling = true;
 
+
+	local sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 512}, private.scene);
 	sphere.position.y = 1;
+	shadowGenerator.getShadowMap().renderList.push(sphere);
+	sphere.receiveShadows = true;
+	sphere.material = new BABYLON.StandardMaterial("mat", private.scene);
+	sphere.material.diffuseColor = new BABYLON.Color3(0, 0.8, 1);
+	define FACTOR = 5;
+	sphere.material.emissiveColor = new BABYLON.Color3(0, 0.8 / FACTOR, 1 / FACTOR);
 
-	local ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, private.scene);
+	local new_box = new BABYLON.Mesh.CreateBox("box", 1, private.scene);
+	new_box.scaling.set(5, 1, 5);
+	new_box.position.y = -1;
+	shadowGenerator.getShadowMap().renderList.push(new_box);
+	new_box.receiveShadows = true;
+	
 
 	macro "post processing";
+	this.pipeline.MSAA = config.MSAA;
 
 
+	private.update = new time.AdvancedInterval(config.poll, @()->{
+		config.update();
+	});
+	private.update.start();
+
+
+	macro "performance";
 	private.engine.runRenderLoop(@()->{
+		calc_performance();
+		config.render();
 	   	private.scene.render();
 	});
 };

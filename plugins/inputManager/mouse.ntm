@@ -21,7 +21,7 @@ document.addEventListener('pointerdown', @(e)->{
 	local name = INPUTCODE_MAP.get(code);
 
 
-	INPUT_DOWN[code] = true;
+	INPUT_DOWN[code + 22] = true;
 
 	local events = DOWN_EVENTS[code + 22];
 	itterate events(key, event){
@@ -37,7 +37,7 @@ document.addEventListener('pointerup', @(e)->{
 	local code = e.which * -1;
 	local name = INPUTCODE_MAP.get(code);
 
-	INPUT_DOWN[code] = false;
+	INPUT_DOWN[code + 22] = false;
 	local events = UP_EVENTS[code + 22];
 	itterate events(key, event){
 		event();
