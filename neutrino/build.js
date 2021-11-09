@@ -92,7 +92,7 @@ module.exports = function(args, dirname, compile_target, output_target){
 
 
 	if(args.includes('--package') == false){
-		files.deleteFolder("location")
+		files.deleteFolder("location");
 	}
 
 
@@ -109,6 +109,7 @@ module.exports = function(args, dirname, compile_target, output_target){
 			debug: args.includes('--debug'),
 			package: args.includes('--package'),
 			plugin: args.includes('--plugin'),
+			preserve: args.includes('--preserve'),
 			relative: file.relative.replaceAll("\\", "/"),
 		});
 

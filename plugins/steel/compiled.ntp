@@ -414,15 +414,14 @@ config.update(); //75:22 | index.nt
 		let diff=process.hrtime(private.fpsTimer); //40:15 | performance.ntm
 		private.frameTime=diff[0]*1000000000+diff[1]; //41:12 | performance.ntm
 		private.fps=Math.floor(1000000000/private.frameTime); //42:12 | performance.ntm
-		private.frameTime=Math.floor(private.frameTime/1000)/1000; //44:12 | performance.ntm
-		private.fpsAvg=calc_average_tick(private.fps); //46:12 | performance.ntm
+		private.fpsAvg=calc_average_tick(private.fps); //44:12 | performance.ntm
 		if(private.fpsBoundsWaitCounter==0){
-			if(private.fps>private.fpsMax){private.fpsMax=private.fps}; //48:16 | performance.ntm
-			if(private.fps<private.fpsMin){private.fpsMin=private.fps}; //49:16 | performance.ntm
+			if(private.fps>private.fpsMax){private.fpsMax=private.fps}; //46:16 | performance.ntm
+			if(private.fps<private.fpsMin){private.fpsMin=private.fps}; //47:16 | performance.ntm
 		}else{
-			private.fpsBoundsWaitCounter-=1; //51:16 | performance.ntm
-		}; //47:7 | performance.ntm
-		private.fpsTimer=process.hrtime(); //53:12 | performance.ntm
+			private.fpsBoundsWaitCounter-=1; //49:16 | performance.ntm
+		}; //45:7 | performance.ntm
+		private.fpsTimer=process.hrtime(); //51:12 | performance.ntm
 	}; //39:23 | performance.ntm
 	private.engine.runRenderLoop(()=>{
 		calc_performance(); //82:25 | index.nt
