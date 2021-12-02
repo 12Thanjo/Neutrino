@@ -93,6 +93,7 @@ assert('subtraction (-)', 2, @()->{return 6 - 4;});
 assert('multiplication (*)', 24, @()->{return 6 * 4;});
 assert('division (/)', 1.5, @()->{return 6 / 4;});
 assert('modulus (%)', 2, @()->{return 6 % 4;});
+assert('power (^)', 128, @()->{return 2 ^ 7;});
 console.log();
 
 
@@ -103,6 +104,7 @@ assert('subtraction (-=)', 12, @()->{num -= 2; return num;});
 assert('multiplication (*=)', 24, @()->{num *= 2; return num;});
 assert('division (/=)', 6, @()->{num /= 4; return num;});
 assert('modulus (%=)', 2, @()->{num %= 4; return num;});
+assert('power (^=)', 16, @()->{num ^= 4; return num;});
 console.log();
 
 
@@ -114,6 +116,7 @@ assert('subtraction (=-)', -8, @()->{num =- 2; return num;});
 assert('multiplication (=*)', -16, @()->{num =* 2; return num;});
 assert('division (=/)', 2, @()->{num =/ -32; return num;});
 assert('modulus (=%)', 1, @()->{num =% 5; return num;});
+assert('modulus (=^)', 4, @()->{num =^ 4; return num;});
 console.log();
 
 
@@ -176,19 +179,26 @@ assert("for", 6, @()->{
 	};
 	return count;
 });
-assert("forNum", 6, @()->{
+assert("forNum", true, @()->{
 	local count = 0;
 	forNum(i, 4){
 		// 0, 1, 2, 3
 		count += i;
 	};
-	return count;
+
+	local count2 = 0;
+	forNum(i, 2, 5){
+		// 2, 3, 4
+		count2 += i;
+	};
+
+	return count == 6 && count2 == 9;
 });
-assert("itterate", true, @()->{
+assert("iterate", true, @()->{
 	local forArr = [1, 2, 3];
 	local key_count = 0;
 	local value_count = 0;
-	itterate forArr(key, value){
+	iterate forArr(key, value){
 		key_count += key;
 		value_count += value;
 	};
@@ -258,6 +268,39 @@ assert('species', true, @()->{
 		getter_count += target.getter_prop;
 	});
 	return GenericSpecies.has('id') && GenericSpecies.get('id') == gen && gen.param == 'foo' && gen.priv_prop == null && gen.getter_prop == 1 && getter_count == 1;
+});
+assert("Operator Overloading", true, @()->{
+	struct Scalar(value){
+		this.value = value;
+	};
+	struct Vector2(x, y){
+		this.x = x;
+		this.y = y;
+
+		operation += (Scalar, scalar){
+			this.x += scalar.value;
+			this.y += scalar.value;
+		};
+
+		operation + (Vector2, vector){ 
+			local new_x = this.x + vector.x;
+			local new_y = this.y + vector.y;
+			return new Vector2(new_x, new_y);
+		};
+	};
+
+
+	local s1 = new Scalar(1);
+	local v1 = new Vector2(2, 3);
+	local v2 = new Vector2(4, 5);
+
+	// use "$" to use an overloaded operator
+	// there can be a space between if wanted
+	v1 $+= s1;
+	v1 $ += s1;
+	local v3 = v1 $+ v2;
+
+	return v3.x == 8 && v3.y == 10;
 });
 console.log();
 
@@ -378,3 +421,5 @@ assert('RangeError', 'message', @()->{
 	};
 });
 console.log();
+
+		
