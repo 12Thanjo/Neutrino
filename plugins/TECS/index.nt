@@ -1,0 +1,234 @@
+// plugin: TECS
+// description: Threaded ECS architecture
+// author: 12Thanjo
+
+
+
+local encodeStringBuffer = function(string){
+	local bytes = string.length;
+
+	for(i, string){
+		local code = string.charCodeAt(i);
+		if(code > 127 && code <= 2047){
+			bytes += 1;
+		}else if(code > 2047 && code <= 65535){
+			bytes += 2;
+		};
+		if(code >= 56320 && code <= 57343){
+			i -= 1;
+		};
+	};
+
+	local buffer = new SharedArrayBuffer(bytes);
+	local arrayBuffer = new Uint8Array(buffer);
+	local encoded = unescape(encodeURIComponent(string));
+
+	for(i, encoded){
+		arrayBuffer[i] = encoded[i].charCodeAt(0);
+	};
+
+	return buffer;
+};
+
+local decodeStringBuffer = function(buffer){
+	local array = new Uint8Array(buffer);
+	local encodedString = String.fromCharCode.apply(null, array);
+	local decodedString = decodeURIComponent(escape(encodedString));
+	return decodedString;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+
+local Thread = null;
+
+
+
+try{
+    if(Worker != null){
+    	Thread = Worker;
+    }else{
+    	Thread = require('worker_threads').Worker;
+    };
+}catch{
+    Thread = require('worker_threads').Worker;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+local types = {
+	"any": Array,
+	"int8": Int8Array, "uint8": Uint8Array,
+	"int16": Int16Array, "uint16": Uint16Array,
+	"int32": Int32Array, "uint32": Uint32Array,
+	"float32": Float32Array,
+	"float64": Float64Array,
+	"int64": BigInt64Array, "uint64": BigUint64Array,
+};
+
+
+
+
+
+plugin.print = true;
+local create_text_style = function(color, backgroundColor){
+	return |"background-color: #"backgroundColor"; color: #"color";"|;
+};
+local log_colors = {
+	"Environment": "114422",
+	"Component": "551155",
+	"Query": "331155",
+	"System": "004455",
+};
+local log = function(type, name){
+	if(plugin.print){
+		local backgroundColor = log_colors[type];
+		console.log(|"%c TECS | %c"type" %c"name " "|, create_text_style("cccccc", backgroundColor), create_text_style("999999", backgroundColor), create_text_style("eebb11", backgroundColor));
+	};
+};
+
+////////////////////////////////////////////////////////////////////////////
+
+plugin.all = function(~conditionals){
+	return @(entity)->{
+		local pass = true;
+		itterate conditionals(i, cond){
+			if(cond typeof "string"){
+				if((entity.components.has(cond)) == false){
+					pass = false;
+					break;
+				};
+			}else{
+				if(cond(entity) == false){
+					pass = false;
+					break;
+				};
+			};
+		};
+		return pass;
+	};
+};
+
+plugin.none = function(~conditionals){
+	return @(entity)->{
+		local pass = true;
+		itterate conditionals(i, cond){
+			if(cond typeof "string"){
+				if((entity.components.has(cond))){
+					pass = false;
+					break;
+				};
+			}else{
+				if(cond()){
+					pass = false;
+					break;
+				};
+			};
+		};
+		return pass;
+	};
+};
+
+plugin.some = function(~conditionals){
+	return @(entity)->{
+		local pass = false;
+		itterate conditionals(i, cond){
+			if(cond typeof "string"){
+				if((entity.components.has(cond))){
+					pass = true;
+					break;
+				};
+			}else{
+				if(cond()){
+					pass = true;
+					break;
+				};
+			};
+		};
+		return pass;
+	};
+};
+
+
+////////////////////////////////////////////////////////////////////////////
+struct Prop(type, auto){
+	this.type = type;
+	auto default 0;
+	this.auto = auto;
+};
+plugin.prop = function(type, auto){
+	return new Prop(type, auto);
+};
+
+local num_CPUs = require('os').cpus().length - 1;
+species Environment(id, config){
+	// setup config
+	config default {};
+	config.size default 1000;
+	if(config.size > 2 ^ 64){
+		Error |"Exceeded the entity limit (2^64)"|;
+	};
+	config.threads default num_CPUs;
+	if(config.threads > num_CPUs){
+		console.warn(|"TECS too many threads in Environment ("id")\ngot: ("config.threads"), max: ("num_CPUs")\ndefaulting to max"|);
+	};
+
+	//setup env
+	access id = id;
+	access size = config.size;
+	access threads = config.threads;
+
+	// setup components
+	local self = this;
+	local self_priv = private;
+	private.buffers = {};
+	this.components = {};
+
+	local pointer_i = 0;
+	private.pointer = {};
+	this.getPointer = function(entity){
+		pointer_i = entity;
+		return private.pointer;
+	};
+
+
+	macro "threads";
+	macro "component";
+	macro "entity";
+	macro "query";
+	macro "system";
+
+
+	log("Environment", id);
+};
+plugin.Environment = Environment;
+
+
+/////////////////////////////////////////////////////////////
+
+species EventLoop(name){
+	access name = name;
+
+	private.i = 0;
+	private.queue = [];
+
+	this.add = function(event){
+		private.queue.push(event);
+	};
+
+	local self = this;
+	this.next = function(){
+		private.i += 1;
+		try{
+			private.queue[private.i](self.next);
+		};
+	};
+
+	this.start = function(){
+		private.i = -1;
+		this.next();
+	};
+
+};
+plugin.EventLoop = EventLoop;

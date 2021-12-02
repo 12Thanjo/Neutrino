@@ -1,0 +1,71 @@
+species Component(name, builder){
+	private.name = name;
+	this.builder = builder;
+
+
+	// setup the component data, allocate memory, etc.
+	local recursive_component_create = function(builder, target){
+		forKeys builder(key, value){
+			if(value instanceof Prop){
+				local components = null;
+				if(value.type != "any"){
+					local Type = types[value.type];
+
+					local buffer = new SharedArrayBuffer(Type.BYTES_PER_ELEMENT * self_priv.size);
+					target.buffers[key] = {
+						buffer: buffer,
+						type: value.type
+					};
+
+					components = new Type(buffer);
+				}else{
+					components = new Array(self_priv.size);
+				};
+
+				target.components[key] = components;
+
+				//add to the pointer
+				Object.defineProperty(target.pointer, key, {
+					get: function(){
+						return components[pointer_i];
+					},
+					set: function(val){
+						components[pointer_i] = val;	
+					},
+				});
+			}else if(value typeof "object"){
+				target.buffers[key] = {};
+				target.components[key] = {};
+				target.pointer[key] = {};
+
+				recursive_component_create(value, {
+					buffers: target.buffers[key],
+					components: target.components[key],
+					pointer: target.pointer[key],
+				});
+			}else{
+				Error |
+					"Invalid Component Builder\n"
+					"\tEnvironment: ("self_priv.id")\n"
+					"\tComponent: ("private.name")"
+				|;
+			};
+		};
+	};
+
+	local builder_obj = {};
+	builder_obj[private.name] = builder;
+	recursive_component_create(builder_obj, {
+		buffers: self_priv.buffers,
+		components: self.components,
+		pointer: self_priv.pointer,
+	});
+
+
+	log("Component", name);
+};
+
+this.createComponent = function(name, builder){
+	spawn Component(name, builder);
+	self_priv.scheduler.send_to_workers("component", self_priv.buffers);
+};

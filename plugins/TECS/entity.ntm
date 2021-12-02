@@ -1,0 +1,88 @@
+private.entities = [];
+private.entity_id = 1;
+private.removed = new Set();
+private.entity_lookup = new Map();
+
+
+struct Entity(id, name){
+	access id = id;
+	access name = name;
+	if(name != null){
+		self_priv.entity_lookup.set(name, this);
+	};
+
+	this.components = new Set();
+
+	this.getPointer = function(){
+		return self.getPointer(id);
+	};
+
+	self_priv.entities[id] = this;
+
+	this.bindComponent = function(component_id, ~params){
+		self.bindComponent(this, component_id, ~params);
+	};
+
+	this.hasComponent = function(component_id	){
+		return this.component.has(component_id	);
+	};
+};
+
+
+
+this.createEntity = function(name){
+	local new_entity = null;
+	if(private.removed.size == 0){
+		new_entity = new Entity(private.entity_id, name);
+		private.entity_id += 1;
+	}else{
+		local entity_id = private.removed.values().next().value;
+		private.removed.delete(entity_id);
+		new_entity = new Entity(entity_id, name);
+	};
+
+	return new_entity;
+};
+this.getEntity = function(name){
+	return private.entity_lookup.get(name);
+};
+
+this.bindComponent = function(entity_ref, component_id, ~params){
+	local entity_id = entity_ref.id;
+	local entity = private.entities[entity_id];
+	local component = Component.get(component_id);
+	
+	entity.components.add(component_id);
+
+	local recursive_i = 0;
+	local recursive = function(builder, target){
+		forKeys builder(key, value){
+			if(value instanceof Prop){
+				if(params[recursive_i] == null){
+					target[key][entity_id] = value.auto;
+				}else{
+					target[key][entity_id] = params[recursive_i];
+				};
+				recursive_i += 1;
+			}else{
+				recursive(value, target[key]);
+			};
+		};	
+	};
+
+	
+	if(component.builder instanceof Prop){
+		if(params[0] == null){
+			this.components[component_id][entity_id] = component.builder;
+		}else{
+			this.components[component_id][entity_id] = params[0];
+		};
+	}else{
+		recursive(component.builder, this.components[component_id]);
+	};
+
+
+	Query.forEach(@(query)->{
+		query.audit(entity);
+	});
+};

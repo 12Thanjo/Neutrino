@@ -47,7 +47,16 @@ module.exports = function(args){
 	    if(files.fileExists(plugin_path + "\\compiled.js")){
 	    	files.renameFile(plugin_path + "\\compiled.js", plugin_path + "\\compiled.ntp");
 	    	var code = files.readFile(plugin_path + "\\compiled.ntp");
-	    	code = `$pending_plugins.set('${target}',()=>{let plugin={metadata:${JSON.stringify(plugin_config)}};${code};return plugin;});`;
+
+
+	    	if(args.includes("--debug")){
+	    		code = code.replaceAll('\n', '\n\t');
+	    		code = code.substring(0, code.length - 1);
+	    		code = "\n\t" + code;
+	    	}
+
+
+	    	code = `$pending_plugins.set('${target}',()=>{let plugin={metadata:${JSON.stringify(plugin_config)}};${code}return plugin;});`;
 	    	files.writeFile(plugin_path + "\\compiled.ntp", code);
 	    }
 	});

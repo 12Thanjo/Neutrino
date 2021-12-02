@@ -1,0 +1,139 @@
+
+struct SharedSet(){
+	local type = null;
+	access bufferType = "";
+	local size_multiply = 1;
+	if(self_priv.size < Math.pow(2, 8) - 1){
+		type = Uint8Array;
+		private.bufferType = "uint8";
+		size_multiply = Uint8Array.BYTES_PER_ELEMENT;
+	}else if(self_priv.size < Math.pow(2, 16) - 1){
+		type = Uint16Array;
+		private.bufferType = "uint16";
+		size_multiply = Uint16Array.BYTES_PER_ELEMENT;
+	}else if(self_priv.size < Math.pow(2, 32) - 1){
+		type = Uint32Array;
+		private.bufferType = "uint32";
+		size_multiply = Uint32Array.BYTES_PER_ELEMENT;
+	}else{
+		type = BigUint64Array;
+		private.bufferType = "uint64";
+		size_multiply = BigUint64Array.BYTES_PER_ELEMENT;
+	};
+
+	this.shared = new SharedArrayBuffer(self_priv.size * size_multiply);
+
+	this.array = new type(this.shared);
+	// this.array.fill(0);
+	private.i = 1;
+
+	this.has = function(value){
+		return this.array.includes(value);
+	};
+
+	this.add = function(value){
+		if(this.has(value) == false){
+			this.array[private.i] = value;
+			// console.log(this.array);
+
+			private.i += 1;
+			this.array[0] = private.i;
+		};
+	};
+
+	this.delete = function(value){
+		forNum(i, private.i){
+			if(this.array[i] == value){
+				this.array[i] = this.array[private.i - 1];
+
+				private.i -= 1;
+				this.array[0] = private.i;
+
+				break;
+			};
+		};
+	};
+
+	this.forEach = function(event){
+		forNum(i, private.i){
+			event(this.array[i]);
+		};
+	};
+
+	Object.defineProperty(this, 'length', {
+		get: function(){
+			return private.i - 1;
+		},
+	});
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+access queries = {};
+species Query(id, conditionals, threaded){
+	access id = id;
+	threaded default false;
+	if(threaded){
+		this.entities = new SharedSet();
+	}else{
+		this.entities = new Set();
+	};
+	access threaded = threaded;
+	this.conditionals = conditionals;
+	
+	////////////////////////////////////////////////
+
+	this.audit = function(entity){
+		local pass = true;
+		itterate this.conditionals(i, cond){
+			if(cond(entity) == false){
+				pass = false;
+				break;
+			};
+		};
+
+		if(pass){
+			this.entities.add(entity.id);
+		}else{
+			this.entities.delete(entity.id);
+		};
+	};
+
+	this.remove = function(entity){
+		this.entities.delete(entity.id);
+	};
+
+	this.forEach = function(event){
+		this.entities.forEach(event);
+	};
+
+	////////////////////////////////////////////////
+
+	// look for entities to add
+	itterate self_priv.entities(i, entity){
+		if(entity != null){
+			this.audit(entity);
+		};
+	};
+
+	////////////////////////////////////////////////
+
+	if(threaded){
+		self_priv.queries[id] = this.entities.shared;
+		self_priv.scheduler.send_to_workers("query", {
+			id: id,
+			set: this.entities.shared,
+			type: this.entities.bufferType,
+		});
+	}else{
+		self_priv.queries[id] = this.entities;
+	};
+
+	log("Query", id);
+};
+
+this.createQuery = function(id, conditionals, threaded){
+	spawn Query(id, conditionals, threaded);
+};

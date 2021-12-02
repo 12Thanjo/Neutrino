@@ -4,9 +4,11 @@
 
 import BABYLON;
 import DOM;
+import OCS [Prop, all, some, none];
 
 species Engine(name, config){
 	access name = name;
+	local self = this;
 
 	// config
 	config default {};
@@ -17,27 +19,26 @@ species Engine(name, config){
 			height: DOM.h
 		});
 	}else{
-		this.canvas = config.canvas;
+		this.canvas = DOM(config.canvas);
 	};
 	config.fov default 75;
 	config.shadowResolution default 2048;
 	config.MSAA default 1;
 	config.poll default 1000 / 64;
+
+	config.create default @()->{};
 	config.update default @()->{};
 	config.render default @()->{};
 
 
 	//////////////////////////////////////////////////////////////////////
 
-
-
-	private.engine = new BABYLON.Engine(this.canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false});
+	private.engine = new BABYLON.Engine(this.canvas.array[0].element, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false});
 	private.scene = new BABYLON.Scene(private.engine);
 	access camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), private.scene);
 	private.camera.setTarget(BABYLON.Vector3.Zero());
 	private.camera.fov = 2 * 3.14 / 360 * config.fov;
 	private.camera.minZ = 0.1;
-
 
 	
 	private.scene.clearColor = new BABYLON.Color3(0.05,0.05,0.06);
@@ -46,14 +47,14 @@ species Engine(name, config){
 	light.intensity = 0.6;
 
 
-	shadowGenerator = new BABYLON.ShadowGenerator(config.shadowResolution, light);
-    // shadowGenerator.setDarkness(0.5);
-    shadowGenerator.usePoissonSampling = true;
+	private.shadowGenerator = new BABYLON.ShadowGenerator(config.shadowResolution, light);
+    private.shadowGenerator.setDarkness(0.25); //lower is darker
+    private.shadowGenerator.usePoissonSampling = true;
 
 
 	local sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 512}, private.scene);
 	sphere.position.y = 1;
-	shadowGenerator.getShadowMap().renderList.push(sphere);
+	private.shadowGenerator.getShadowMap().renderList.push(sphere);
 	sphere.receiveShadows = true;
 	sphere.material = new BABYLON.StandardMaterial("mat", private.scene);
 	sphere.material.diffuseColor = new BABYLON.Color3(0, 0.8, 1);
@@ -63,25 +64,53 @@ species Engine(name, config){
 	local new_box = new BABYLON.Mesh.CreateBox("box", 1, private.scene);
 	new_box.scaling.set(5, 1, 5);
 	new_box.position.y = -1;
-	shadowGenerator.getShadowMap().renderList.push(new_box);
+	private.shadowGenerator.getShadowMap().renderList.push(new_box);
 	new_box.receiveShadows = true;
 	
 
 	macro "post processing";
 	this.pipeline.MSAA = config.MSAA;
+	macro "ocs";
+	macro "objects";
+
+
+
+
+	macro "performance";
+	local polling_rate = 1 / config.poll * 1000;
+	this.animationScaling = function(value){
+		if(private.fps != 0){
+			return value * polling_rate / private.fps;
+		}else{
+			return 0;
+		};
+	};
+
+	config.create(this);
 
 
 	private.update = new time.AdvancedInterval(config.poll, @()->{
-		config.update();
+		config.update(this);
 	});
 	private.update.start();
 
 
-	macro "performance";
+
+
 	private.engine.runRenderLoop(@()->{
 		calc_performance();
-		config.render();
+		config.render(this);
+
+		// OCS
+		position.run();
+		scale.run();
+		rotation.run();
+
 	   	private.scene.render();
 	});
+
+	this.getEngine = function(){
+		return private.engine;
+	};
 };
 plugin.Engine = Engine;

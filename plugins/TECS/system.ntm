@@ -1,0 +1,31 @@
+species System(id, query, event){
+	private.query = Query.get(query);
+
+	private.execute = function(list, min, max){
+		forNum(i, min, max + 1){
+			event(list[i]);
+		};
+	};
+
+	this.run = function(callback, threads){
+		threads default 0;
+		if(private.query.threaded == false || threads == 0){
+			private.query.forEach(@(entity)->{
+				event(entity, self.components);
+			});
+			callback();
+		}else{
+			self_priv.scheduler.addTask(id, private.query.id, threads, private.query.entities.length, callback);
+		};
+	};
+	
+	self_priv.scheduler.send_to_workers("system", {
+		id: id,
+		system: event.toString()
+	});
+
+	log("System", id);
+};
+this.createSystem = function(id, query, event, config){
+	return new System(id, query, event, config);
+};

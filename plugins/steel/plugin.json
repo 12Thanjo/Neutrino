@@ -6,6 +6,7 @@
     "author": "12Thanjo",
     "dependancies": [
         "BABYLON",
-        "DOM"
+        "DOM",
+        "OCS"
     ]
 }

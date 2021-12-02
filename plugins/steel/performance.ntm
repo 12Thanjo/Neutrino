@@ -35,7 +35,7 @@ local calc_average_tick = function(newtick){
 };
  
 
-define BILLION = 1000000000;
+define BILLION = 1000 * 1000 * 1000;
 local calc_performance = function(){
     local diff = process.hrtime(private.fpsTimer);
     private.frameTime = diff[0] * BILLION + diff[1];

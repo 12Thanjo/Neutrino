@@ -1,0 +1,153 @@
+
+local code = |
+	'var types = {'
+		'"any": Array,'
+		'"int8": Int8Array, "uint8": Uint8Array,'
+		'"int16": Int16Array, "uint16": Uint16Array,'
+		'"int32": Int32Array, "uint32": Uint32Array,'
+		'"float32": Float32Array,'
+		'"float64": Float64Array,'
+		'"int64": BigInt64Array, "uint64": BigUint64Array,'
+	'};'
+	'var actions = new Map();'
+	'var components = {};'
+	'actions.set("component", (data)=>{'
+		'var recursive = function(buffer, target, target_parent, key){'
+			'if(buffer.type != null && buffer.type && typeof buffer.type == "string" && types[buffer.type]){'
+				'target_parent[key] = new types[buffer.type](buffer.buffer);'
+			'}else{'
+				'for(var key in buffer){'
+					'target[key] = {};'
+					'recursive(buffer[key], target[key], target, key);'
+				'}'
+			'}'
+		'};'
+		'recursive(data, components);'
+	'});'
+	'var queries = {};'
+	'actions.set("query", (data)=>{'
+		'queries[data.id] = new types[data.type](data.set);'
+	'});'
+	'var systems = {};'
+	'actions.set("system", (data)=>{'
+		'data.system = "systems[data.id] = " + data.system;'
+		'eval(data.system);'
+	'});'
+	'actions.set("run", (data)=>{'
+		'var system = systems[data.system];'
+		'var query = queries[data.query];'
+		'for(var i=data.min; i<data.max;i++){'
+			'system(query[i], components);'
+		'}'
+		// 'console.log("done: ", data.event, data.min, data.max);'
+		'this.postMessage(data);'
+	'});'
+	'actions.set("log", ()=>{'
+		'console.log("components: ", components);'
+		'console.log("queries: ", queries);'
+		'console.log("systems: ", systems);'
+	'});'
+	'this.onmessage = function(e){'
+		'actions.get(e.data.type)(e.data.data);'
+	'};'
+|;
+local blob = new Blob([code]);
+local obj_url = URL.createObjectURL(blob, {type: 'text/javascript'});
+
+if(config.threads > 0){
+	import structures (Queue);
+
+	access scheduler = {
+		workers: [],
+		free_workers: new Queue(),
+		tasks: new Queue(),
+		waiting_tasks: new Map(),
+	};
+
+	forNum(i, private.threads){
+		local new_thread = new Thread(obj_url);
+		new_thread.i = i;
+		new_thread.onmessage = function(e){
+			private.scheduler.free_workers.push(private.scheduler.workers[new_thread.i]);
+			
+			local task = null;
+			if(private.scheduler.waiting_tasks.has(e.data.system)){
+				task = private.scheduler.waiting_tasks.get(e.data.system);
+			}else{
+				task = private.scheduler.tasks.peek();
+			};
+
+			task.finished -= 1;
+			if(task.finished == 0){
+				private.scheduler.waiting_tasks.delete(task.system);
+				task.callback();	
+			};
+
+			private.scheduler.run();
+		};
+		private.scheduler.workers.push(new_thread);
+		private.scheduler.free_workers.push(new_thread);
+	};
+
+	private.scheduler.send_to_workers = function(type, data){
+		local message = {
+			type: type,
+			data: data
+		};
+		itterate private.scheduler.workers(i, worker){
+			worker.postMessage(message);
+		};
+	};
+
+
+	struct Task(system, query, threads, size, callback){
+		this.system = system;
+		this.segments = new Queue();
+		this.callback = callback;
+		this.finished = threads;
+
+		local mod = size % threads;
+		local div = (size - mod) / threads;
+		local iter = 0;
+		forNum(i, threads){
+			local min = iter;
+			iter += div;
+			if(mod > 0){
+				iter += 1;
+				mod -= 1;
+			};
+
+			this.segments.push({
+				system: system,
+				query: query,
+				min: min,
+				max: iter
+			});
+		};
+	};
+
+	private.scheduler.run = function(){
+		while(this.free_workers.length > 0 && this.tasks.length > 0){
+			local worker = this.free_workers.pop();
+			if(this.tasks.peek().segments.length == 0){
+				local task = this.tasks.pop();
+				this.waiting_tasks.set(task.system, task);
+			};
+
+			if(this.tasks.length > 0){
+				worker.postMessage({
+					type: "run",
+					data: this.tasks.peek().segments.pop(),
+				});
+			};
+		};
+	};
+
+	private.scheduler.addTask = function(system, query, threads, size, callback){
+		this.tasks.push(new Task(system, query, threads, size, callback));
+		this.run();	
+	};
+};
+
+
+

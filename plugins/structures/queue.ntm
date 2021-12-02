@@ -33,7 +33,11 @@ scope {
 		};
 
 		this.peek = function(){
-			return this.front.data;
+			if(private.front != null){
+				return private.front.data;
+			}else{
+				return null;
+			};
 		};
 
 		this.print = function(){

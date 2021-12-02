@@ -1,59 +1,64 @@
-$pending_plugins.set('steel',()=>{let plugin={metadata:{"name":"steel","version":"0.1.0","description":"a game engine written in neutrino","main":"index.nt","author":"12Thanjo","dependancies":["BABYLON","DOM"]}};let BABYLON=$get_plugin('BABYLON'); //5:7
+$pending_plugins.set('steel',()=>{let plugin={metadata:{"name":"steel","version":"0.1.0","description":"a game engine written in neutrino","main":"index.nt","author":"12Thanjo","dependancies":["BABYLON","DOM","OCS"]}};let BABYLON=$get_plugin('BABYLON'); //5:7
 let DOM=$get_plugin('DOM'); //6:7
+let {Prop,all,some,none}=$get_plugin('OCS');let OCS=$get_plugin('OCS'); //7:7
 let Engine=function(name,config){
 	let private={};Engine.$map.set(name,this);
-	private.name=name; //9:16 | index.nt
-	Object.defineProperty(this, "name", {get: ()=>{return private.name;}}); //9:11 | index.nt
-	if(config==null){config={};}; //12:11 | index.nt
+	private.name=name; //10:16 | index.nt
+	Object.defineProperty(this, "name", {get: ()=>{return private.name;}}); //10:11 | index.nt
+	let self=this; //11:15 | index.nt
+	if(config==null){config={};}; //14:11 | index.nt
 	if(config.canvas==null){
-		this.canvas=DOM.createElement("canvas",document.body); //14:13 | index.nt
+		this.canvas=DOM.createElement("canvas",document.body); //16:13 | index.nt
 		this.canvas.css({
 			width:DOM.w,
 			height:DOM.h
-		}); //15:24 | index.nt
+		}); //17:24 | index.nt
 	}else{
-		this.canvas=config.canvas; //20:13 | index.nt
-	}; //13:7 | index.nt
-	if(config.fov==null){config.fov=75;}; //22:11 | index.nt
-	if(config.shadowResolution==null){config.shadowResolution=2048;}; //23:11 | index.nt
-	if(config.MSAA==null){config.MSAA=1;}; //24:11 | index.nt
-	if(config.poll==null){config.poll=15.625;}; //25:11 | index.nt
+		this.canvas=DOM(config.canvas); //22:13 | index.nt
+	}; //15:7 | index.nt
+	if(config.fov==null){config.fov=75;}; //24:11 | index.nt
+	if(config.shadowResolution==null){config.shadowResolution=2048;}; //25:11 | index.nt
+	if(config.MSAA==null){config.MSAA=1;}; //26:11 | index.nt
+	if(config.poll==null){config.poll=15.625;}; //27:11 | index.nt
+	if(config.create==null){config.create=()=>{
+	};}; //29:11 | index.nt
 	if(config.update==null){config.update=()=>{
-	};}; //26:11 | index.nt
+	};}; //30:11 | index.nt
 	if(config.render==null){config.render=()=>{
-	};}; //27:11 | index.nt
-	private.engine=new BABYLON.Engine(this.canvas,true,{
-preserveDrawingBuffer:true,
-stencil:true,
-disableWebGL2Support:false
-}); //34:12 | index.nt
-	private.scene=new BABYLON.Scene(private.engine); //35:12 | index.nt
-	private.camera=new BABYLON.FreeCamera("camera1",new BABYLON.Vector3(0,5,-10),private.scene); //36:18 | index.nt
-	Object.defineProperty(this, "camera", {get: ()=>{return private.camera;}}); //36:11 | index.nt
-	private.camera.setTarget(BABYLON.Vector3.Zero()); //37:29 | index.nt
-	private.camera.fov=config.fov*0.0174; //38:12 | index.nt
-	private.camera.minZ=0.1; //39:12 | index.nt
-	private.scene.clearColor=new BABYLON.Color3(0.05,0.05,0.06); //43:12 | index.nt
-	let light=new BABYLON.DirectionalLight("ambient light",new BABYLON.Vector3(-1,-2,-1),private.scene); //44:16 | index.nt
-	light.position=new BABYLON.Vector3(20,40,20); //45:10 | index.nt
-	light.intensity=0.6; //46:10 | index.nt
-	shadowGenerator=new BABYLON.ShadowGenerator(config.shadowResolution,light); //49:20 | index.nt
-	shadowGenerator.usePoissonSampling=true; //51:20 | index.nt
+	};}; //31:11 | index.nt
+	private.engine=new BABYLON.Engine(this.canvas.array[0].element,true,{
+		preserveDrawingBuffer:true,
+		stencil:true,
+		disableWebGL2Support:false
+	}); //36:12 | index.nt
+	private.scene=new BABYLON.Scene(private.engine); //37:12 | index.nt
+	private.camera=new BABYLON.FreeCamera("camera1",new BABYLON.Vector3(0,5,-10),private.scene); //38:18 | index.nt
+	Object.defineProperty(this, "camera", {get: ()=>{return private.camera;}}); //38:11 | index.nt
+	private.camera.setTarget(BABYLON.Vector3.Zero()); //39:29 | index.nt
+	private.camera.fov=config.fov*0.0174; //40:12 | index.nt
+	private.camera.minZ=0.1; //41:12 | index.nt
+	private.scene.clearColor=new BABYLON.Color3(0.05,0.05,0.06); //44:12 | index.nt
+	let light=new BABYLON.DirectionalLight("ambient light",new BABYLON.Vector3(-1,-2,-1),private.scene); //45:16 | index.nt
+	light.position=new BABYLON.Vector3(20,40,20); //46:10 | index.nt
+	light.intensity=0.6; //47:10 | index.nt
+	private.shadowGenerator=new BABYLON.ShadowGenerator(config.shadowResolution,light); //50:12 | index.nt
+	private.shadowGenerator.setDarkness(0.25); //51:40 | index.nt
+	private.shadowGenerator.usePoissonSampling=true; //52:12 | index.nt
 	let sphere=BABYLON.MeshBuilder.CreateSphere("sphere",{
-diameter:2,
-segments:512
-},private.scene); //54:17 | index.nt
-	sphere.position.y=1; //55:11 | index.nt
-	shadowGenerator.getShadowMap().renderList.push(sphere); //56:51 | index.nt
-	sphere.receiveShadows=true; //57:11 | index.nt
-	sphere.material=new BABYLON.StandardMaterial("mat",private.scene); //58:11 | index.nt
-	sphere.material.diffuseColor=new BABYLON.Color3(0,0.8,1); //59:11 | index.nt
-	sphere.material.emissiveColor=new BABYLON.Color3(0,0.8/5,1/5); //61:11 | index.nt
-	let new_box=new BABYLON.Mesh.CreateBox("box",1,private.scene); //63:18 | index.nt
-	new_box.scaling.set(5,1,5); //64:24 | index.nt
-	new_box.position.y=-1; //65:12 | index.nt
-	shadowGenerator.getShadowMap().renderList.push(new_box); //66:51 | index.nt
-	new_box.receiveShadows=true; //67:12 | index.nt
+		diameter:2,
+		segments:512
+	},private.scene); //55:17 | index.nt
+	sphere.position.y=1; //56:11 | index.nt
+	private.shadowGenerator.getShadowMap().renderList.push(sphere); //57:59 | index.nt
+	sphere.receiveShadows=true; //58:11 | index.nt
+	sphere.material=new BABYLON.StandardMaterial("mat",private.scene); //59:11 | index.nt
+	sphere.material.diffuseColor=new BABYLON.Color3(0,0.8,1); //60:11 | index.nt
+	sphere.material.emissiveColor=new BABYLON.Color3(0,0.16,0.2); //62:11 | index.nt
+	let new_box=new BABYLON.Mesh.CreateBox("box",1,private.scene); //64:18 | index.nt
+	new_box.scaling.set(5,1,5); //65:24 | index.nt
+	new_box.position.y=-1; //66:12 | index.nt
+	private.shadowGenerator.getShadowMap().renderList.push(new_box); //67:59 | index.nt
+	new_box.receiveShadows=true; //68:12 | index.nt
 	let pipeline=new BABYLON.DefaultRenderingPipeline("default",true,private.scene,[private.camera]); //1:15 | post processing.ntm
 	pipeline.fxaaEnabled=false; //4:9 | post processing.ntm
 	pipeline.samples=1; //7:9 | post processing.ntm
@@ -371,11 +376,73 @@ segments:512
 			pipeline.grain.animated=val; //366:17 | post processing.ntm
 		}
 	}); //361:22 | post processing.ntm
-	this.pipeline.MSAA=config.MSAA; //71:9 | index.nt
-	private.update=new time.AdvancedInterval(config.poll,()=>{
-config.update(); //75:22 | index.nt
-}); //74:12 | index.nt
-	private.update.start(); //77:25 | index.nt
+	this.pipeline.MSAA=config.MSAA; //72:9 | index.nt
+	this.environment=new OCS.Environment(private.name); //1:5 | ocs.ntm
+	this.environment.bindComponent(new OCS.Component("position",{
+		x:new Prop(0),
+		y:new Prop(0),
+		z:new Prop(0)
+	})); //5:31 | ocs.ntm
+	this.environment.bindComponent(new OCS.Component("scale",{
+		x:new Prop(1),
+		y:new Prop(1),
+		z:new Prop(1)
+	})); //11:31 | ocs.ntm
+	this.environment.bindComponent(new OCS.Component("rotation",{
+		x:new Prop(0),
+		y:new Prop(0),
+		z:new Prop(0)
+	})); //16:31 | ocs.ntm
+	let renderTarget=new OCS.Component("renderTarget",new Prop(null)); //22:19 | ocs.ntm
+	this.environment.bindComponent(renderTarget); //23:31 | ocs.ntm
+	this.environment.createQuery('position',all('position','renderTarget')); //28:29 | ocs.ntm
+	let position=this.environment.createSystem('position','position',(entity)=>{
+		entity.renderTarget.position.x=entity.position.x; //30:11 | ocs.ntm
+		entity.renderTarget.position.z=entity.position.y; //31:11 | ocs.ntm
+		entity.renderTarget.position.y=entity.position.z; //32:11 | ocs.ntm
+	}); //29:15 | ocs.ntm
+	this.environment.createQuery('scale',all('scale','renderTarget')); //37:29 | ocs.ntm
+	let scale=this.environment.createSystem('scale','scale',(entity)=>{
+		entity.renderTarget.scaling.x=entity.scale.x; //39:11 | ocs.ntm
+		entity.renderTarget.scaling.z=entity.scale.y; //40:11 | ocs.ntm
+		entity.renderTarget.scaling.y=entity.scale.z; //41:11 | ocs.ntm
+	}); //38:12 | ocs.ntm
+	Math.Tau=Math.PI*2; //46:5 | ocs.ntm
+	this.environment.createQuery('rotation',all('rotation','renderTarget')); //47:29 | ocs.ntm
+	let rotation=this.environment.createSystem('rotation','rotation',(entity)=>{
+		entity.rotation.z%=Math.Tau; //49:11 | ocs.ntm
+		entity.rotation.x%=Math.Tau; //50:11 | ocs.ntm
+		entity.rotation.y%=Math.Tau; //51:11 | ocs.ntm
+		entity.renderTarget.rotationQuaternion=BABYLON.Quaternion.RotationYawPitchRoll(entity.rotation.z,entity.rotation.x,entity.rotation.y); //52:11 | ocs.ntm
+	}); //48:15 | ocs.ntm
+	this.add={}; //2:5 | objects.ntm
+	this.add.box=function(name,config){ //5:23 | objects.ntm
+		if(config==null){config={};}; //6:11 | objects.ntm
+		if(config.position==null){config.position={
+			x:0,
+			y:0,
+			z:0
+		};}; //7:11 | objects.ntm
+		if(config.scale==null){config.scale={
+			x:1,
+			y:1,
+			z:1
+		};}; //12:11 | objects.ntm
+		if(config.rotation==null){config.rotation={
+			x:0,
+			y:0,
+			z:0
+		};}; //17:11 | objects.ntm
+		let mesh=new BABYLON.Mesh.CreateBox(name,1,private.scene); //24:15 | objects.ntm
+		mesh.position.set(config.position.x,config.position.z,config.position.y); //25:22 | objects.ntm
+		mesh.scaling.set(config.scale.x,config.scale.z,config.scale.y); //26:21 | objects.ntm
+		mesh.rotationQuaternion=BABYLON.Quaternion.RotationYawPitchRoll(config.rotation.z,config.rotation.x,config.rotation.y); //27:9 | objects.ntm
+		private.shadowGenerator.getShadowMap().renderList.push(mesh); //33:59 | objects.ntm
+		mesh.receiveShadows=true; //34:9 | objects.ntm
+		let entity=self.environment.createEntity(name); //38:17 | objects.ntm
+		entity.bindComponent("renderTarget",mesh); //45:23 | objects.ntm
+		return entity; //48:11 | objects.ntm
+	}; //5:5 | objects.ntm
 	private.fpsTimer=process.hrtime(); //1:8 | performance.ntm
 	private.fpsMax=Infinity*-1; //2:14 | performance.ntm
 	Object.defineProperty(this, "fpsMax", {get: ()=>{return private.fpsMax;}}); //2:7 | performance.ntm
@@ -423,12 +490,31 @@ config.update(); //75:22 | index.nt
 		}; //45:7 | performance.ntm
 		private.fpsTimer=process.hrtime(); //51:12 | performance.ntm
 	}; //39:23 | performance.ntm
+	let polling_rate=1/config.poll*1000; //80:23 | index.nt
+	this.animationScaling=function(value){ //81:36 | index.nt
+		if(private.fps!=0){
+			return value*polling_rate/private.fps; //83:19 | index.nt
+		}else{
+			return 0; //85:19 | index.nt
+		}; //82:11 | index.nt
+	}; //81:9 | index.nt
+	config.create(this); //89:18 | index.nt
+	private.update=new time.AdvancedInterval(config.poll,()=>{
+		config.update(this); //93:22 | index.nt
+	}); //92:12 | index.nt
+	private.update.start(); //95:25 | index.nt
 	private.engine.runRenderLoop(()=>{
-		calc_performance(); //82:25 | index.nt
-		config.render(); //83:22 | index.nt
-		private.scene.render(); //84:32 | index.nt
-	}); //81:33 | index.nt
-}; //8:8 | index.nt
-Engine.$map=new Map();Engine.get=function(id){return Engine.$map.get(id);};Engine.has=function(id){return Engine.$map.has(id);};Engine.forEach=function(cb){Engine.$map.forEach(cb);};Engine.delete=function(cb){Engine.$map.delete(cb);}; //8:8 | index.nt
-plugin.Engine=Engine; //87:7 | index.nt
+		calc_performance(); //101:25 | index.nt
+		config.render(this); //102:22 | index.nt
+		position.run(); //105:21 | index.nt
+		scale.run(); //106:18 | index.nt
+		rotation.run(); //107:21 | index.nt
+		private.scene.render(); //109:32 | index.nt
+	}); //100:33 | index.nt
+	this.getEngine=function(){ //112:29 | index.nt
+		return private.engine; //113:15 | index.nt
+	}; //112:9 | index.nt
+}; //9:8 | index.nt
+Engine.$map=new Map();Engine.get=function(id){return Engine.$map.get(id);};Engine.has=function(id){return Engine.$map.has(id);};Engine.forEach=function(cb){Engine.$map.forEach(cb);};Engine.delete=function(cb){Engine.$map.delete(cb);}; //9:8 | index.nt
+plugin.Engine=Engine; //116:7 | index.nt
 ;return plugin;});

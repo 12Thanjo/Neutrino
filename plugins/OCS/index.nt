@@ -5,7 +5,7 @@
 import multithread;
 
 local OCS = function(){
-	console.log('%c OCS Initialized | v0.1.0', "background-color: #00667f ; color: #cccccc ; font-size: 16px ; font-family: 'american typewriter';");
+	// console.log('%c OCS Initialized | v0.1.0', "background-color: #00667f ; color: #cccccc ; font-size: 16px ; font-family: 'american typewriter';");
 
 	// conditionals
 	local all = function(~conditionals){
@@ -74,16 +74,16 @@ local OCS = function(){
 		};
 	};
 
-	species _Prop_(auto){
+	species Prop(auto){
 		this.auto = auto;
 	};
 
-	species _Component_(id, builder){
+	species Component(id, builder){
 		this.id = id;
 		this.builder = builder;
 	};
 
-	species _Environment_(id){
+	species Environment(id){
 		private.id = id;
 		private.entity_id = 0;
 		private.entity_lookup = new Map();
@@ -93,7 +93,7 @@ local OCS = function(){
 
 		local env_priv = private;
 
-		struct _Entity_(id, name){
+		struct Entity(id, name){
 			env_priv.entities[id] = this;
 
 			access id = id;
@@ -101,7 +101,7 @@ local OCS = function(){
 			if(name != null){
 				env_priv.entity_lookup.set(private.name, this);
 				this.destroy = function(){
-					_Query_.forEach(@(query)->{
+					Query.forEach(@(query)->{
 						query.remove(this);
 					});
 					env_priv.entity_lookup.delete(private.name);
@@ -110,7 +110,7 @@ local OCS = function(){
 				};
 			}else{
 				this.destroy = function(){
-					_Query_.forEach(@(query)->{
+					Query.forEach(@(query)->{
 						query.remove(this);
 					});
 					env_priv.removed.add(private.id);
@@ -119,7 +119,7 @@ local OCS = function(){
 			};
 
 			this.bindComponent = function(component, ~params){
-				if(component instanceof _Component_ || component instanceof EnvComponent){
+				if(component instanceof Component || component instanceof EnvComponent){
 					component = component.id;
 				};
 				if(EnvComponent.has(component) == false){
@@ -129,7 +129,7 @@ local OCS = function(){
 				local component_target = EnvComponent.get(component);
 
 
-				if(component_target.builder instanceof _Prop_){
+				if(component_target.builder instanceof Prop){
 					params[0] default component_target.builder.auto;
 					this[component] = params[0];
 				}else{
@@ -137,7 +137,7 @@ local OCS = function(){
 
 					local i = 0;
 					local create_component_props = function(builder, depth_arr){
-						if(builder instanceof _Prop_){
+						if(builder instanceof Prop){
 							params[i] default builder.auto;
 
 							local target = builder_obj;
@@ -161,7 +161,7 @@ local OCS = function(){
 				};
 
 
-				_Query_.forEach(@(query)->{
+				Query.forEach(@(query)->{
 					query.audit(this);
 				});
 
@@ -174,7 +174,7 @@ local OCS = function(){
 			this.builder = builder;
 		};
 
-		species _Query_(id, conditionals){
+		species Query(id, conditionals){
 			// private.id = id;
 			this.entities = new Set();
 			private.conditionals = conditionals;
@@ -214,11 +214,10 @@ local OCS = function(){
 					event(env_priv.entities[id], i);
 				};
 			};
-
 		};
 
-		species _System_(id, query, event){
-			private.query = _Query_.get(query);
+		species System(id, query, event){
+			private.query = Query.get(query);
 			private.event = event;
 			this.run = function(){
 				private.query.forEach(@(entity, i)->{
@@ -278,6 +277,9 @@ local OCS = function(){
 
 		// components
 		this.bindComponent = function(component){
+			if(EnvComponent.has(component.id)){
+				Error |"Environment ("private.id") already has component ("component.id")"|;
+			};
 			return new EnvComponent(component.id, component.builder);
 		};
 		this.getComponent = function(id){
@@ -288,12 +290,12 @@ local OCS = function(){
 		this.createEntity = function(name){
 			local new_entity = null;
 			if(private.removed.size == 0){
-				new_entity = new _Entity_(private.entity_id, name);
+				new_entity = new Entity(private.entity_id, name);
 				private.entity_id += 1;
 			}else{
 				local entity_id = private.removed.values().next().value;
 				private.removed.delete(entity_id);
-				new_entity = new _Entity_(entity_id, name);
+				new_entity = new Entity(entity_id, name);
 			};
 
 			return new_entity;
@@ -304,24 +306,24 @@ local OCS = function(){
 
 		// queries
 		this.createQuery = function(id, ~conditionals){
-			new _Query_(id, conditionals);
+			new Query(id, conditionals);
 		};
 		//this.getQuery = function(id){
-		//	return _Query_.get(id);
+		//	return Query.get(id);
 		//};
 		this.deleteQuery = function(id){
-			_Query_.delete(id);
+			Query.delete(id);
 		};
 
 		// systems
 		this.createSystem = function(id, query, event){
-			return new _System_(id, query, event);
+			return new System(id, query, event);
 		};
 		this.getSystem = function(id){
-			return _System_.get(id);
+			return System.get(id);
 		};
 		this.deleteSystem = function(id){
-			_System_.delete(id);
+			System.delete(id);
 		};
 	};
 
@@ -353,9 +355,9 @@ local OCS = function(){
 
 
 	return {
-		_Environment_: _Environment_,
-		_Component_: _Component_,
-		_Prop_: _Prop_,
+		Environment: Environment,
+		Component: Component,
+		Prop: Prop,
 		all: all,
 		none: none,
 		some: some,
