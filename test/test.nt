@@ -237,7 +237,10 @@ assert('class', true, @()->{
 	// id is auto generated and is accessable at a local scope
 	// the id is its index in the map
 	class GenericClass(param){
+		// access creates a private variable with a public getter
+		// it can be used with struct, class, species
 		access id = id;
+
 		this.param = param;
 		private.priv_prop = "hi";
 	};
@@ -269,7 +272,7 @@ assert('species', true, @()->{
 	});
 	return GenericSpecies.has('id') && GenericSpecies.get('id') == gen && gen.param == 'foo' && gen.priv_prop == null && gen.getter_prop == 1 && getter_count == 1;
 });
-assert("Operator Overloading", true, @()->{
+assert("Operator Overloading ($)", true, @()->{
 	struct Scalar(value){
 		this.value = value;
 	};
@@ -277,6 +280,7 @@ assert("Operator Overloading", true, @()->{
 		this.x = x;
 		this.y = y;
 
+		// the operation keyword can be used in struct, class, species
 		operation += (Scalar, scalar){
 			this.x += scalar.value;
 			this.y += scalar.value;
@@ -341,13 +345,20 @@ assert('instanceof', true, @()->{
 
 	return foo instanceof Spec;
 });
+assert('instanceof', true, @()->{
+	struct Spec(){};
+
+	local foo = new Spec();
+
+	return foo classof "Spec";
+});
 assert('swap', true, @()->{
-	local a = "foo";
-	local b = "bar";
+	local a = "a";
+	local b = "b";
 
 	a swap b;
 
-	return a == "bar" && b == "foo";
+	return a == "b" && b == "a";
 });
 assert('toggle', true, @()->{
 	local foo = false;
