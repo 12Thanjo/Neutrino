@@ -111,7 +111,7 @@ plugin.getFilePathUpDirectory = function(path, number){
     path = plugin.normalize(path);
 
     forNum(i, number){
-        if(["/", "\\"] includes path[path.length - 1]){
+        if(path[path.length - 1] is ["/", "\\"]){
             path = path.substring(0, path.length-1);      
         };
         path = path.substring(0, path.lastIndexOf("/")+1);

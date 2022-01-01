@@ -1,0 +1,21 @@
+species Session(uuid){
+	access uuid = uuid;
+	this.data = {};
+
+	this.generate_csrf = function(){
+		private.csrf = crypto.randomString(64);
+		return private.csrf;
+	};
+	this.generate_csrf();
+
+	this.check_csrf = function(csrf){
+		return crypto.equal(csrf, private.csrf);
+	};
+
+	this.delete = function(){
+		Session.delete(this.uuid);
+	};
+};
+local create_session = function(){
+	return new Session(crypto.uuid());
+};

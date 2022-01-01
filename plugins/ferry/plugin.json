@@ -1,0 +1,12 @@
+{
+    "name": "ferry",
+    "version": "0.1.0",
+    "description": "HTTP request handler built on top of Waterfall",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": [
+        "waterfall",
+        "cmd",
+        "crypto"
+    ]
+}

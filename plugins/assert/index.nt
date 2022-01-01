@@ -3,16 +3,38 @@
 // author: 12Thanjo
 
 import cmd;
+local metadata = new Object(plugin.metadata);
 
-local check = "✓";
-local x = '✘';
+define check = "✓";
+define x = '✘';
 
-
+local tests = 0;
+local passed = 0;
 
 plugin = function(title, value, condition){
+	tests += 1;
 	if(condition() == value){
+		passed += 1;
 		cmd.log(check + " " + title, cmd.color.green);
 	}else{
 		cmd.log(x + " " + title, cmd.color.red);
 	};
 };
+
+
+plugin.result = function(){
+	local result = "";
+	local color = "";
+	if(passed == tests){
+		result = "Passed";
+		color = cmd.color.green;
+	}else{
+		result = "Failed";
+		color = cmd.color.red;
+	};
+	cmd.log(|"Assert test: "color result|);
+
+	cmd.log(|"tests passed: "passed"/"tests|, color);
+};
+
+plugin.metadata = metadata;

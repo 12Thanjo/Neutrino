@@ -1,0 +1,27 @@
+{
+  "name": "neutrino-compiler",
+  "version": "1.0.0",
+  "description": "A programming language that compiles to NodeJS",
+  "main": "neutrino.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {
+    "virtuosity-server": "^0.6.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/12Thanjo/Neutrino.git"
+  },
+  "author": "12Thanjo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/12Thanjo/Neutrino/issues"
+  },
+  "homepage": "https://github.com/12Thanjo/Neutrino#readme"
+}

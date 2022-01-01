@@ -1,6 +1,12 @@
 name: crypto
 	type: object
 	description: extention to the built in crypto module to nodejs
+	name: randomString
+		type: function
+		description: generate a random hex string
+		param: length
+			type: integer
+			description: lenght of the string to generate (number of 8 bit hex codes)
 	name: sha256
 		type: function
 		description: hash using the sha256 standard
@@ -96,8 +102,14 @@ name: crypto
 		param: secretKey
 			type: string
 			description: secret key to sign with
+	name: unsigned
+		type: function
+		description: unsigned a signed string (from crypto.sign())
+		param: signed
+			type: string
+			description: the signed string to unsign
 	name: verify
-		type: string
+		type: function
 		description: verify a signed string (from crypto.sign())
 		param: signed
 			type: string

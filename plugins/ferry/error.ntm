@@ -1,0 +1,66 @@
+local create_error_string = function(code, status, message, req){
+	return |
+		'<!DOCTYPE html>'
+		'<html>'
+		'<head>'
+			'<meta charset="utf-8">'
+			'<meta name="viewport" content="width=device-width, initial-scale=1">'
+			'<title>ERROR 'code'</title>'
+		'</head>'
+		'<body>'
+			'<h1><b>'code'</b> 'status'</h1>'
+			'<p>'message': 'req.method' 'req.path'</p>'
+		'</body>'
+		'</html>'
+	|;
+};
+
+plugin.error = {
+	'400': function(req, res){
+		res.send(create_error_string(400, "Bad Request", "Bad Request", req));
+		res.statusCode = 400;
+		plugin.log.warning(|"400 - Bad Request: "req.method" "req.path|);
+	},
+	'401': function(req, res){
+		res.send(create_error_string(401, "Unauthorized", "Unauthorized Access", req));
+		res.statusCode = 401;
+		plugin.log.warning(|"401 - Unauthorized Access Attempt: "req.method" "req.path|);
+	},
+	'403': function(req, res){
+		res.send(create_error_string(403, "Forbidden", "Forbidden Access", req));
+		res.statusCode = 403;
+		plugin.log.warning(|"403 - Forbidden Access Attempt: "req.method" "req.path|);
+	},
+	'404': function(req, res){
+		res.send(create_error_string(404, "Not Found", "Cannot get path", req));
+		res.statusCode = 404;
+		plugin.log.info(|"404 - Cannot get path: "req.method" "req.path|);
+	},
+	'405': function(req, res){
+		res.send(create_error_string(405, "Not Acceptable", "Not Acceptable", req));
+		res.statusCode = 405;
+		plugin.log.info(|"405 - Not Acceptable: "req.method" "req.path|);
+	},
+	'418': function(req, res){
+		res.send(create_error_string(418, "I am a teapot", "I am a teapot", req));
+		res.statusCode = 418;
+		plugin.log.info(|"418 - I am a teapot: "req.method" "req.path|);
+	},
+
+
+	'500': function(req, res, message){
+		res.send(create_error_string(500, "Internal Server Error", "Internal Server Error", req));
+		res.statusCode = 500;
+		plugin.log.error(|"500 - Internal Server Error: "req.method" "req.path" | "message|);
+	},
+	'501': function(req, res){
+		res.send(create_error_string(501, "Not Implimented", "Method Not Implimented", req));
+		res.statusCode = 501;
+		plugin.log.info(|"501 - Method Not Implimented: "req.method" "req.path|);
+	},
+	'502': function(req, res){
+		res.send(create_error_string(502, "Bad Gateway", "Gateway returned invalid response", req));
+		res.statusCode = 502;
+		plugin.log.info(|"502 - Gateway returned invalid response: "req.method" "req.path|);
+	},
+};

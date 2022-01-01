@@ -81,7 +81,7 @@ name: cmd
 			description: set the text hidden
 	name: log
 		type: function
-		description: console.log() with stylizations with preventing overflow
+		description: console.log() with stylizations with style-overflow prevention
 		param: string
 			type: string
 			description: string to output
@@ -91,3 +91,9 @@ name: cmd
 		param: backgroundColor
 			type: string
 			description: bakground color of text (cmd.backgroundColor)
+	name: error
+		type: function
+		description: console.error() with stylizations with style-overflow prevention
+		param: string
+			type: string
+			description: string to output

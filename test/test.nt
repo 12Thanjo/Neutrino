@@ -245,10 +245,20 @@ assert('class', true, @()->{
 		private.priv_prop = "hi";
 	};
 
+	// create some 
 	spawn GenericClass("foo");
 	spawn GenericClass("bar");
 
-	return GenericClass.has(0) && GenericClass.get(0).param == "foo" && GenericClass.get(1).param == "bar";
+	// create and then delete one
+	local delete_me = new GenericClass("delete me");
+	GenericClass.delete(delete_me.id);
+
+	// GenericClass.resetI() can be used to reset the id counter (will overwrite in the GenericClass map)
+
+	return 	GenericClass.has(0) && 
+			GenericClass.get(0).param == "foo" && 
+			GenericClass.get(1).param == "bar" && 
+			GenericClass.has(2) == false;
 });
 assert('species', true, @()->{
 	 // id parameter is needed
@@ -270,7 +280,12 @@ assert('species', true, @()->{
 	GenericSpecies.forEach(@(target)->{
 		getter_count += target.getter_prop;
 	});
-	return GenericSpecies.has('id') && GenericSpecies.get('id') == gen && gen.param == 'foo' && gen.priv_prop == null && gen.getter_prop == 1 && getter_count == 1;
+	return 	GenericSpecies.has('id') && 
+			GenericSpecies.get('id') == gen &&
+			gen.param == 'foo' &&
+			gen.priv_prop == null &&
+			gen.getter_prop == 1 &&
+			getter_count == 1;
 });
 assert("Operator Overloading ($)", true, @()->{
 	struct Scalar(value){
@@ -390,6 +405,11 @@ assert('is', true, @()->{
 	local search = ['asdf', 'foo'];
 	return ('foo' is ['asdf', 'foo']) && ('foo' is search);
 });
+assert('isnt', true, @()->{
+	local foo = "foo";
+	local search = ['asdf', 'bar'];
+	return (foo isnt ['asdf', 'bar']) && ("foo" isnt search);
+});
 assert('scope', true, @()->{
 	local foo = true;
 	local bar = false;
@@ -433,4 +453,5 @@ assert('RangeError', 'message', @()->{
 });
 console.log();
 
+assert.result();
 		

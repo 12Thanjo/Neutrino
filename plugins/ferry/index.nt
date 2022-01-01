@@ -1,0 +1,198 @@
+// plugin: ferry
+// description: HTTP request handler built on top of Waterfall
+// author: 12Thanjo
+
+import waterfall;
+import cmd;
+import crypto;
+
+macro "logging";
+macro "error";
+macro "sessions";
+
+
+local dir_map = {};
+setup_dir = function(method, path, event){
+	if(dir_map[method] == null){
+		dir_map[method] = new Map();
+	};
+	dir_map[method].set(path, event);
+};
+
+plugin.get = function(path, callback){
+	setup_dir("GET", path, callback);
+};
+plugin.post = function(path, callback){
+	setup_dir("POST", path, callback);
+};
+plugin.delete = function(path, callback){
+	setup_dir("DELETE", path, callback);
+};
+plugin.put = function(path, callback){
+	setup_dir("PUT", path, callback);
+};
+plugin.options = function(path, callback){
+	setup_dir("OPTIONS", path, callback);
+};
+plugin.patch = function(path, callback){
+	setup_dir("PATCH", path, callback);
+};
+plugin.on = function(method, path, callback){
+	setup_dir(method, path, callback);
+};
+
+local middlewares = new Map();
+plugin.middleware = function(path, event){
+	middlewares.set(path, event);
+};
+
+
+local afterwares = [];
+plugin.afterware = function(event){
+	afterwares.push(event);
+};
+
+
+
+local error_check = function(req, res, event){
+	try{
+		event(req, res);
+	}catch(e){
+		plugin.error['500'](req, res, |e.message" | "e.stack|);
+	};
+};
+
+
+plugin.start = function(port, config){
+	// config
+	config default {};
+	config.cookieSecret default "";
+	config.useSessions default false;
+	config.rejectInvalidCookies default false;
+	config.rejectInvalidSessions default false;
+	config.deleteRejectedSessions default false;
+
+
+	waterfall(port, @(req, res)->{
+		// cookies ///////////////////////////////////////////
+		if(config.cookieSecret != ""){
+			forKeys req.cookies(key, value){
+				local verified = crypto.verify(value, config.cookieSecret);
+				if(verified){
+					// valid signature
+					local unsigned = crypto.unsign(value);
+					req.cookies[key] = unsigned;
+					res.cookies.set(key, unsigned);
+				}else{
+					// invalid signature
+					if(config.rejectInvalidCookies){
+						req.reject = true;
+					}else{
+						res.cookies.remove(key);
+						delete req.cookies[key];
+					};
+				};
+			};
+		};
+		delete res.cookies.remove;
+
+		// sessions //////////////////////////////////////////
+		local session;
+		if(config.useSessions){
+			if(req.cookies["|--SESSION--|"] != null){
+				if(Session.has(req.cookies["|--SESSION--|"])){
+					session = Session.get(req.cookies["|--SESSION--|"]);
+					if(session.check_csrf(req.cookies["|--CSRF--|"])){
+						// valid csrf
+						req.session = session.data;
+					}else{
+						// invalid csrf
+						plugin.log.warning(|"Someone with an incorrect CSRF attempted to connect (UUID: "req.cookies['|--SESSION--|']", CSRF: "req.cookies['|--SESSION--|']")"|);
+						req.reject = config.rejectInvalidSessions;
+					};
+				}else{
+					plugin.log.warning(|"Someone with an incorrect session UUID attempted to connect (UUID: "req.cookies['|--SESSION--|']")"|);
+					// req.reject = config.rejectInvalidSessions;
+				};
+			};
+
+			if(session == null && req.reject == false){
+				session = create_session();
+				plugin.log.info("Created a new session | UUID: " + session.uuid);
+				req.session = session.data;
+			};
+
+			delete req.cookies['|--SESSION--|'];
+			delete req.cookies['|--CSRF--|'];
+		};
+
+		// middleware ////////////////////////////////////////
+		local split_path = req.path.split("/");
+		local path_str = "";
+		local continue = req.reject == false;
+		iterate split_path(i, value){
+			if(continue){
+				if(path_str != "/"){
+					path_str += "/" + value;
+				}else{
+					path_str += value;
+				};
+				
+				if(middlewares.has(path_str)){
+					error_check(req, res, @(req, res)->{
+						continue = middlewares.get(path_str)(req, res) != false;
+
+						if(continue == false){
+							plugin.error['403'](req, res);
+						}else{
+							continue = req.reject == false;
+						};
+					});
+				};
+			}else{
+				break;
+			};
+		};
+
+
+		if(continue){
+			// directory event ///////////////////////////////////
+			local method = req.method;
+			if(dir_map[method] && dir_map[method].has(req.path)){
+				error_check(req, res, 
+					dir_map[method].get(req.path)
+				);
+			}else{
+				plugin.error['404'](req, res);
+			};
+
+
+			// afterware /////////////////////////////////////////
+			iterate afterwares(i, event){
+				event(req, res);
+			};
+
+			// set session cookies
+			if(config.useSessions){
+				res.cookies.set("|--SESSION--|", session.uuid);
+				res.cookies.set("|--CSRF--|", session.generate_csrf());
+			};
+
+			// sign cookies
+			if(config.cookieSecret != ""){
+				local cookie_list = res.cookies.print();
+				forKeys cookie_list(key, value){
+					res.cookies.set(key, crypto.sign(value, config.cookieSecret));
+				};
+			};
+		};
+
+
+		if(req.reject){
+			plugin.log.warning(|"Rejected a "req.method" request from "req.ip|);
+			if(config.rejectInvalidSessions){
+				session.delete();
+			};
+		};
+	});
+};

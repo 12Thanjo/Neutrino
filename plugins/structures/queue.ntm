@@ -4,7 +4,7 @@ scope {
 		this.next = null;
 	};
 
-	struct Queue(){
+	struct Queue(setup_arr){
 		private.front = null;
 		private.back = null;
 		access length = 0;
@@ -50,6 +50,12 @@ scope {
 			};
 
 			return output;
+		};
+
+		if(setup_arr != null){
+			iterate setup_arr(i, value){
+				this.push(value);
+			};
 		};
 	};
 	plugin.Queue = Queue;

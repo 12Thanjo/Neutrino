@@ -276,173 +276,181 @@ assert('class',true,()=>{
 		private.priv_prop="hi"; //245:16 | test.nt
 	}; //239:10 | test.nt
 	GenericClass.$i=0;GenericClass.resetI=function(){GenericClass.$i=0;};GenericClass.$map=new Map();GenericClass.get=function(id){return GenericClass.$map.get(id);};GenericClass.has=function(id){return GenericClass.$map.has(id);};GenericClass.forEach=function(cb){GenericClass.$map.forEach(cb);};GenericClass.delete=function(cb){GenericClass.$map.delete(cb);}; //239:10 | test.nt
-	new GenericClass("foo"); //248:10 | test.nt
-	new GenericClass("bar"); //249:10 | test.nt
-	return GenericClass.has(0)&&GenericClass.get(0).param=="foo"&&GenericClass.get(1).param=="bar"; //251:11 | test.nt
+	new GenericClass("foo"); //249:23 | test.nt
+	new GenericClass("bar"); //250:23 | test.nt
+	let delete_me=new GenericClass("delete me"); //253:20 | test.nt
+	GenericClass.delete(delete_me.id); //254:24 | test.nt
+	return GenericClass.has(0)&&GenericClass.get(0).param=="foo"&&GenericClass.get(1).param=="bar"&&GenericClass.has(2)==false; //258:11 | test.nt
 }); //236:7 | test.nt
 assert('species',true,()=>{
 	let GenericSpecies=function(id,param){
 		let $this=this;let private={};this.$op={};GenericSpecies.$map.set(id,this);
-		$this.name=id; //258:13 | test.nt
-		$this.param=param; //259:13 | test.nt
-		private.priv_prop="hi"; //260:16 | test.nt
-		private.getter_prop=0; //261:27 | test.nt
-		Object.defineProperty(this, "getter_prop", {get: ()=>{return private.getter_prop;}}); //261:15 | test.nt
-		private.getter_prop+=1; //262:16 | test.nt
-	}; //257:12 | test.nt
-	GenericSpecies.$map=new Map();GenericSpecies.get=function(id){return GenericSpecies.$map.get(id);};GenericSpecies.has=function(id){return GenericSpecies.$map.has(id);};GenericSpecies.forEach=function(cb){GenericSpecies.$map.forEach(cb);};GenericSpecies.delete=function(cb){GenericSpecies.$map.delete(cb);}; //257:12 | test.nt
-	let gen=new GenericSpecies('id','foo'); //265:14 | test.nt
-	gen.getter_prop=2; //267:8 | test.nt
-	let getter_count=0; //269:23 | test.nt
+		$this.name=id; //268:13 | test.nt
+		$this.param=param; //269:13 | test.nt
+		private.priv_prop="hi"; //270:16 | test.nt
+		private.getter_prop=0; //271:27 | test.nt
+		Object.defineProperty(this, "getter_prop", {get: ()=>{return private.getter_prop;}}); //271:15 | test.nt
+		private.getter_prop+=1; //272:16 | test.nt
+	}; //267:12 | test.nt
+	GenericSpecies.$map=new Map();GenericSpecies.get=function(id){return GenericSpecies.$map.get(id);};GenericSpecies.has=function(id){return GenericSpecies.$map.has(id);};GenericSpecies.forEach=function(cb){GenericSpecies.$map.forEach(cb);};GenericSpecies.delete=function(cb){GenericSpecies.$map.delete(cb);}; //267:12 | test.nt
+	let gen=new GenericSpecies('id','foo'); //275:14 | test.nt
+	gen.getter_prop=2; //277:8 | test.nt
+	let getter_count=0; //279:23 | test.nt
 	GenericSpecies.forEach((target)=>{
-		getter_count+=target.getter_prop; //271:21 | test.nt
-	}); //270:27 | test.nt
-	return GenericSpecies.has('id')&&GenericSpecies.get('id')==gen&&gen.param=='foo'&&gen.priv_prop==null&&gen.getter_prop==1&&getter_count==1; //273:11 | test.nt
-}); //253:7 | test.nt
+		getter_count+=target.getter_prop; //281:21 | test.nt
+	}); //280:27 | test.nt
+	return GenericSpecies.has('id')&&GenericSpecies.get('id')==gen&&gen.param=='foo'&&gen.priv_prop==null&&gen.getter_prop==1&&getter_count==1; //283:11 | test.nt
+}); //263:7 | test.nt
 assert("Operator Overloading ($)",true,()=>{
 	let Scalar=function(value){
 		let $this=this;let private={};this.$op={};
-		$this.value=value; //277:13 | test.nt
-	}; //276:11 | test.nt
+		$this.value=value; //292:13 | test.nt
+	}; //291:11 | test.nt
 	let Vector2=function(x,y){
 		let $this=this;let private={};this.$op={};
-		$this.x=x; //280:13 | test.nt
-		$this.y=y; //281:13 | test.nt
+		$this.x=x; //295:13 | test.nt
+		$this.y=y; //296:13 | test.nt
 		this.$op["+= <Scalar>"]=function(scalar){
-			$this.x+=scalar.value; //285:17 | test.nt
-			$this.y+=scalar.value; //286:17 | test.nt
-		}; //284:18 | test.nt
+			$this.x+=scalar.value; //300:17 | test.nt
+			$this.y+=scalar.value; //301:17 | test.nt
+		}; //299:18 | test.nt
 		this.$op["+ <Vector2>"]=function(vector){
-			let new_x=$this.x+vector.x; //290:24 | test.nt
-			let new_y=$this.y+vector.y; //291:24 | test.nt
-			return new Vector2(new_x,new_y); //292:19 | test.nt
-		}; //289:18 | test.nt
-	}; //279:11 | test.nt
-	let s1=new Scalar(1); //297:13 | test.nt
-	let v1=new Vector2(2,3); //298:13 | test.nt
-	let v2=new Vector2(4,5); //299:13 | test.nt
-	v1.$op["+= <"+s1.constructor.name+">"](s1); //303:8 | test.nt
-	v1.$op["+= <"+s1.constructor.name+">"](s1); //304:8 | test.nt
-	let v3=v1.$op["+ <"+v2.constructor.name+">"](v2); //305:13 | test.nt
-	return v3.x==8&&v3.y==10; //307:11 | test.nt
-}); //275:7 | test.nt
-console.log(); //309:12 | test.nt
-console.log("Keywords:"); //312:12 | test.nt
+			let new_x=$this.x+vector.x; //305:24 | test.nt
+			let new_y=$this.y+vector.y; //306:24 | test.nt
+			return new Vector2(new_x,new_y); //307:19 | test.nt
+		}; //304:18 | test.nt
+	}; //294:11 | test.nt
+	let s1=new Scalar(1); //312:13 | test.nt
+	let v1=new Vector2(2,3); //313:13 | test.nt
+	let v2=new Vector2(4,5); //314:13 | test.nt
+	v1.$op["+= <"+s1.constructor.name+">"](s1); //318:8 | test.nt
+	v1.$op["+= <"+s1.constructor.name+">"](s1); //319:8 | test.nt
+	let v3=v1.$op["+ <"+v2.constructor.name+">"](v2); //320:13 | test.nt
+	return v3.x==8&&v3.y==10; //322:11 | test.nt
+}); //290:7 | test.nt
+console.log(); //324:12 | test.nt
+console.log("Keywords:"); //327:12 | test.nt
 assert('return',true,()=>{
-	return true; //314:11 | test.nt
-}); //313:7 | test.nt
+	return true; //329:11 | test.nt
+}); //328:7 | test.nt
 assert('try',true,()=>{
 	try{
-		return true; //318:15 | test.nt
-	}catch{}; //317:8 | test.nt
-}); //316:7 | test.nt
+		return true; //333:15 | test.nt
+	}catch{}; //332:8 | test.nt
+}); //331:7 | test.nt
 assert('catch',true,()=>{
 	try{
-		foo=doesnt_exist; //323:12 | test.nt
-		return false; //324:15 | test.nt
+		foo=doesnt_exist; //338:12 | test.nt
+		return false; //339:15 | test.nt
 	}catch{
-		return true; //326:15 | test.nt
+		return true; //341:15 | test.nt
 	};
-}); //321:7 | test.nt
+}); //336:7 | test.nt
 assert('catch (e)',true,()=>{
 	try{
-		foo=doesnt_exist; //331:12 | test.nt
-		return false; //332:15 | test.nt
+		foo=doesnt_exist; //346:12 | test.nt
+		return false; //347:15 | test.nt
 	}catch(e){
-		return e!=null; //334:15 | test.nt
+		return e!=null; //349:15 | test.nt
 	};
-}); //329:7 | test.nt
+}); //344:7 | test.nt
 assert('typeof',true,()=>{
-	let num=1234; //338:14 | test.nt
-	return typeof num==='number'; //339:11 | test.nt
-}); //337:7 | test.nt
+	let num=1234; //353:14 | test.nt
+	return typeof num==='number'; //354:11 | test.nt
+}); //352:7 | test.nt
 assert('instanceof',true,()=>{
 	let Spec=function(){
 		let $this=this;let private={};this.$op={};
-	}; //342:11 | test.nt
-	let foo=new Spec(); //344:14 | test.nt
-	return foo instanceof Spec; //346:11 | test.nt
-}); //341:7 | test.nt
+	}; //357:11 | test.nt
+	let foo=new Spec(); //359:14 | test.nt
+	return foo instanceof Spec; //361:11 | test.nt
+}); //356:7 | test.nt
 assert('instanceof',true,()=>{
 	let Spec=function(){
 		let $this=this;let private={};this.$op={};
-	}; //349:11 | test.nt
-	let foo=new Spec(); //351:14 | test.nt
-	return foo.constructor.name ==="Spec"; //353:11 | test.nt
-}); //348:7 | test.nt
-assert('swap',true,()=>{
-	let a="foo"; //356:12 | test.nt
-	let b="bar"; //357:12 | test.nt
-	var $save=a;a=b;b=$save; //359:6 | test.nt
-	return a=="bar"&&b=="foo"; //361:11 | test.nt
-}); //355:7 | test.nt
-assert('toggle',true,()=>{
-	let foo=false; //364:14 | test.nt
-	if(foo===false){foo=true;}else{foo=false;}; //365:8 | test.nt
-	return foo; //366:11 | test.nt
+	}; //364:11 | test.nt
+	let foo=new Spec(); //366:14 | test.nt
+	return foo.constructor.name ==="Spec"; //368:11 | test.nt
 }); //363:7 | test.nt
+assert('swap',true,()=>{
+	let a="a"; //371:12 | test.nt
+	let b="b"; //372:12 | test.nt
+	var $save=a;a=b;b=$save; //374:6 | test.nt
+	return a=="b"&&b=="a"; //376:11 | test.nt
+}); //370:7 | test.nt
+assert('toggle',true,()=>{
+	let foo=false; //379:14 | test.nt
+	if(foo===false){foo=true;}else{foo=false;}; //380:8 | test.nt
+	return foo; //381:11 | test.nt
+}); //378:7 | test.nt
 assert('break',1,()=>{
-	let count=0; //369:16 | test.nt
+	let count=0; //384:16 | test.nt
 	for(var i=0;i<3;i++){
-		count+=i+1; //371:14 | test.nt
-		break; //372:14 | test.nt
-	}; //370:11 | test.nt
-	return count; //374:11 | test.nt
-}); //368:7 | test.nt
+		count+=i+1; //386:14 | test.nt
+		break; //387:14 | test.nt
+	}; //385:11 | test.nt
+	return count; //389:11 | test.nt
+}); //383:7 | test.nt
 assert('default',2,()=>{
-	let foo=null; //377:14 | test.nt
-	if(foo==null){foo=2;}; //378:8 | test.nt
-	return foo; //379:11 | test.nt
-}); //376:7 | test.nt
+	let foo=null; //392:14 | test.nt
+	if(foo==null){foo=2;}; //393:8 | test.nt
+	return foo; //394:11 | test.nt
+}); //391:7 | test.nt
 assert('delete',null,()=>{
 	let foo={
 		bar:"asdf"
-	}; //382:14 | test.nt
-	delete foo.bar; //385:11 | test.nt
-	return foo.bar; //386:11 | test.nt
-}); //381:7 | test.nt
+	}; //397:14 | test.nt
+	delete foo.bar; //400:11 | test.nt
+	return foo.bar; //401:11 | test.nt
+}); //396:7 | test.nt
 assert('is',true,()=>{
-	let foo="foo"; //389:14 | test.nt
-	let search=['asdf','foo']; //390:17 | test.nt
-	return (['asdf','foo'].includes('foo'))&&(search.includes('foo')); //391:11 | test.nt
-}); //388:7 | test.nt
+	let foo="foo"; //404:14 | test.nt
+	let search=['asdf','foo']; //405:17 | test.nt
+	return (['asdf','foo'].includes('foo'))&&(search.includes('foo')); //406:11 | test.nt
+}); //403:7 | test.nt
+assert('isnt',true,()=>{
+	let foo="foo"; //409:14 | test.nt
+	let search=['asdf','bar']; //410:17 | test.nt
+	return ((['asdf','bar'].includes(foo)==false))&&((search.includes("foo")==false)); //411:11 | test.nt
+}); //408:7 | test.nt
 assert('scope',true,()=>{
-	let foo=true; //394:14 | test.nt
-	let bar=false; //395:14 | test.nt
+	let foo=true; //414:14 | test.nt
+	let bar=false; //415:14 | test.nt
 	{
-		let foo=false; //397:18 | test.nt
-		bar=true; //398:12 | test.nt
-	}; //396:10 | test.nt
-	return foo&&bar; //400:11 | test.nt
-}); //393:7 | test.nt
-console.log(); //402:12 | test.nt
-console.log("Errors:"); //405:12 | test.nt
+		let foo=false; //417:18 | test.nt
+		bar=true; //418:12 | test.nt
+	}; //416:10 | test.nt
+	return foo&&bar; //420:11 | test.nt
+}); //413:7 | test.nt
+console.log(); //422:12 | test.nt
+console.log("Errors:"); //425:12 | test.nt
 assert('Error','message',()=>{
 	try{
 		throw Error("message");
 	}catch(e){
-		return e.message; //410:15 | test.nt
+		return e.message; //430:15 | test.nt
 	};
-}); //406:7 | test.nt
+}); //426:7 | test.nt
 assert('SyntaxError','message',()=>{
 	try{
 		throw SyntaxError("message");
 	}catch(e){
-		return e.message; //417:15 | test.nt
+		return e.message; //437:15 | test.nt
 	};
-}); //413:7 | test.nt
+}); //433:7 | test.nt
 assert('ReferenceError','message',()=>{
 	try{
 		throw ReferenceError("message");
 	}catch(e){
-		return e.message; //424:15 | test.nt
+		return e.message; //444:15 | test.nt
 	};
-}); //420:7 | test.nt
+}); //440:7 | test.nt
 assert('RangeError','message',()=>{
 	try{
 		throw RangeError("message");
 	}catch(e){
-		return e.message; //431:15 | test.nt
+		return e.message; //451:15 | test.nt
 	};
-}); //427:7 | test.nt
-console.log(); //434:12 | test.nt
+}); //447:7 | test.nt
+console.log(); //454:12 | test.nt
+assert.result(); //456:14 | test.nt

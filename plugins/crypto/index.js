@@ -2,12 +2,17 @@
 // description: extention to the built in crypto module to nodejs
 // author: 12Thanjo
 
-let crypto;
+var crypto;
 try{
 	crypto = require('crypto');
 }catch{
  	console.error('crypto is not supported');
 };
+
+
+plugin.randomString = function(length){
+	return crypto.randomBytes(length).toString("hex");
+}
 
 plugin.sha256 = function(data, secretKey){
 	return crypto.createHmac('sha256', secretKey)
@@ -16,7 +21,7 @@ plugin.sha256 = function(data, secretKey){
 };
 
 plugin.scrypt = function(data, salt, length){
-	let key = crypto.scryptSync(data, salt, length);
+	var key = crypto.scryptSync(data, salt, length);
 	return key.toString('hex');
 };
 
@@ -39,8 +44,8 @@ plugin.generateIV = function(){
 };
 
 plugin.encrypt = function(text, iv, secretKey){
-    let cipher = crypto.createCipheriv('aes-256-ctr', secretKey, iv);
-    let encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+    var cipher = crypto.createCipheriv('aes-256-ctr', secretKey, iv);
+    var encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
 
     return {
         content: encrypted.toString('hex'),
@@ -49,8 +54,8 @@ plugin.encrypt = function(text, iv, secretKey){
 };
 
 plugin.decrypt = function(content, iv, secretKey){
-    let decipher = crypto.createDecipheriv('aes-256-ctr', secretKey, Buffer.from(iv, 'hex'));
-    let decrpyted = Buffer.concat([decipher.update(Buffer.from(content, 'hex')), decipher.final()]);
+    var decipher = crypto.createDecipheriv('aes-256-ctr', secretKey, Buffer.from(iv, 'hex'));
+    var decrpyted = Buffer.concat([decipher.update(Buffer.from(content, 'hex')), decipher.final()]);
 
     return decrpyted.toString();
 };
@@ -65,7 +70,7 @@ plugin.diffieHellman = {};
 
 
 plugin.diffieHellman.generate = function(){
-	let dh = crypto.createECDH('secp256k1');
+	var dh = crypto.createECDH('secp256k1');
 	dh.generateKeys();
 	return {
 		publicKey: dh.getPublicKey().toString('hex'),
@@ -77,7 +82,7 @@ plugin.diffieHellman.compute = function(privateKey, theirPublicKey){
 	privateKey = Buffer.from(privateKey, 'hex');
 	theirPublicKey = Buffer.from(theirPublicKey, 'hex');
 
-	let dh = crypto.createECDH('secp256k1');
+	var dh = crypto.createECDH('secp256k1');
 	dh.setPrivateKey(privateKey);
 	return dh.computeSecret(theirPublicKey, 'base64', 'hex')
 };
@@ -93,19 +98,24 @@ plugin.sign = function(data, secretKey){
 	return data + "." + signature;
 };
 
+plugin.unsign = function(signed){
+	if(signed.includes('.')){
+		return signed.substring(0, signed.lastIndexOf('.'));
+	}else{
+		console.error("not a signed string");
+	}
+}
 
 
 plugin.verify = function(signed, secretKey){
 	if(signed.includes('.')){
-		var point_position = signed.lastIndexOf('.');
-		var data = signed.substring(0, point_position);
-
-		var sign_test = plugin.sign(data, secretKey);
+		var sign_test = plugin.sign(plugin.unsign(signed), secretKey);
 		return plugin.equal(sign_test, signed);
 	}else{
 		return false;
 	};
 };
+
 
 
 /////////////////////////////////////////////////////////////////////////////

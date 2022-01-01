@@ -55,10 +55,14 @@ plugin.style = {
 
 
 plugin.log = function(string, color, backgroundColor){
-	string = string || "";
-	color = color || "";
-	backgroundColor = backgroundColor || "";
+	string default "";
+	color default "";
+	backgroundColor default "";
 	console.log(color + backgroundColor + string + plugin.color.white + plugin.backgroundColor.black + plugin.style.reset);
+};
+
+plugin.error = function(string){
+	console.log(plugin.color.red + string + plugin.color.white + plugin.backgroundColor.black + plugin.style.reset);
 };
 
 plugin.specialLog = function(data){

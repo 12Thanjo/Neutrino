@@ -15,8 +15,17 @@ module.exports = function(args, dirname, compile_target, output_target){
 
 	///////////////////////////////////////////////////////////////////////////////////////////
 
-	log(`Neutrino build project`, cmd.color.cyan);
-	log(`----------------------`, cmd.color.cyan);
+	if(compile_target == null){
+		log(`Neutrino build project`, cmd.color.cyan);
+		log(`----------------------`, cmd.color.cyan);
+	}else{
+		log(`Neutrino compile > ${compile_target}`, cmd.color.cyan);
+		var lines = `-------------------`;
+		for(var i=0; i<compile_target.length;i++){
+			lines += "-";
+		}
+		log(lines, cmd.color.cyan);
+	}
 
 	var nt_files = [];
 	var num_of_files = 0;
@@ -105,13 +114,21 @@ module.exports = function(args, dirname, compile_target, output_target){
 			console.log("~~~~~~~~~~~~~~~");
 		}
 
-		var compiled = neutrino.Compiler(parsed.output, parsed.const_dict, {
-			debug: args.includes('--debug'),
-			package: args.includes('--package'),
-			plugin: args.includes('--plugin'),
-			preserve: args.includes('--preserve'),
-			relative: file.relative.replaceAll("\\", "/"),
-		});
+		try{
+			var compiled = neutrino.Compiler(parsed.output, parsed.const_dict, {
+				debug: args.includes('--debug'),
+				package: args.includes('--package'),
+				plugin: args.includes('--plugin'),
+				preserve: args.includes('--preserve'),
+				relative: file.relative.replaceAll("\\", "/"),
+			});
+		}catch(e){
+			console.log(cmd.color.red);
+			console.log(e);
+			console.log(cmd.color.white);
+			process.exit();
+		}
+
 
 		files.writeFile(file.path + "/" + file.name + ".js", compiled);
 		log(`> Compiled: ${cmd.color.yellow + file.relative.replaceAll("\\", "/") + cmd.color.blue + file.name}.nt`, cmd.color.green);

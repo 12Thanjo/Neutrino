@@ -5,7 +5,7 @@ scope {
 	};
 
 
-	struct Stack(){
+	struct Stack(setup_arr){
 		private.top = null;
 		access length = 0;
 
@@ -28,7 +28,11 @@ scope {
 		};
 
 		this.peek = function(){
-			return private.top.data;
+			if(private.top != null){
+				return private.top.data;
+			}else{
+				return null;
+			};
 		};
 
 		this.print = function(){
@@ -41,6 +45,14 @@ scope {
 			};
 
 			return output;
+		};
+
+
+		if(setup_arr != null){
+			local length = setup_arr.length - 1;
+			iterate setup_arr(i, value){
+				this.push(setup_arr[length - i]);
+			};
 		};
 	};
 	plugin.Stack = Stack;

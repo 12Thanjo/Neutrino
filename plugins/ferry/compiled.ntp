@@ -1,0 +1,273 @@
+$pending_plugins.set('ferry',()=>{let plugin={metadata:{"name":"ferry","version":"0.1.0","description":"HTTP request handler built on top of Waterfall","main":"index.nt","author":"12Thanjo","dependancies":["waterfall","cmd","crypto"]}};
+	let waterfall=$get_plugin('waterfall'); //5:7
+	let cmd=$get_plugin('cmd'); //6:7
+	let crypto=$get_plugin('crypto'); //7:7
+	let log_builder=function(type,message){ //1:28 | logging.ntm
+		return {
+			type:type,
+			message:message,
+			timestamp:new Date().toUTCString()
+		}; //2:11 | logging.ntm
+	}; //1:18 | logging.ntm
+	plugin.log={
+		info:function(message){ //10:19 | logging.ntm
+			let log=log_builder("info",message); //11:18 | logging.ntm
+			let mode=plugin.log.mode.info; //12:19 | logging.ntm
+			if(mode=="full"){
+				cmd.log(JSON.stringify(log),cmd.color.cyan); //14:20 | logging.ntm
+			}else if(mode=="verbose"){
+				cmd.log(message,cmd.color.cyan); //16:20 | logging.ntm
+			}else if(mode!="silent"){
+				throw Error(('`info log is set to an invalid mode.\nGot('+(mode)+'})\nSupported modes are: "verbose", "debug", "silent"'));
+			}; //13:11 | logging.ntm
+			let str=JSON.stringify(log); //20:18 | logging.ntm
+		},
+		warning:function(message){ //24:22 | logging.ntm
+			let log=log_builder("warning",message); //25:18 | logging.ntm
+			let mode=plugin.log.mode.warning; //26:19 | logging.ntm
+			if(mode=="full"){
+				cmd.log(JSON.stringify(log),cmd.color.yellow); //28:20 | logging.ntm
+			}else if(mode=="verbose"){
+				cmd.log(message,cmd.color.yellow); //30:20 | logging.ntm
+			}else if(mode!="silent"){
+				throw Error(('`warning log is set to an invalid mode.\nGot('+(mode)+'})\nSupported modes are: "verbose", "debug", "silent"'));
+			}; //27:11 | logging.ntm
+			let str=JSON.stringify(log); //34:18 | logging.ntm
+		},
+		error:function(message){ //38:20 | logging.ntm
+			let log=log_builder("error",message); //39:18 | logging.ntm
+			let mode=plugin.log.mode.error; //40:19 | logging.ntm
+			if(mode=="full"){
+				cmd.log(JSON.stringify(log),cmd.color.red); //42:20 | logging.ntm
+			}else if(mode=="verbose"){
+				cmd.log(message,cmd.color.red); //44:20 | logging.ntm
+			}else if(mode!="silent"){
+				throw Error(('`error log is set to an invalid mode.\nGot('+(mode)+'})\nSupported modes are: "verbose", "debug", "silent"'));
+			}; //41:11 | logging.ntm
+			let str=JSON.stringify(log); //48:18 | logging.ntm
+		},
+		mode:{
+			info:"verbose",
+			warning:"verbose",
+			error:"verbose"
+		}
+	}; //9:7 | logging.ntm
+	let create_error_string=function(code,status,message,req){ //1:36 | error.ntm
+		return '<!DOCTYPE html>'+'<html>'+'<head>'+'<meta charset="utf-8">'+'<meta name="viewport" content="width=device-width, initial-scale=1">'+'<title>ERROR '+(code)+'</title>'+'</head>'+'<body>'+'<h1><b>'+(code)+'</b> '+(status)+'</h1>'+'<p>'+(message)+': '+(req.method)+' '+(req.path)+'</p>'+'</body>'+'</html>'; //2:11 | error.ntm
+	}; //1:26 | error.ntm
+	plugin.error={
+		'400':function(req,res){ //19:20 | error.ntm
+			res.send(create_error_string(400,"Bad Request","Bad Request",req)); //20:17 | error.ntm
+			res.statusCode=400; //21:12 | error.ntm
+			plugin.log.warning("400 - Bad Request: "+(req.method)+" "+(req.path)); //22:27 | error.ntm
+		},
+		'401':function(req,res){ //24:20 | error.ntm
+			res.send(create_error_string(401,"Unauthorized","Unauthorized Access",req)); //25:17 | error.ntm
+			res.statusCode=401; //26:12 | error.ntm
+			plugin.log.warning("401 - Unauthorized Access Attempt: "+(req.method)+" "+(req.path)); //27:27 | error.ntm
+		},
+		'403':function(req,res){ //29:20 | error.ntm
+			res.send(create_error_string(403,"Forbidden","Forbidden Access",req)); //30:17 | error.ntm
+			res.statusCode=403; //31:12 | error.ntm
+			plugin.log.warning("403 - Forbidden Access Attempt: "+(req.method)+" "+(req.path)); //32:27 | error.ntm
+		},
+		'404':function(req,res){ //34:20 | error.ntm
+			res.send(create_error_string(404,"Not Found","Cannot get path",req)); //35:17 | error.ntm
+			res.statusCode=404; //36:12 | error.ntm
+			plugin.log.info("404 - Cannot get path: "+(req.method)+" "+(req.path)); //37:24 | error.ntm
+		},
+		'405':function(req,res){ //39:20 | error.ntm
+			res.send(create_error_string(405,"Not Acceptable","Not Acceptable",req)); //40:17 | error.ntm
+			res.statusCode=405; //41:12 | error.ntm
+			plugin.log.info("405 - Not Acceptable: "+(req.method)+" "+(req.path)); //42:24 | error.ntm
+		},
+		'418':function(req,res){ //44:20 | error.ntm
+			res.send(create_error_string(418,"I am a teapot","I am a teapot",req)); //45:17 | error.ntm
+			res.statusCode=418; //46:12 | error.ntm
+			plugin.log.info("418 - I am a teapot: "+(req.method)+" "+(req.path)); //47:24 | error.ntm
+		},
+		'500':function(req,res,message){ //51:20 | error.ntm
+			res.send(create_error_string(500,"Internal Server Error","Internal Server Error",req)); //52:17 | error.ntm
+			res.statusCode=500; //53:12 | error.ntm
+			plugin.log.error("500 - Internal Server Error: "+(req.method)+" "+(req.path)+" | "+(message)); //54:25 | error.ntm
+		},
+		'501':function(req,res){ //56:20 | error.ntm
+			res.send(create_error_string(501,"Not Implimented","Method Not Implimented",req)); //57:17 | error.ntm
+			res.statusCode=501; //58:12 | error.ntm
+			plugin.log.info("501 - Method Not Implimented: "+(req.method)+" "+(req.path)); //59:24 | error.ntm
+		},
+		'502':function(req,res){ //61:20 | error.ntm
+			res.send(create_error_string(502,"Bad Gateway","Gateway returned invalid response",req)); //62:17 | error.ntm
+			res.statusCode=502; //63:12 | error.ntm
+			plugin.log.info("502 - Gateway returned invalid response: "+(req.method)+" "+(req.path)); //64:24 | error.ntm
+		}
+	}; //18:7 | error.ntm
+	let Session=function(uuid){
+		let $this=this;let private={};this.$op={};Session.$map.set(uuid,this);
+		private.uuid=uuid; //2:16 | sessions.ntm
+		Object.defineProperty(this, "uuid", {get: ()=>{return private.uuid;}}); //2:11 | sessions.ntm
+		$this.data={}; //3:9 | sessions.ntm
+		$this.generate_csrf=function(){ //5:33 | sessions.ntm
+			private.csrf=crypto.randomString(64); //6:16 | sessions.ntm
+			return private.csrf; //7:15 | sessions.ntm
+		}; //5:9 | sessions.ntm
+		$this.generate_csrf(); //9:23 | sessions.ntm
+		$this.check_csrf=function(csrf){ //11:30 | sessions.ntm
+			return crypto.equal(csrf,private.csrf); //12:15 | sessions.ntm
+		}; //11:9 | sessions.ntm
+		$this.delete=function(){ //15:26 | sessions.ntm
+			Session.delete($this.uuid); //16:23 | sessions.ntm
+		}; //15:9 | sessions.ntm
+	}; //1:8 | sessions.ntm
+	Session.$map=new Map();Session.get=function(id){return Session.$map.get(id);};Session.has=function(id){return Session.$map.has(id);};Session.forEach=function(cb){Session.$map.forEach(cb);};Session.delete=function(cb){Session.$map.delete(cb);}; //1:8 | sessions.ntm
+	let create_session=function(){ //19:31 | sessions.ntm
+		return new Session(crypto.uuid()); //20:11 | sessions.ntm
+	}; //19:21 | sessions.ntm
+	let dir_map={}; //14:14 | index.nt
+	setup_dir=function(method,path,event){ //15:20 | index.nt
+		if(dir_map[method]==null){
+			dir_map[method]=new Map(); //17:16 | index.nt
+		}; //16:7 | index.nt
+		dir_map[method].set(path,event); //19:24 | index.nt
+	}; //15:10 | index.nt
+	plugin.get=function(path,callback){ //22:21 | index.nt
+		setup_dir("GET",path,callback); //23:14 | index.nt
+	}; //22:7 | index.nt
+	plugin.post=function(path,callback){ //25:22 | index.nt
+		setup_dir("POST",path,callback); //26:14 | index.nt
+	}; //25:7 | index.nt
+	plugin.delete=function(path,callback){ //28:24 | index.nt
+		setup_dir("DELETE",path,callback); //29:14 | index.nt
+	}; //28:7 | index.nt
+	plugin.put=function(path,callback){ //31:21 | index.nt
+		setup_dir("PUT",path,callback); //32:14 | index.nt
+	}; //31:7 | index.nt
+	plugin.options=function(path,callback){ //34:25 | index.nt
+		setup_dir("OPTIONS",path,callback); //35:14 | index.nt
+	}; //34:7 | index.nt
+	plugin.patch=function(path,callback){ //37:23 | index.nt
+		setup_dir("PATCH",path,callback); //38:14 | index.nt
+	}; //37:7 | index.nt
+	plugin.on=function(method,path,callback){ //40:20 | index.nt
+		setup_dir(method,path,callback); //41:14 | index.nt
+	}; //40:7 | index.nt
+	let middlewares=new Map(); //44:18 | index.nt
+	plugin.middleware=function(path,event){ //45:28 | index.nt
+		middlewares.set(path,event); //46:20 | index.nt
+	}; //45:7 | index.nt
+	let afterwares=[]; //50:17 | index.nt
+	plugin.afterware=function(event){ //51:27 | index.nt
+		afterwares.push(event); //52:20 | index.nt
+	}; //51:7 | index.nt
+	let error_check=function(req,res,event){ //57:28 | index.nt
+		try{
+			event(req,res); //59:14 | index.nt
+		}catch(e){
+			plugin.error['500'](req,res,(e.message)+" | "+(e.stack)); //61:21 | index.nt
+		};
+	}; //57:18 | index.nt
+	plugin.start=function(port,config){ //66:23 | index.nt
+		if(config==null){config={};}; //68:11 | index.nt
+		if(config.cookieSecret==null){config.cookieSecret="";}; //69:11 | index.nt
+		if(config.useSessions==null){config.useSessions=false;}; //70:11 | index.nt
+		if(config.rejectInvalidCookies==null){config.rejectInvalidCookies=false;}; //71:11 | index.nt
+		if(config.rejectInvalidSessions==null){config.rejectInvalidSessions=false;}; //72:11 | index.nt
+		if(config.deleteRejectedSessions==null){config.deleteRejectedSessions=false;}; //73:11 | index.nt
+		waterfall(port,(req,res)=>{
+			if(config.cookieSecret!=""){
+				for(let key in req.cookies){
+					let value=req.cookies[key];
+					let verified=crypto.verify(value,config.cookieSecret); //80:31 | index.nt
+					if(verified){
+						let unsigned=crypto.unsign(value); //83:35 | index.nt
+						req.cookies[key]=unsigned; //84:24 | index.nt
+						res.cookies.set(key,unsigned); //85:36 | index.nt
+					}else{
+						if(config.rejectInvalidCookies){
+							req.reject=true; //89:28 | index.nt
+						}else{
+							res.cookies.remove(key); //91:43 | index.nt
+							delete req.cookies[key]; //92:31 | index.nt
+						}; //88:23 | index.nt
+					}; //81:19 | index.nt
+				}; //79:20 | index.nt
+			}; //78:11 | index.nt
+			delete res.cookies.remove; //97:15 | index.nt
+			let session=null; //100:22 | index.nt
+			if(config.useSessions){
+				if(req.cookies["|--SESSION--|"]!=null){
+					if(Session.has(req.cookies["|--SESSION--|"])){
+						session=Session.get(req.cookies["|--SESSION--|"]); //104:28 | index.nt
+						if(session.check_csrf(req.cookies["|--CSRF--|"])){
+							req.session=session.data; //107:28 | index.nt
+						}else{
+							plugin.log.warning("Someone with an incorrect CSRF attempted to connect (UUID: "+(req.cookies['|--SESSION--|'])+", CSRF: "+(req.cookies['|--SESSION--|'])+")"); //110:43 | index.nt
+							req.reject=config.rejectInvalidSessions; //111:28 | index.nt
+						}; //105:23 | index.nt
+					}else{
+						plugin.log.warning("Someone with an incorrect session UUID attempted to connect (UUID: "+(req.cookies['|--SESSION--|'])+")"); //114:39 | index.nt
+					}; //103:19 | index.nt
+				}; //102:15 | index.nt
+				if(session==null&&req.reject==false){
+					session=create_session(); //120:24 | index.nt
+					plugin.log.info("Created a new session | UUID: "+session.uuid); //121:32 | index.nt
+					req.session=session.data; //122:20 | index.nt
+				}; //119:15 | index.nt
+				delete req.cookies['|--SESSION--|']; //125:19 | index.nt
+				delete req.cookies['|--CSRF--|']; //126:19 | index.nt
+			}; //101:11 | index.nt
+			let split_path=req.path.split("/"); //130:25 | index.nt
+			let path_str=""; //131:23 | index.nt
+			let $continue=req.reject==false; //132:23 | index.nt
+			for(var[i,value]of split_path.entries()){
+				if($continue){
+					if(path_str!="/"){
+						path_str+="/"+value; //136:29 | index.nt
+					}else{
+						path_str+=value; //138:29 | index.nt
+					}; //135:19 | index.nt
+					if(middlewares.has(path_str)){
+						error_check(req,res,(req,res)=>{
+							$continue=middlewares.get(path_str)(req,res)!=false; //143:33 | index.nt
+							if($continue==false){
+								plugin.error['403'](req,res); //146:41 | index.nt
+							}else{
+								$continue=req.reject==false; //148:37 | index.nt
+							}; //145:27 | index.nt
+						}); //142:32 | index.nt
+					}; //141:19 | index.nt
+				}else{
+					break; //153:22 | index.nt
+				}; //134:15 | index.nt
+			}; //133:16 | index.nt
+			if($continue){
+				let method=req.method; //160:25 | index.nt
+				if(dir_map[method]&&dir_map[method].has(req.path)){
+					error_check(req,res,dir_map[method].get(req.path)); //162:28 | index.nt
+				}else{
+					plugin.error['404'](req,res); //166:29 | index.nt
+				}; //161:15 | index.nt
+				for(var[i,event]of afterwares.entries()){
+					event(req,res); //172:22 | index.nt
+				}; //171:20 | index.nt
+				if(config.useSessions){
+					res.cookies.set("|--SESSION--|",session.uuid); //177:32 | index.nt
+					res.cookies.set("|--CSRF--|",session.generate_csrf()); //178:32 | index.nt
+				}; //176:15 | index.nt
+				if(config.cookieSecret!=""){
+					let cookie_list=res.cookies.print(); //183:34 | index.nt
+					for(let key in cookie_list){
+						let value=cookie_list[key];
+						res.cookies.set(key,crypto.sign(value,config.cookieSecret)); //185:36 | index.nt
+					}; //184:24 | index.nt
+				}; //182:15 | index.nt
+			}; //158:11 | index.nt
+			if(req.reject){
+				plugin.log.warning("Rejected a "+(req.method)+" request from "+(req.ip)); //192:31 | index.nt
+				if(config.rejectInvalidSessions){
+					session.delete(); //194:31 | index.nt
+				}; //193:15 | index.nt
+			}; //191:11 | index.nt
+		}); //76:14 | index.nt
+	}; //66:7 | index.nt
+return plugin;});

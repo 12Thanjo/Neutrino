@@ -1,0 +1,57 @@
+local log_builder = function(type, message){
+	return {
+		type: type,
+		message: message,
+		timestamp: new Date().toUTCString(),
+	};
+};
+
+plugin.log = {
+	info: function(message){
+		local log = log_builder("info", message);
+		local mode = plugin.log.mode.info;
+		if(mode == "full"){
+			cmd.log(JSON.stringify(log), cmd.color.cyan);
+		}else if(mode == "verbose"){
+			cmd.log(message, cmd.color.cyan);
+		}else if(mode != "silent"){
+			Error(|'`info log is set to an invalid mode.\nGot('mode'})\nSupported modes are: "verbose", "debug", "silent"'|);
+		};
+		local str = JSON.stringify(log);
+		// info_stream.write(str + "\n");
+		// all_stream.write(str + "\n");
+	},
+	warning: function(message){
+		local log = log_builder("warning", message);
+		local mode = plugin.log.mode.warning;
+		if(mode == "full"){
+			cmd.log(JSON.stringify(log), cmd.color.yellow);
+		}else if(mode == "verbose"){
+			cmd.log(message, cmd.color.yellow);
+		}else if(mode != "silent"){
+			Error(|'`warning log is set to an invalid mode.\nGot('mode'})\nSupported modes are: "verbose", "debug", "silent"'|);
+		};
+		local str = JSON.stringify(log);
+		// warning_stream.write(str + "\n");
+		// all_stream.write(str + "\n");
+	},
+	error: function(message){
+		local log = log_builder("error", message);
+		local mode = plugin.log.mode.error;
+		if(mode == "full"){
+			cmd.log(JSON.stringify(log), cmd.color.red);
+		}else if(mode == "verbose"){
+			cmd.log(message, cmd.color.red);
+		}else if(mode != "silent"){
+			Error(|'`error log is set to an invalid mode.\nGot('mode'})\nSupported modes are: "verbose", "debug", "silent"'|);
+		};
+		local str = JSON.stringify(log);
+		// error_stream.write(str + "\n");
+		// all_stream.write(str + "\n");
+	},
+	mode: {
+		info: "verbose",
+		warning: "verbose",
+		error: "verbose"
+	},
+};
