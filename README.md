@@ -68,8 +68,8 @@ scope {
 	// create new vector available globally
 	global vec2 = new Vector(3, 4);
 
-
-	vec2 += vec1;
+	// use the overloaded operator
+	vec2 $+= vec1;
 };
 
 console.log(vec2.x, vec2.y);
