@@ -93,7 +93,7 @@ local log = function(type, name){
 plugin.all = function(~conditionals){
 	return @(entity)->{
 		local pass = true;
-		itterate conditionals(i, cond){
+		iterate conditionals(i, cond){
 			if(cond typeof "string"){
 				if((entity.components.has(cond)) == false){
 					pass = false;
@@ -113,7 +113,7 @@ plugin.all = function(~conditionals){
 plugin.none = function(~conditionals){
 	return @(entity)->{
 		local pass = true;
-		itterate conditionals(i, cond){
+		iterate conditionals(i, cond){
 			if(cond typeof "string"){
 				if((entity.components.has(cond))){
 					pass = false;
@@ -133,7 +133,7 @@ plugin.none = function(~conditionals){
 plugin.some = function(~conditionals){
 	return @(entity)->{
 		local pass = false;
-		itterate conditionals(i, cond){
+		iterate conditionals(i, cond){
 			if(cond typeof "string"){
 				if((entity.components.has(cond))){
 					pass = true;
@@ -220,8 +220,14 @@ species EventLoop(name){
 	local self = this;
 	this.next = function(){
 		private.i += 1;
-		try{
-			private.queue[private.i](self.next);
+		try{ //prevent crashes if there's an issue in a system
+			if(private.i < private.queue){
+				private.queue[private.i](self.next);
+			}else if(print){
+				console.error("Attempted to go to the next event in an Event Loop when already at the end");
+			};
+		}catch(e){
+			console.log(e);
 		};
 	};
 
@@ -231,4 +237,20 @@ species EventLoop(name){
 	};
 
 };
+
+scope {
+	struct Manager(systems, event){
+		private.systems = systems;
+		this.done = function(){
+			private.systems -= 1;
+			if(private.systems == 0){
+				event();
+			};
+		};
+	};
+	
+	EventLoop.Manager = Manager;
+};
+
+
 plugin.EventLoop = EventLoop;

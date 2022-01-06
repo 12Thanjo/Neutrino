@@ -87,7 +87,7 @@ species Query(id, conditionals, threaded){
 
 	this.audit = function(entity){
 		local pass = true;
-		itterate this.conditionals(i, cond){
+		iterate this.conditionals(i, cond){
 			if(cond(entity) == false){
 				pass = false;
 				break;
@@ -112,7 +112,7 @@ species Query(id, conditionals, threaded){
 	////////////////////////////////////////////////
 
 	// look for entities to add
-	itterate self_priv.entities(i, entity){
+	iterate self_priv.entities(i, entity){
 		if(entity != null){
 			this.audit(entity);
 		};

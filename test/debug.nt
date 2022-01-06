@@ -1,5 +1,0 @@
-local stats_timer = foo({
-	update: function(){
-		
-	},
-});

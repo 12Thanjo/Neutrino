@@ -94,7 +94,7 @@ if(config.threads > 0){
 			type: type,
 			data: data
 		};
-		itterate private.scheduler.workers(i, worker){
+		iterate private.scheduler.workers(i, worker){
 			worker.postMessage(message);
 		};
 	};

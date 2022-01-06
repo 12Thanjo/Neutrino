@@ -26,6 +26,6 @@ species System(id, query, event){
 
 	log("System", id);
 };
-this.createSystem = function(id, query, event, config){
-	return new System(id, query, event, config);
+this.createSystem = function(id, query, event){
+	return new System(id, query, event);
 };

@@ -13,7 +13,7 @@ $ npm install
 ### Usage
 Neutrino files use the `.nt` file extention.
 
-The `bin` folder contains the .bat files to run the Neutrino compiler. `neutrino.bat` and `nt.bat` are the same, and `tau.bat` is for the creation of built-in plugins.
+The `bin` folder contains the `.bat` files to run the Neutrino compiler. `neutrino.bat` and `nt.bat` are the same, and `tau.bat` is for the creation of built-in plugins (`.sh` files are also available)
 
 ```batch
 $ ./bin/neutrino.bat compile file_to_compile.nt --debug --run
@@ -22,6 +22,8 @@ $ ./bin/neutrino.bat compile file_to_compile.nt --debug --run
 You can run `$./bin/neutrino.bat help` to see all of the compiler functionality.
 You can also do the same with `tau`, but this is not necesarily designed for public use at this time (maybe coming in the future).
 
+##### Suggested Use:
+Add `./bin` to 
 
 ### Example Program:
 
@@ -50,7 +52,7 @@ class Vector(x, y){
 
 
 	this.x = x;
-	access.y = y;//this.y is readonly, private.y is editable
+	access.y = y;//this.y is readonly, private.y is writable
 
 	// operator overloading with another Vector`
 	operation += (Vector, vec){
@@ -63,13 +65,15 @@ class Vector(x, y){
 // create a subscope
 scope {
 	// create new vector available in this scope
+	// will have an id of 0
 	local vec1 = new Vector(1, 2);
 
 	// create new vector available globally
+	// will have an id of 1
 	global vec2 = new Vector(3, 4);
 
 	// use the overloaded operator
-	vec2 $+= vec1;
+	vec2 $+= Vector.get(0);
 };
 
 console.log(vec2.x, vec2.y);

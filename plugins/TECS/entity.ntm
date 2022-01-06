@@ -23,8 +23,8 @@ struct Entity(id, name){
 		self.bindComponent(this, component_id, ~params);
 	};
 
-	this.hasComponent = function(component_id	){
-		return this.component.has(component_id	);
+	this.hasComponent = function(component_id){
+		return this.component.has(component_id);
 	};
 };
 
