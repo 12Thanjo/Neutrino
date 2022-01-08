@@ -12,7 +12,7 @@ local OCS = function(){
 		return { 
 			test: @(entity)->{
 				local pass = true;
-				itterate conditionals(i, comp){
+				iterate conditionals(i, comp){
 					if(comp typeof "string"){
 						if(entity[comp] == null){
 							pass = false;
@@ -34,7 +34,7 @@ local OCS = function(){
 		return { 
 			test: @(entity)->{
 				local pass = true;
-				itterate conditionals(i, comp){
+				iterate conditionals(i, comp){
 					if(comp typeof "string"){
 						if(entity[comp] != null){
 							pass = false;
@@ -56,7 +56,7 @@ local OCS = function(){
 		return { 
 			test: @(entity)->{
 				local pass = false;
-				itterate conditionals(i, comp){
+				iterate conditionals(i, comp){
 					if(comp typeof "string"){
 						if(entity[comp] != null){
 							pass = true;
@@ -181,7 +181,7 @@ local OCS = function(){
 
 			this.audit = function(entity){
 				local pass = true;
-				itterate private.conditionals(i, conditional){
+				iterate private.conditionals(i, conditional){
 					if(conditional.test(entity) == false){
 						pass = false;
 						break;
@@ -203,14 +203,14 @@ local OCS = function(){
 			//	this.audit(entity);
 			//});
 
-			itterate env_priv.entities(i, entity){
+			iterate env_priv.entities(i, entity){
 				if(entity != null){
 					this.audit(entity);
 				};
 			};
 
 			this.forEach = function(event){
-				itterate this.entities(i, id){
+				iterate this.entities(i, id){
 					event(env_priv.entities[id], i);
 				};
 			};
@@ -236,7 +236,7 @@ local OCS = function(){
 				local array = [];
 				private.query.forEach(@(entity)->{
 					local obj = {};
-					itterate components(i, component){
+					iterate components(i, component){
 						obj[component] = entity[component];
 					};
 					array.push(obj);
@@ -244,7 +244,7 @@ local OCS = function(){
 
 				private.cluster.run(array, @(i, data)->{
 					private.query.forEach(@(entity)->{
-						itterate components(j, component){
+						iterate components(j, component){
 							entity[component] = data[component];
 						};
 					});
@@ -256,7 +256,7 @@ local OCS = function(){
 				local entities = [];
 				private.query.forEach(@(entity)->{
 					local obj = {};
-					itterate components(i, component){
+					iterate components(i, component){
 						obj[component] = entity[component];
 						entities.push(i);
 					};
@@ -265,8 +265,8 @@ local OCS = function(){
 				});
 
 				private.cluster.run(array, @(i, data)->{
-					itterate entities(j, entity){
-						itterate components(k, component){
+					iterate entities(j, entity){
+						iterate components(k, component){
 							entity[component] = data[component];
 						};
 					};	

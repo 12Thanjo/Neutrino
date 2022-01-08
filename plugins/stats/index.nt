@@ -32,7 +32,7 @@ plugin.sort = function(~params){
 plugin.sum = function(~params){
 	local nums = get_arr(params);
 	local count = 0;
-	itterate nums(i, num){
+	iterate nums(i, num){
 		count += num;
 	};
 	return count;
@@ -43,7 +43,7 @@ plugin.max = function(~params){
 	local nums = get_arr(params);
 
 	local max = -1 * Infinity;
-	itterate nums(i, num){
+	iterate nums(i, num){
 		max => num;
 	};
 
@@ -56,7 +56,7 @@ plugin.min = function(~params){
 	local nums = get_arr(params);
 
 	local min = Infinity;
-	itterate nums(i, num){
+	iterate nums(i, num){
 		min =< num;
 	};
 
@@ -96,7 +96,7 @@ plugin.mode = function(~params){
 	local nums = get_arr(~params);
 	local counter = new Map();
 
-	itterate nums(i, number){
+	iterate nums(i, number){
 		if(counter.has(number) == false){
 			counter.set(number, 1);
 		}else{
@@ -106,7 +106,7 @@ plugin.mode = function(~params){
 
 	local max = -1 * Infinity;
 	local max_value = 0;
-	itterate counter(key, value){
+	iterate counter(key, value){
 		if(max < value){
 			max = value;
 			max_value = key;
@@ -139,7 +139,7 @@ plugin.standardDeviation = function(~params){
 	local mean = plugin.mean(nums);
 	local square_distance_mean = 0;
 
-	itterate nums(i, num){
+	iterate nums(i, num){
 		local distance = Math.floor(num - mean);
 		square_distance_mean += distance * distance;
 	};

@@ -1,4 +1,4 @@
 @echo off
 set dirname=%cd%
-cd "../"
-node neutrino.js "%dirname%" %*
+rem cd "../"
+node "%~dp0../neutrino.js" "%dirname%" %*

@@ -21,12 +21,12 @@ document.addEventListener('keydown', @(e)->{
 	if(INPUT_DOWN[code + 22] == false){
 		INPUT_DOWN[code + 22] = true;
 		local events = DOWN_EVENTS[code + 22];
-		itterate events(key, event){
+		iterate events(key, event){
 			event();
 		};
 	};
 	local events = PRESS_EVENTS[code + 22];
-	itterate events(key, event){
+	iterate events(key, event){
 		event();
 	};
 });
@@ -39,7 +39,7 @@ document.addEventListener('keyup', @(e)->{
 	plugin.keyboard.last.up = name;
 
 	local events = UP_EVENTS[code + 22];
-	itterate events(key, event){
+	iterate events(key, event){
 		event();
 	};
 });

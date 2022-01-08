@@ -24,7 +24,7 @@ document.addEventListener('pointerdown', @(e)->{
 	INPUT_DOWN[code + 22] = true;
 
 	local events = DOWN_EVENTS[code + 22];
-	itterate events(key, event){
+	iterate events(key, event){
 		event();
 	};
 });
@@ -39,7 +39,7 @@ document.addEventListener('pointerup', @(e)->{
 
 	INPUT_DOWN[code + 22] = false;
 	local events = UP_EVENTS[code + 22];
-	itterate events(key, event){
+	iterate events(key, event){
 		event();
 	};
 });
@@ -51,7 +51,7 @@ document.addEventListener('wheel', @(e)->{
 	plugin.mouse.wheelX = e.wheelDeltaX;
 	plugin.mouse.wheelY = e.wheelDeltaY;
 
-	itterate WHEEL_EVENTS(key, event){
+	iterate WHEEL_EVENTS(key, event){
 		event();
 	};
 });

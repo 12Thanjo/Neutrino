@@ -1,8 +1,0 @@
-{
-    "name": "type",
-    "version": "0.1.0",
-    "description": "more advanced type checker",
-    "main": "index.js",
-    "author": "12Thanjo",
-    "dependancies": []
-}

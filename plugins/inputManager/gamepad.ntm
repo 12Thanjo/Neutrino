@@ -36,7 +36,7 @@ scope {
 						INPUT_DOWN[i] = true;
 
 						local events = DOWN_EVENTS[i];
-						itterate events(key, event){
+						iterate events(key, event){
 							event();
 						};
 					}else if(INPUT_DOWN[i]){
@@ -44,14 +44,14 @@ scope {
 							INPUT_DOWN[i] = false;
 
 							local events = UP_EVENTS[i];
-							itterate events(key, event){
+							iterate events(key, event){
 								event();
 							};
 						}else{
 							INPUT_DOWN[i] = true;
 
 							local events = PRESS_EVENTS[i];
-							itterate events(key, event){
+							iterate events(key, event){
 								event();
 							};
 						};

@@ -127,25 +127,25 @@ if(config.threads > 0){
 	};
 
 	private.scheduler.run = function(){
-		while(this.free_workers.length > 0 && this.tasks.length > 0){
-			local worker = this.free_workers.pop();
-			if(this.tasks.peek().segments.length == 0){
-				local task = this.tasks.pop();
-				this.waiting_tasks.set(task.system, task);
+		while(private.scheduler.free_workers.length > 0 && private.scheduler.tasks.length > 0){
+			local worker = private.scheduler.free_workers.pop();
+			if(private.scheduler.tasks.peek().segments.length == 0){
+				local task = private.scheduler.tasks.pop();
+				private.scheduler.waiting_tasks.set(task.system, task);
 			};
 
-			if(this.tasks.length > 0){
+			if(private.scheduler.tasks.length > 0){
 				worker.postMessage({
 					type: "run",
-					data: this.tasks.peek().segments.pop(),
+					data: private.scheduler.tasks.peek().segments.pop(),
 				});
 			};
 		};
 	};
 
 	private.scheduler.addTask = function(system, query, threads, size, callback){
-		this.tasks.push(new Task(system, query, threads, size, callback));
-		this.run();	
+		private.scheduler.tasks.push(new Task(system, query, threads, size, callback));
+		private.scheduler.run();
 	};
 };
 

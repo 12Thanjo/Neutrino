@@ -56,7 +56,7 @@ module.exports = function(args){
 	    	}
 
 
-	    	code = `$pending_plugins.set('${target}',()=>{let plugin={metadata:${JSON.stringify(plugin_config)}};${code}return plugin;});`;
+	    	code = `module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('${target}',()=>{let plugin={metadata:${JSON.stringify(plugin_config)}};${code}return plugin;})};`;
 	    	files.writeFile(plugin_path + "\\compiled.ntp", code);
 	    }
 	});

@@ -75,7 +75,7 @@ species Event(id, trigger, events){
 		};
 		private.inputs.push(INPUT_MAP.get(trigger) + 22);
 	}else{
-		itterate trigger(key, value){
+		iterate trigger(key, value){
 			if(INPUT_MAP.has(value) == false){
 				ReferenceError |"("value") is not a valid input trigger"|;
 			};	
@@ -93,10 +93,10 @@ species Event(id, trigger, events){
 
 
 
-	itterate private.inputs(key, value){
+	iterate private.inputs(key, value){
 		DOWN_EVENTS[value].set(private.id, @()->{
 			local pass = true;
-			itterate private.inputs(key, value){
+			iterate private.inputs(key, value){
 				if(INPUT_DOWN[value] == false){
 					pass = false;
 					break;
@@ -111,7 +111,7 @@ species Event(id, trigger, events){
 
 		UP_EVENTS[value].set(private.id, @()->{
 			local pass = 1;
-			itterate private.inputs(key, value){
+			iterate private.inputs(key, value){
 				if(INPUT_DOWN[value] == false){
 					pass -= 1;
 				};
@@ -124,7 +124,7 @@ species Event(id, trigger, events){
 
 		PRESS_EVENTS[value].set(private.id, @()->{
 			local pass = true;
-			itterate private.inputs(key, value){
+			iterate private.inputs(key, value){
 				if(INPUT_DOWN[value] == false){
 					pass = false;
 					break;

@@ -1,4 +1,4 @@
 @echo off
 set dirname=%cd%
-cd "../"
-node tau.js %dirname% %*
+rem cd "../"
+node "%~dp0../tau.js" "%dirname%" %*

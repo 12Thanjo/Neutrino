@@ -86,7 +86,7 @@ struct forAll(threads, event){
         private.data_set_i = -1;
         private.threads_left = threads;
 
-        itterate private.threads(i, thread){
+        iterate private.threads(i, thread){
             private.data_set_i += 1;
             thread.postMessage({
                 i: private.data_set_i,
@@ -149,7 +149,7 @@ struct forEach(threads, event){
         private.data_set_i = -1;
         private.threads_left = threads;
 
-        itterate private.threads(i, thread){
+        iterate private.threads(i, thread){
             private.data_set_i += 1;
             if(private.data_set_i < data_set_length){
                 thread.postMessage({

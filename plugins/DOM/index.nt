@@ -240,7 +240,7 @@ struct DOMElement(elem){
 
 
 struct DOMCollection(arr){
-	itterate arr(i, elem){
+	iterate arr(i, elem){
 		arr[i] = new DOMElement(elem);
 	};
 
@@ -249,7 +249,7 @@ struct DOMCollection(arr){
 
 	this.on = function(event, callback){
 		// local foo = ;
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			elem.on(event, callback);
 		};
 		return this;
@@ -279,7 +279,7 @@ struct DOMCollection(arr){
 
 
 	this.removeElement = function(domElement){
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			if(elem == domElement){
 				this.array.splice(i, 1);
 				break;
@@ -290,25 +290,25 @@ struct DOMCollection(arr){
 
 
 	this.next = function(){
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			elem.next();
 		};
 	};
 	this.prev = function(){
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			elem.prev();
 		};
 	};
 
 	this.addClass = function(className){
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			elem.addClass(className);
 		};
 		return this;
 	};
 
 	this.removeClass = function(className){
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			elem.removeClass(className);
 		};
 		return this;
@@ -316,19 +316,19 @@ struct DOMCollection(arr){
 
 	this.getStyle = function(prop){
 		local output = [];
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			output.push(elem.getStyle(prop));
 		};
 		return output;
 	};
 	this.style = function(prop, val){
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			elem.style(prop, val);
 		};
 		return this;
 	};
 	this.css = function(props){
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			elem.css(props);
 		};
 		return this;
@@ -336,9 +336,9 @@ struct DOMCollection(arr){
 
 	this.select = function(query){
 		local output = [];
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			local it_target = elem.select(query).array;
-			itterate it_target(key, value){
+			iterate it_target(key, value){
 				output.push(value.element);
 			};
 		};
@@ -347,9 +347,9 @@ struct DOMCollection(arr){
 
 	this.selectAll = function(query){
 		local output = [];
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			local it_target = elem.selectAll(query).array;
-			itterate it_target(key, value){
+			iterate it_target(key, value){
 				output.push(value.element);
 			};
 		};
@@ -359,13 +359,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'innerHTML', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.innerHTML);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.innerHTML = val;
 			};	
 		},
@@ -374,13 +374,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'value', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.value);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.value = val;
 			};	
 		},
@@ -389,13 +389,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'width', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.width);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.width = val;
 			};
 		},
@@ -403,13 +403,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'height', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.height);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.height = val;
 			};
 		},
@@ -418,13 +418,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'x', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.x);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.x = val;
 			};
 		},
@@ -432,20 +432,20 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'y', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.y);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.y = val;
 			};
 		},
 	});
 
 	this.destroy = function(){
-		itterate this.array(i, elem){
+		iterate this.array(i, elem){
 			elem.destroy();
 		};
 	};
@@ -453,13 +453,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'href', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.href);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.href = val;
 			};
 		},
@@ -468,13 +468,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'src', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.src);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.src = val;
 			};
 		},
@@ -483,13 +483,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'id', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.id);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.id = val;
 			};
 		},
@@ -498,13 +498,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'hidden', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.hidden);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.hidden = val;
 			};
 		},
@@ -513,13 +513,13 @@ struct DOMCollection(arr){
 	Object.defineProperty(this, 'display', {
 		get: function(){
 			local output = [];
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				output.push(elem.display);
 			};
 			return output;
 		},
 		set: function(val){
-			itterate this.array(i, elem){
+			iterate this.array(i, elem){
 				elem.display = val;
 			};
 		},
