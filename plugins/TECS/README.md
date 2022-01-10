@@ -49,7 +49,7 @@ env.createComponent("position", {
 });
 
 // create a health component
-env.createComponent("health", prop("uint16"))
+env.createComponent("health", prop("uint16"));
 
 
 // queries //////////////////////////////////////////////////////////

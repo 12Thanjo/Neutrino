@@ -4,7 +4,8 @@
 
 import BABYLON;
 import DOM;
-import OCS [Prop, all, some, none];
+// import OCS [Prop, all, some, none];
+import TECS [prop, all, some, none];
 
 species Engine(name, config){
 	access name = name;
@@ -25,6 +26,8 @@ species Engine(name, config){
 	config.shadowResolution default 2048;
 	config.MSAA default 1;
 	config.poll default 1000 / 64;
+	config.size default 10000;
+	config.threads default require('os').cpus().length - 1;
 
 	config.create default @()->{};
 	config.update default @()->{};
@@ -70,7 +73,7 @@ species Engine(name, config){
 
 	macro "post processing";
 	this.pipeline.MSAA = config.MSAA;
-	macro "ocs";
+	macro "TECS";
 	macro "objects";
 
 
@@ -102,9 +105,9 @@ species Engine(name, config){
 		config.render(this);
 
 		// OCS
-		position.run();
-		scale.run();
-		rotation.run();
+		// position.run();
+		// scale.run();
+		// rotation.run();
 
 	   	private.scene.render();
 	});

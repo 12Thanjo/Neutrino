@@ -7,6 +7,6 @@
     "dependancies": [
         "BABYLON",
         "DOM",
-        "OCS"
+        "TECS"
     ]
 }

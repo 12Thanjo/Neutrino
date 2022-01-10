@@ -2,6 +2,8 @@
 // description: advanced math types and functions
 // author: 12Thanjo
 
+
+macro "constants";
 macro "Vector2";
 
 plugin.clamp = function(value, min, max){
