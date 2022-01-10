@@ -187,8 +187,8 @@ species Environment(id, config){
 
 	local pointer_i = 0;
 	private.pointer = {};
-	this.getPointer = function(entity){
-		pointer_i = entity;
+	this.getPointer = function(entity_id){
+		pointer_i = entity_id;
 		return private.pointer;
 	};
 

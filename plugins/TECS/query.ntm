@@ -86,15 +86,15 @@ species Query(id, conditionals, threaded){
 	////////////////////////////////////////////////
 
 	this.audit = function(entity){
-		local pass = true;
-		iterate this.conditionals(i, cond){
-			if(cond(entity) == false){
-				pass = false;
-				break;
-			};
-		};
+		// local pass = true;
+		// iterate this.conditionals(i, cond){
+		// 	if(cond(entity) == false){
+		// 		pass = false;
+		// 		break;
+		// 	};
+		// };
 
-		if(pass){
+		if(this.conditionals(entity)){
 			this.entities.add(entity.id);
 		}else{
 			this.entities.delete(entity.id);

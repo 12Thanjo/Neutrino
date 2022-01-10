@@ -2,48 +2,43 @@
 this.add = {};
 
 
-// this.add.box = function(name, config){
-// 	config default {};
-// 	config.position default {
-// 		x: 0,
-// 		y: 0,
-// 		z: 0,
-// 	};
-// 	config.scale default {
-// 		x: 1,
-// 		y: 1,
-// 		z: 1,
-// 	};
-// 	config.rotation default {
-// 		x: 0,
-// 		y: 0,
-// 		z: 0,
-// 	};
+this.add.box = function(name, config){
+	config default {};
+	config.position default {
+		x: 0,
+		y: 0,
+		z: 0,
+	};
+	config.scale default {
+		x: 1,
+		y: 1,
+		z: 1,
+	};
+	config.rotation default {
+		x: 0,
+		y: 0,
+		z: 0,
+	};
 
 
-// 	local mesh = new BABYLON.Mesh.CreateBox(name, 1, private.scene);
-// 	mesh.position.set(config.position.x, config.position.z, config.position.y);
-// 	mesh.scaling.set(config.scale.x, config.scale.z, config.scale.y);
-// 	mesh.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
-// 		config.rotation.z, 
-// 		config.rotation.x,
-// 		config.rotation.y
-// 	);
+	local mesh = new BABYLON.Mesh.CreateBox(name, 1, private.scene);
+	mesh.position.set(config.position.x, config.position.z, config.position.y);
+	mesh.scaling.set(config.scale.x, config.scale.z, config.scale.y);
+	mesh.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
+		config.rotation.z, 
+		config.rotation.x,
+		config.rotation.y
+	);
 
-// 	private.shadowGenerator.getShadowMap().renderList.push(mesh);
-// 	mesh.receiveShadows = true;
+	private.shadowGenerator.getShadowMap().renderList.push(mesh);
+	mesh.receiveShadows = true;
 
 
-// 	// OCS
-// 	local entity = self.environment.createEntity(name);
+	// TECS
+	local entity = self.environment.createEntity();
 
-// 	// components
-// 	entity
-// 		// .bindComponent("position", x, y, z)
-// 		// .bindComponent("scale")
-// 		// .bindComponent("rotation")
-// 		.bindComponent("renderTarget", mesh)
-// 	;
+	// components
+	self.environment.bindComponent(entity, "renderTarget", mesh);
 
-// 	return entity;
-// };
+	return entity;
+};

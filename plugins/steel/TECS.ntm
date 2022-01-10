@@ -89,39 +89,36 @@ this.environment.createComponent("renderTarget", prop("any"));
 // systems //////////////////////////////////////////////////////////////
 
 // position
-this.environment.createQuery("position", ["position", "renderTarget"]);
+this.environment.createQuery("position", all("position", "renderTarget"));
 local position = this.environment.createSystem("position", "position", @(id, components)->{
-	local render_position = components.renderTarget[i].position;
-	local entity_position = components.position[i];
+	local render_position = components.renderTarget[id].position;
 
-	render_position.x = entity_position.x;
-	render_position.z = entity_position.y;
-	render_position.y = entity_position.z;
+	render_position.x = components.position.x[id];
+	render_position.z = components.position.y[id];
+	render_position.y = components.position.z[id];
 });
 
 // scale
-this.environment.createQuery("scale", ["scale", "renderTarget"]);
+this.environment.createQuery("scale", all("scale", "renderTarget"));
 local scale = this.environment.createSystem("scale", "scale", @(id, components)->{
-	local render_scale = components.renderTarget[i].scale;
-	local entity_scale = components.scale[i];
+	local render_scale = components.renderTarget[id].scale;
 
-	render_scale.x = entity_scale.x;
-	render_scale.z = entity_scale.y;
-	render_scale.y = entity_scale.z;
+	render_scale.x = components.scale.x[id];
+	render_scale.z = components.scale.y[id];
+	render_scale.y = components.scale.z[id];
 });
 
 // rotation
-this.environment.createQuery("rotation", ["rotation", "renderTarget"]);
+this.environment.createQuery("rotation", all("rotation", "renderTarget"));
 local rotation = this.environment.createSystem("rotation", "rotation", @(id, components)->{
-	local entity_rotation = components.rotation[i];
 
 
-	entity_rotation.z %= Math.TAU;
-	entity_rotation.x %= Math.TAU;
-	entity_rotation.y %= Math.TAU;
-	components.renderTarget[i].rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
-		entity_rotation.z, 
-		entity_rotation.x,
-		entity_rotation.y
+	components.rotation.z[id] %= Math.TAU;
+	components.rotation.x[id] %= Math.TAU;
+	components.rotation.y[id] %= Math.TAU;
+	components.renderTarget[id].rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
+		components.rotation.z[id], 
+		components.rotation.x[id],
+		components.rotation.y[id]
 	);
 });

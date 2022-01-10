@@ -66,9 +66,12 @@ env.createQuery("player", [all("position", "health")], false);
 // create an entity
 var entity = env.createEntity();
 
-// add a position component to the entity
+// add the position component to the entity
 // set x to 12 and y to 14
-env.bindComponent(entity, "position", [12, 14]);
+env.bindComponent(entity.id, "position", 12, 14);
+
+// bind the health component to the entity
+entity.bindComponent(entity, "health");
 
 // systems //////////////////////////////////////////////////////////
 
@@ -149,12 +152,12 @@ Create a new Environment (_is a Neutrino species_).
 | threads  | Integer | Maximum number of threads to use when multithreading | System Threads - 1 |
 
 
-### `env.getPointer(entity)`
+### `env.getPointer(entity_id)`
 Get the entity pointer to make entity property manipulation easier, while slower. For smaller sets of entites, the difference is negligable.
 
 | Parameter | Type    | Description			 	     |
 |-----------|---------|------------------------------|
-| entity    | Integer | id of the entity to point to |
+| entity_id | Integer | id of the entity to point to |
 
 
 
@@ -198,7 +201,7 @@ There is also an _"any"_ type, which can take any type of value (numbers, string
 ## Entity
 
 ### `env.createEntity(name)`
-Unique objects that hold Components with values
+Unique objects that hold Components with values. Returns and [Entity](#entity-object).
 
 | Parameter | Type   | Description			 	            |
 |-----------|--------|--------------------------------------|
@@ -206,28 +209,48 @@ Unique objects that hold Components with values
 
 
 ### `env.getEntity(name)`
-Get an entity from their name (can only get entities that actually have names)
+Get an entity from their name (can only get entities that actually have names). Returns and [Entity](#entity-object).
 | Parameter | Type   | Description			 	 |
 |-----------|--------|---------------------------|
 | name      | String | unique name of the entity |
 
 
-### `env.bindComponent(entity_ref, component_id, params)`
-Bind a component to an entity
-| Parameter     | Type   | Description			 	  																								   |
-|---------------|--------|-----------------------------------------------------------------------------------------------------------------------------|
-| entity_ref    | Entity | Entity to bind component to                          																	   |
-| component_id  | String | Unique id of the component to bind to the Entity    																		   |
-| params 	    | Array  | Values to set to the properties (length is optional). The order is in which they are created (top to bottom, left to right) |
+### `env.bindComponent(entity_ref, component_id, ~params)`
+Bind a component to an entity.
+| Parameter     | Type    | Description			 	  																								    |
+|---------------|---------|-----------------------------------------------------------------------------------------------------------------------------|
+| entity_ref    | Entity  | Entity to bind component to                          																	    |
+| component_id  | String  | Unique id of the component to bind to the Entity    																		|
+| \~params 	    | Params  | Values to set to the properties (length is optional). The order is in which they are created (top to bottom, left to right) |
 
 
 
+### Entity Object
+
+#### `Entity.bindComponent(component_id, ~params)`
+Baind a component ot the entity.
+| Parameter     | Type    | Description			 	  																								    |
+|---------------|---------|-----------------------------------------------------------------------------------------------------------------------------|
+| component_id  | String  | Unique id of the component to bind to the Entity    																		|
+| \~params 	    | Params  | Values to set to the properties (length is optional). The order is in which they are created (top to bottom, left to right) |
+
+#### `Entity.components`
+A set of the component_id's of all the components the entity has
+
+#### `Entity.getPointer()`
+Sets the entity pointer for the environment to this entity and returns it.
+
+#### `Entity.hasComponent(component_id)`
+Returns a boolean if the entity has the component.
+| Parameter     | Type    | Description			 	  						 |
+|---------------|---------|--------------------------------------------------|
+| component_id  | String  | Unique id of the component to bind to the Entity |
 
 
 ## Query
 
 ### `env.createQuery(id, conditionals, threaded)`
-Create a query (_is a Neutrino species_). Entities will be added to queries at and after creation of the query.
+Create a query. Entities will be added to queries at and after creation of the query.
 | Parameter     | Type    | Description			 	                                           | Default |
 |---------------|---------|--------------------------------------------------------------------|---------|
 | id            | String  | unique id of the entity                                            |         |
@@ -245,8 +268,6 @@ Create a query (_is a Neutrino species_). Entities will be added to queries at a
 ```
 
 The array that is put into the parameter acts the same as an _all_
-
-
 
 
 
