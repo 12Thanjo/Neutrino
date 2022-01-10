@@ -116,7 +116,7 @@ event_loop.add(()=>{
 
 // run the event loop 64 times a second
 setTimeout(()=>{
-	event_loop.run();
+	event_loop.start();
 },1000/64);
 
 ```

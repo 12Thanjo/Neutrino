@@ -97,17 +97,20 @@ species Engine(name, config){
 	});
 	private.update.start();
 
+	// TECS //////////////////////////////////////////////////////////////////////////
+	private.event_loop = new TECS.EventLoop(private.name);
+	private.event_loop.add(@(done)->{
+		position.run(@()->{});
+		scale.run(@()->{});
+		rotation.run(@()->{});
+	});
 
-
-
+	// render loop ///////////////////////////////////////////////////////////////////
 	private.engine.runRenderLoop(@()->{
 		calc_performance();
 		config.render(this);
 
-		// OCS
-		// position.run();
-		// scale.run();
-		// rotation.run();
+		private.event_loop.start();
 
 	   	private.scene.render();
 	});

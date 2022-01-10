@@ -1,7 +1,7 @@
 module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('steel',()=>{let plugin={metadata:{"name":"steel","version":"0.1.0","description":"a game engine written in neutrino","main":"index.nt","author":"12Thanjo","dependancies":["BABYLON","DOM","TECS"]}};
 	let BABYLON=$get_plugin('BABYLON'); //5:7
 	let DOM=$get_plugin('DOM'); //6:7
-	let TECS=$get_plugin('TECS'); //8:7
+	let {prop,all,some,none}=$get_plugin('TECS');let TECS=$get_plugin('TECS'); //8:7
 	let Engine=function(name,config){
 		let $this=this;let private={};this.$op={};Engine.$map.set(name,this);
 		private.name=name; //11:16 | index.nt
@@ -384,6 +384,46 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			size:config.size,
 			threads:config.threads
 		}); //59:5 | TECS.ntm
+		$this.environment.createComponent("position",{
+			x:prop("float64"),
+			y:prop("float64"),
+			z:prop("float64")
+		}); //68:33 | TECS.ntm
+		$this.environment.createComponent("scale",{
+			x:prop("float64",1),
+			y:prop("float64",1),
+			z:prop("float64",1)
+		}); //74:33 | TECS.ntm
+		$this.environment.createComponent("rotation",{
+			x:prop("float64"),
+			y:prop("float64"),
+			z:prop("float64")
+		}); //80:33 | TECS.ntm
+		$this.environment.createComponent("renderTarget",prop("any")); //86:33 | TECS.ntm
+		$this.environment.createQuery("position",["position","renderTarget"]); //92:29 | TECS.ntm
+		let position=$this.environment.createSystem("position","position",(id,components)=>{
+			let render_position=components.renderTarget[i].position; //94:26 | TECS.ntm
+			let entity_position=components.position[i]; //95:26 | TECS.ntm
+			render_position.x=entity_position.x; //97:20 | TECS.ntm
+			render_position.z=entity_position.y; //98:20 | TECS.ntm
+			render_position.y=entity_position.z; //99:20 | TECS.ntm
+		}); //93:15 | TECS.ntm
+		$this.environment.createQuery("scale",["scale","renderTarget"]); //103:29 | TECS.ntm
+		let scale=$this.environment.createSystem("scale","scale",(id,components)=>{
+			let render_scale=components.renderTarget[i].scale; //105:23 | TECS.ntm
+			let entity_scale=components.scale[i]; //106:23 | TECS.ntm
+			render_scale.x=entity_scale.x; //108:17 | TECS.ntm
+			render_scale.z=entity_scale.y; //109:17 | TECS.ntm
+			render_scale.y=entity_scale.z; //110:17 | TECS.ntm
+		}); //104:12 | TECS.ntm
+		$this.environment.createQuery("rotation",["rotation","renderTarget"]); //114:29 | TECS.ntm
+		let rotation=$this.environment.createSystem("rotation","rotation",(id,components)=>{
+			let entity_rotation=components.rotation[i]; //116:26 | TECS.ntm
+			entity_rotation.z%=Math.TAU; //119:20 | TECS.ntm
+			entity_rotation.x%=Math.TAU; //120:20 | TECS.ntm
+			entity_rotation.y%=Math.TAU; //121:20 | TECS.ntm
+			components.renderTarget[i].rotationQuaternion=BABYLON.Quaternion.RotationYawPitchRoll(entity_rotation.z,entity_rotation.x,entity_rotation.y); //122:15 | TECS.ntm
+		}); //115:15 | TECS.ntm
 		$this.add={}; //2:5 | objects.ntm
 		private.fpsTimer=process.hrtime(); //1:8 | performance.ntm
 		private.fpsMax=Infinity*-1; //2:14 | performance.ntm
@@ -445,15 +485,25 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			config.update($this); //96:22 | index.nt
 		}); //95:12 | index.nt
 		private.update.start(); //98:25 | index.nt
+		private.event_loop=new TECS.EventLoop(private.name); //101:12 | index.nt
+		private.event_loop.add((done)=>{
+			position.run(()=>{
+			}); //103:21 | index.nt
+			scale.run(()=>{
+			}); //104:18 | index.nt
+			rotation.run(()=>{
+			}); //105:21 | index.nt
+		}); //102:27 | index.nt
 		private.engine.runRenderLoop(()=>{
-			calc_performance(); //104:25 | index.nt
-			config.render($this); //105:22 | index.nt
-			private.scene.render(); //112:32 | index.nt
-		}); //103:33 | index.nt
-		$this.getEngine=function(){ //115:29 | index.nt
-			return private.engine; //116:15 | index.nt
-		}; //115:9 | index.nt
+			calc_performance(); //110:25 | index.nt
+			config.render($this); //111:22 | index.nt
+			private.event_loop.start(); //113:33 | index.nt
+			private.scene.render(); //115:32 | index.nt
+		}); //109:33 | index.nt
+		$this.getEngine=function(){ //118:29 | index.nt
+			return private.engine; //119:15 | index.nt
+		}; //118:9 | index.nt
 	}; //10:8 | index.nt
 	Engine.$map=new Map();Engine.get=function(id){return Engine.$map.get(id);};Engine.has=function(id){return Engine.$map.has(id);};Engine.forEach=function(cb){Engine.$map.forEach(cb);};Engine.delete=function(cb){Engine.$map.delete(cb);}; //10:8 | index.nt
-	plugin.Engine=Engine; //119:7 | index.nt
+	plugin.Engine=Engine; //122:7 | index.nt
 return plugin;})};

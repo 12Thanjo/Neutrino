@@ -62,10 +62,66 @@ this.environment = new TECS.Environment(private.name, {
 });
 
 
+
 // components //////////////////////////////////////////////////////////////
 
+this.environment.createComponent("position", {
+	x: prop("float64"),
+	y: prop("float64"),
+	z: prop("float64")
+});
 
+this.environment.createComponent("scale", {
+	x: prop("float64", 1),
+	y: prop("float64", 1),
+	z: prop("float64", 1)
+});
+
+this.environment.createComponent("rotation", {
+	x: prop("float64"),
+	y: prop("float64"),
+	z: prop("float64")
+});
+
+this.environment.createComponent("renderTarget", prop("any"));
 
 
 // systems //////////////////////////////////////////////////////////////
 
+// position
+this.environment.createQuery("position", ["position", "renderTarget"]);
+local position = this.environment.createSystem("position", "position", @(id, components)->{
+	local render_position = components.renderTarget[i].position;
+	local entity_position = components.position[i];
+
+	render_position.x = entity_position.x;
+	render_position.z = entity_position.y;
+	render_position.y = entity_position.z;
+});
+
+// scale
+this.environment.createQuery("scale", ["scale", "renderTarget"]);
+local scale = this.environment.createSystem("scale", "scale", @(id, components)->{
+	local render_scale = components.renderTarget[i].scale;
+	local entity_scale = components.scale[i];
+
+	render_scale.x = entity_scale.x;
+	render_scale.z = entity_scale.y;
+	render_scale.y = entity_scale.z;
+});
+
+// rotation
+this.environment.createQuery("rotation", ["rotation", "renderTarget"]);
+local rotation = this.environment.createSystem("rotation", "rotation", @(id, components)->{
+	local entity_rotation = components.rotation[i];
+
+
+	entity_rotation.z %= Math.TAU;
+	entity_rotation.x %= Math.TAU;
+	entity_rotation.y %= Math.TAU;
+	components.renderTarget[i].rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
+		entity_rotation.z, 
+		entity_rotation.x,
+		entity_rotation.y
+	);
+});

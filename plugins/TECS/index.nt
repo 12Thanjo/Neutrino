@@ -210,7 +210,7 @@ plugin.Environment = Environment;
 species EventLoop(name){
 	access name = name;
 
-	private.i = 0;
+	private.i = -1;
 	private.queue = [];
 
 	this.add = function(event){
@@ -221,7 +221,7 @@ species EventLoop(name){
 	this.next = function(){
 		private.i += 1;
 		try{ //prevent crashes if there's an issue in a system
-			if(private.i < private.queue){
+			if(private.i < private.queue.length){
 				private.queue[private.i](self.next);
 			}else if(print){
 				console.error("Attempted to go to the next event in an Event Loop when already at the end");
