@@ -109,6 +109,17 @@ struct DOMElement(elem){
 	};
 
 
+	this.hover = function(mousein, mouseout){
+		this.element.onmouseenter = @()->{
+			mousein(this);
+		};
+		this.element.onmouseleave = @()->{
+			mouseout(this);
+		};
+		return this;
+	};
+
+
 	this.select = function(query){
 		return new DOMCollection([~this.element.querySelectorAll(":scope > " + query)]);
 	};
@@ -330,6 +341,13 @@ struct DOMCollection(arr){
 	this.css = function(props){
 		iterate this.array(i, elem){
 			elem.css(props);
+		};
+		return this;
+	};
+
+	this.hover = function(mousein, mouseout){
+		iterate this.array(i, elem){
+			elem.hover(mousein, mouseout);
 		};
 		return this;
 	};

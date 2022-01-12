@@ -55,20 +55,20 @@ species Engine(name, config){
     private.shadowGenerator.usePoissonSampling = true;
 
 
-	local sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 512}, private.scene);
-	sphere.position.y = 1;
-	private.shadowGenerator.getShadowMap().renderList.push(sphere);
-	sphere.receiveShadows = true;
-	sphere.material = new BABYLON.StandardMaterial("mat", private.scene);
-	sphere.material.diffuseColor = new BABYLON.Color3(0, 0.8, 1);
-	define FACTOR = 5;
-	sphere.material.emissiveColor = new BABYLON.Color3(0, 0.8 / FACTOR, 1 / FACTOR);
+	// local sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 512}, private.scene);
+	// sphere.position.y = 1;
+	// private.shadowGenerator.getShadowMap().renderList.push(sphere);
+	// sphere.receiveShadows = true;
+	// sphere.material = new BABYLON.StandardMaterial("mat", private.scene);
+	// sphere.material.diffuseColor = new BABYLON.Color3(0, 0.8, 1);
+	// define FACTOR = 5;
+	// sphere.material.emissiveColor = new BABYLON.Color3(0, 0.8 / FACTOR, 1 / FACTOR);
 
-	local new_box = new BABYLON.Mesh.CreateBox("box", 1, private.scene);
-	new_box.scaling.set(5, 1, 5);
-	new_box.position.y = -1;
-	private.shadowGenerator.getShadowMap().renderList.push(new_box);
-	new_box.receiveShadows = true;
+	// local new_box = new BABYLON.Mesh.CreateBox("box", 1, private.scene);
+	// new_box.scaling.set(5, 1, 5);
+	// new_box.position.y = -1;
+	// private.shadowGenerator.getShadowMap().renderList.push(new_box);
+	// new_box.receiveShadows = true;
 	
 
 	macro "post processing";

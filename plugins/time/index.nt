@@ -16,6 +16,11 @@ struct AdvancedTimer(duration, event){
 	private.replay_time = 0;
 	this.overlappable = false;
 
+	private.event = function(){
+		private.running = false;
+		event();
+	};
+
 	private.duration = duration;
 	Object.defineProperty(this, 'duration', {
 		get: function(){
@@ -26,7 +31,7 @@ struct AdvancedTimer(duration, event){
 			if(private.running){
 				if(Date.now() - private.start_time > val){
 					clearTimeout(private.timer);
-					event();
+					private.event();
 				};
 			};
 		},
@@ -46,9 +51,9 @@ struct AdvancedTimer(duration, event){
 	this.start = function(){
 		if(this.overlappable || this.running == false){
 			if(private.replay_time == 0){
-				private.timer = setTimeout(event, duration);
+				private.timer = setTimeout(private.event, duration);
 			}else{
-				private.timer = setTimeout(event, private.replay_time);
+				private.timer = setTimeout(private.event, private.replay_time);
 				private.replay_time = 0;
 			};
 			private.running = true;

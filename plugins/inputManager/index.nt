@@ -88,6 +88,12 @@ species Event(id, trigger, events){
 	events.up default @()->{};
 	events.press default @()->{};
 
+	forKeys events(key, value){
+		if(key isnt ["down", "up", "press"]){
+			SyntaxError |"("key") is not a valid event type. Valid types are (down, up, press)."|;
+		};
+	};
+
 
 	this.events = events;
 

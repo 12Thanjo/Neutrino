@@ -118,6 +118,15 @@ name: DOM
 			param: props
 				type: object
 				description: each property of the object is the style property
+		name: hover
+			type: function
+			description: run functions when the mouse is over the element
+			param: mousein
+				type: function
+				description: function to run when the mouse enters the element
+			param: mouseout
+				type: function
+				description: function to run when the mouse leaves the element
 		name: select
 			type: function
 			description: select elements that are direct children

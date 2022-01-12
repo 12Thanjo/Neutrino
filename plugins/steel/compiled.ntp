@@ -47,21 +47,6 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 		private.shadowGenerator=new BABYLON.ShadowGenerator(config.shadowResolution,light); //53:12 | index.nt
 		private.shadowGenerator.setDarkness(0.25); //54:40 | index.nt
 		private.shadowGenerator.usePoissonSampling=true; //55:12 | index.nt
-		let sphere=BABYLON.MeshBuilder.CreateSphere("sphere",{
-			diameter:2,
-			segments:512
-		},private.scene); //58:17 | index.nt
-		sphere.position.y=1; //59:11 | index.nt
-		private.shadowGenerator.getShadowMap().renderList.push(sphere); //60:59 | index.nt
-		sphere.receiveShadows=true; //61:11 | index.nt
-		sphere.material=new BABYLON.StandardMaterial("mat",private.scene); //62:11 | index.nt
-		sphere.material.diffuseColor=new BABYLON.Color3(0,0.8,1); //63:11 | index.nt
-		sphere.material.emissiveColor=new BABYLON.Color3(0,0.16,0.2); //65:11 | index.nt
-		let new_box=new BABYLON.Mesh.CreateBox("box",1,private.scene); //67:18 | index.nt
-		new_box.scaling.set(5,1,5); //68:24 | index.nt
-		new_box.position.y=-1; //69:12 | index.nt
-		private.shadowGenerator.getShadowMap().renderList.push(new_box); //70:59 | index.nt
-		new_box.receiveShadows=true; //71:12 | index.nt
 		let pipeline=new BABYLON.DefaultRenderingPipeline("default",true,private.scene,[private.camera]); //1:15 | post processing.ntm
 		pipeline.fxaaEnabled=false; //4:9 | post processing.ntm
 		pipeline.samples=1; //7:9 | post processing.ntm
@@ -383,44 +368,44 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 		$this.environment=new TECS.Environment(private.name,{
 			size:config.size,
 			threads:config.threads
-		}); //59:5 | TECS.ntm
+		}); //4:5 | TECS.ntm
 		$this.environment.createComponent("position",{
 			x:prop("float64"),
 			y:prop("float64"),
 			z:prop("float64")
-		}); //68:33 | TECS.ntm
+		}); //13:33 | TECS.ntm
 		$this.environment.createComponent("scale",{
 			x:prop("float64",1),
 			y:prop("float64",1),
 			z:prop("float64",1)
-		}); //74:33 | TECS.ntm
+		}); //19:33 | TECS.ntm
 		$this.environment.createComponent("rotation",{
 			x:prop("float64"),
 			y:prop("float64"),
 			z:prop("float64")
-		}); //80:33 | TECS.ntm
-		$this.environment.createComponent("renderTarget",prop("any")); //86:33 | TECS.ntm
-		$this.environment.createQuery("position",all("position","renderTarget")); //92:29 | TECS.ntm
+		}); //25:33 | TECS.ntm
+		$this.environment.createComponent("renderTarget",prop("any")); //31:33 | TECS.ntm
+		$this.environment.createQuery("position",all("position","renderTarget")); //37:29 | TECS.ntm
 		let position=$this.environment.createSystem("position","position",(id,components)=>{
-			let render_position=components.renderTarget[id].position; //94:26 | TECS.ntm
-			render_position.x=components.position.x[id]; //96:20 | TECS.ntm
-			render_position.z=components.position.y[id]; //97:20 | TECS.ntm
-			render_position.y=components.position.z[id]; //98:20 | TECS.ntm
-		}); //93:15 | TECS.ntm
-		$this.environment.createQuery("scale",all("scale","renderTarget")); //102:29 | TECS.ntm
+			let render_position=components.renderTarget[id].position; //39:26 | TECS.ntm
+			render_position.x=components.position.x[id]; //41:20 | TECS.ntm
+			render_position.z=components.position.y[id]; //42:20 | TECS.ntm
+			render_position.y=components.position.z[id]; //43:20 | TECS.ntm
+		}); //38:15 | TECS.ntm
+		$this.environment.createQuery("scale",all("scale","renderTarget")); //47:29 | TECS.ntm
 		let scale=$this.environment.createSystem("scale","scale",(id,components)=>{
-			let render_scale=components.renderTarget[id].scale; //104:23 | TECS.ntm
-			render_scale.x=components.scale.x[id]; //106:17 | TECS.ntm
-			render_scale.z=components.scale.y[id]; //107:17 | TECS.ntm
-			render_scale.y=components.scale.z[id]; //108:17 | TECS.ntm
-		}); //103:12 | TECS.ntm
-		$this.environment.createQuery("rotation",all("rotation","renderTarget")); //112:29 | TECS.ntm
+			let render_scale=components.renderTarget[id].scale; //49:23 | TECS.ntm
+			render_scale.x=components.scale.x[id]; //51:17 | TECS.ntm
+			render_scale.z=components.scale.y[id]; //52:17 | TECS.ntm
+			render_scale.y=components.scale.z[id]; //53:17 | TECS.ntm
+		}); //48:12 | TECS.ntm
+		$this.environment.createQuery("rotation",all("rotation","renderTarget")); //57:29 | TECS.ntm
 		let rotation=$this.environment.createSystem("rotation","rotation",(id,components)=>{
-			components.rotation.z[id]%=Math.TAU; //116:15 | TECS.ntm
-			components.rotation.x[id]%=Math.TAU; //117:15 | TECS.ntm
-			components.rotation.y[id]%=Math.TAU; //118:15 | TECS.ntm
-			components.renderTarget[id].rotationQuaternion=BABYLON.Quaternion.RotationYawPitchRoll(components.rotation.z[id],components.rotation.x[id],components.rotation.y[id]); //119:15 | TECS.ntm
-		}); //113:15 | TECS.ntm
+			components.rotation.z[id]%=Math.TAU; //61:15 | TECS.ntm
+			components.rotation.x[id]%=Math.TAU; //62:15 | TECS.ntm
+			components.rotation.y[id]%=Math.TAU; //63:15 | TECS.ntm
+			components.renderTarget[id].rotationQuaternion=BABYLON.Quaternion.RotationYawPitchRoll(components.rotation.z[id],components.rotation.x[id],components.rotation.y[id]); //64:15 | TECS.ntm
+		}); //58:15 | TECS.ntm
 		$this.add={}; //2:5 | objects.ntm
 		$this.add.box=function(name,config){ //5:23 | objects.ntm
 			if(config==null){config={};}; //6:11 | objects.ntm
@@ -445,7 +430,7 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			mesh.rotationQuaternion=BABYLON.Quaternion.RotationYawPitchRoll(config.rotation.z,config.rotation.x,config.rotation.y); //27:9 | objects.ntm
 			private.shadowGenerator.getShadowMap().renderList.push(mesh); //33:59 | objects.ntm
 			mesh.receiveShadows=true; //34:9 | objects.ntm
-			let entity=self.environment.createEntity(); //38:17 | objects.ntm
+			let entity=self.environment.createEntity(name); //38:17 | objects.ntm
 			self.environment.bindComponent(entity,"renderTarget",mesh); //41:35 | objects.ntm
 			return entity; //43:11 | objects.ntm
 		}; //5:5 | objects.ntm
