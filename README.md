@@ -2,7 +2,7 @@
 # Neutrino
 A programming language that compiles to NodeJS and was designed to make programming easier (at least for me).
 
-### Instalation
+### Installation
 (NodeJS/npm is required)
 
 Install the repo in your chosen method, and run:
