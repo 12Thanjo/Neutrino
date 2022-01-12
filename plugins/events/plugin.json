@@ -1,0 +1,8 @@
+{
+    "name": "events",
+    "version": "0.1.0",
+    "description": "event listeners",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}

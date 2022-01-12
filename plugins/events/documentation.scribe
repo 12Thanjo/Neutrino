@@ -1,0 +1,27 @@
+name: events
+	type: object
+	description: event listeners
+	name: create
+		type: function
+		description: create an event listener. returns a unique event id (integer)
+		param: tag
+			type: string
+			description: tag of the event
+		param: event
+			type: function
+			description: a function to run when the event tag is emitted
+	name: emit
+		type: function
+		description: emit an event
+		param: tag
+			type: string
+			description: tag of the event to emit
+		param: data
+			type: any
+			description: (optional) data to pass to all event functions called
+	name: delete
+		type: function
+		description: delete an event
+		param: id
+			type: integer
+			description: unique id of the event to delete

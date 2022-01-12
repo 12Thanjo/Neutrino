@@ -1,0 +1,42 @@
+// plugin: event
+// description: event listeners
+// author: 12Thanjo
+
+local events = new Map();
+local event_map = new Map();
+
+local event_id = -1;
+plugin.create = function(tag, event){
+	event_id += 1;
+
+	events.set(event_id, tag);
+
+	if(event_map.has(tag)){
+		event_map.get(tag).set(event_id, event);
+	}else{
+		local new_map = new Map();
+		new_map.set(event_id, event);
+		event_map.set(tag, new_map);
+	};
+	
+	return event_id;
+};
+
+
+plugin.emit = function(tag, data){
+	if(event_map.has(tag)){
+		local event_list = event_map.get(tag);
+		iterate event_list(id, event){
+			event(data);
+		};
+	};	
+};
+
+
+plugin.delete = function(id){
+	local tag = events.get(id);
+	event_map.get(tag).delete(id);
+	events.delete(id);
+};
+
+
