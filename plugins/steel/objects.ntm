@@ -41,5 +41,6 @@ this.add.box = function(name, config){
 	entity.bindComponent("renderTarget", mesh);
 	entity.bindComponent("box");
 
+
 	return entity;
 };

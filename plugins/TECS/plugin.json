@@ -1,6 +1,6 @@
 {
     "name": "TECS",
-    "version": "0.1.5",
+    "version": "0.2.1",
     "description": "Threaded ECS architecture",
     "main": "index.nt",
     "author": "12Thanjo",

@@ -26,6 +26,10 @@ struct Entity(id, name){
 	this.hasComponent = function(component_id){
 		return this.component.has(component_id);
 	};
+
+	this.destroy = function(){
+		self.destroyEntity(private.id);
+	};
 };
 
 
@@ -43,9 +47,34 @@ this.createEntity = function(name){
 
 	return new_entity;
 };
+
 this.getEntity = function(name){
 	return private.entity_lookup.get(name);
 };
+
+
+this.getEntityById = function(id){
+	return private.entities[id];
+};
+
+
+this.destroyEntity = function(id){
+	private.removed.add(id);
+
+
+	local entity = private.entities[id];
+	if(entity.name != null){
+		self_priv.entity_lookup.delete(entity.name);
+	};
+
+	Query.forEach(@(query)->{
+		query.remove(entity);
+	});
+
+	delete private.entities[id];
+};
+
+
 
 this.bindComponent = function(entity_ref, component_id, ~params){
 	local entity_id = entity_ref.id;

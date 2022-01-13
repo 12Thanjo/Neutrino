@@ -1,4 +1,4 @@
-module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('TECS',()=>{let plugin={metadata:{"name":"TECS","version":"0.1.3","description":"Threaded ECS architecture","main":"index.nt","author":"12Thanjo","dependancies":["structures"]}};
+module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('TECS',()=>{let plugin={metadata:{"name":"TECS","version":"0.2.1","description":"Threaded ECS architecture","main":"index.nt","author":"12Thanjo","dependancies":["structures"]}};
 	let encodeStringBuffer=function(string){ //7:35 | index.nt
 		let bytes=string.length; //8:16 | index.nt
 		var $arr_length=string.length;
@@ -330,61 +330,78 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('TECS
 			$this.hasComponent=function(component_id){ //26:32 | entity.ntm
 				return $this.component.has(component_id); //27:15 | entity.ntm
 			}; //26:9 | entity.ntm
+			$this.destroy=function(){ //30:27 | entity.ntm
+				self.destroyEntity(private.id); //31:27 | entity.ntm
+			}; //30:9 | entity.ntm
 		}; //7:7 | entity.ntm
-		$this.createEntity=function(name){ //33:28 | entity.ntm
-			let new_entity=null; //34:21 | entity.ntm
+		$this.createEntity=function(name){ //37:28 | entity.ntm
+			let new_entity=null; //38:21 | entity.ntm
 			if(private.removed.size==0){
-				new_entity=new Entity(private.entity_id,name); //36:19 | entity.ntm
-				private.entity_id+=1; //37:16 | entity.ntm
+				new_entity=new Entity(private.entity_id,name); //40:19 | entity.ntm
+				private.entity_id+=1; //41:16 | entity.ntm
 			}else{
-				let entity_id=private.removed.values().next().value; //39:24 | entity.ntm
-				private.removed.delete(entity_id); //40:31 | entity.ntm
-				new_entity=new Entity(entity_id,name); //41:19 | entity.ntm
-			}; //35:7 | entity.ntm
-			return new_entity; //44:11 | entity.ntm
-		}; //33:5 | entity.ntm
-		$this.getEntity=function(name){ //46:25 | entity.ntm
-			return private.entity_lookup.get(name); //47:11 | entity.ntm
-		}; //46:5 | entity.ntm
-		$this.bindComponent=function(entity_ref,component_id,...params){ //50:29 | entity.ntm
-			let entity_id=entity_ref.id; //51:20 | entity.ntm
-			let entity=private.entities[entity_id]; //52:17 | entity.ntm
-			let component=Component.get(component_id); //53:20 | entity.ntm
-			entity.components.add(component_id); //55:26 | entity.ntm
-			let recursive_i=0; //57:22 | entity.ntm
-			let recursive=function(builder,target){ //58:30 | entity.ntm
+				let entity_id=private.removed.values().next().value; //43:24 | entity.ntm
+				private.removed.delete(entity_id); //44:31 | entity.ntm
+				new_entity=new Entity(entity_id,name); //45:19 | entity.ntm
+			}; //39:7 | entity.ntm
+			return new_entity; //48:11 | entity.ntm
+		}; //37:5 | entity.ntm
+		$this.getEntity=function(name){ //51:25 | entity.ntm
+			return private.entity_lookup.get(name); //52:11 | entity.ntm
+		}; //51:5 | entity.ntm
+		$this.getEntityById=function(id){ //56:29 | entity.ntm
+			return private.entities[id]; //57:11 | entity.ntm
+		}; //56:5 | entity.ntm
+		$this.destroyEntity=function(id){ //61:29 | entity.ntm
+			private.removed.add(id); //62:24 | entity.ntm
+			let entity=private.entities[id]; //65:17 | entity.ntm
+			if(entity.name!=null){
+				self_priv.entity_lookup.delete(entity.name); //67:39 | entity.ntm
+			}; //66:7 | entity.ntm
+			Query.forEach((query)=>{
+				query.remove(entity); //71:21 | entity.ntm
+			}); //70:18 | entity.ntm
+			delete private.entities[id]; //74:11 | entity.ntm
+		}; //61:5 | entity.ntm
+		$this.bindComponent=function(entity_ref,component_id,...params){ //79:29 | entity.ntm
+			let entity_id=entity_ref.id; //80:20 | entity.ntm
+			let entity=private.entities[entity_id]; //81:17 | entity.ntm
+			let component=Component.get(component_id); //82:20 | entity.ntm
+			entity.components.add(component_id); //84:26 | entity.ntm
+			let recursive_i=0; //86:22 | entity.ntm
+			let recursive=function(builder,target){ //87:30 | entity.ntm
 				for(let key in builder){
 					let value=builder[key];
 					if(value instanceof Prop){
 						if(params[recursive_i]==null){
-							target[key][entity_id]=value.auto; //62:27 | entity.ntm
+							target[key][entity_id]=value.auto; //91:27 | entity.ntm
 						}else{
-							target[key][entity_id]=params[recursive_i]; //64:27 | entity.ntm
-						}; //61:19 | entity.ntm
-						recursive_i+=1; //66:28 | entity.ntm
+							target[key][entity_id]=params[recursive_i]; //93:27 | entity.ntm
+						}; //90:19 | entity.ntm
+						recursive_i+=1; //95:28 | entity.ntm
 					}else{
-						recursive(value,target[key]); //68:26 | entity.ntm
-					}; //60:15 | entity.ntm
-				}; //59:16 | entity.ntm
-			}; //58:20 | entity.ntm
+						recursive(value,target[key]); //97:26 | entity.ntm
+					}; //89:15 | entity.ntm
+				}; //88:16 | entity.ntm
+			}; //87:20 | entity.ntm
 			if(component.builder instanceof Prop){
 				if(params[0]==null){
-					$this.components[component_id][entity_id]=component.builder.auto; //76:17 | entity.ntm
+					$this.components[component_id][entity_id]=component.builder.auto; //105:17 | entity.ntm
 				}else{
-					$this.components[component_id][entity_id]=params[0]; //78:17 | entity.ntm
-				}; //75:11 | entity.ntm
+					$this.components[component_id][entity_id]=params[0]; //107:17 | entity.ntm
+				}; //104:11 | entity.ntm
 			}else{
-				recursive(component.builder,$this.components[component_id]); //81:18 | entity.ntm
-			}; //74:7 | entity.ntm
+				recursive(component.builder,$this.components[component_id]); //110:18 | entity.ntm
+			}; //103:7 | entity.ntm
 			Query.forEach((query)=>{
-				query.audit(entity); //86:20 | entity.ntm
-			}); //85:18 | entity.ntm
-		}; //50:5 | entity.ntm
-		$this.forEach=function(event){ //90:23 | entity.ntm
+				query.audit(entity); //115:20 | entity.ntm
+			}); //114:18 | entity.ntm
+		}; //79:5 | entity.ntm
+		$this.forEach=function(event){ //119:23 | entity.ntm
 			for(var[i,entity]of private.entities.entries()){
-				event(i,self.components); //92:14 | entity.ntm
-			}; //91:12 | entity.ntm
-		}; //90:5 | entity.ntm
+				event(i,self.components); //121:14 | entity.ntm
+			}; //120:12 | entity.ntm
+		}; //119:5 | entity.ntm
 		let SharedSet=function(){
 			let $this=this;let private={};this.$op={};
 			let type=null; //3:15 | query.ntm

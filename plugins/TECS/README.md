@@ -209,10 +209,16 @@ Unique objects that hold Components with values. Returns and [Entity](#entity-ob
 
 
 ### `env.getEntity(name)`
-Get an entity from their name (can only get entities that actually have names). Returns and [Entity](#entity-object).
+Get an entity from their name (can only get entities that actually have names). Returns an [Entity](#entity-object).
 | Parameter | Type   | Description			 	 |
 |-----------|--------|---------------------------|
 | name      | String | unique name of the entity |
+
+### `env.getEntityById(id)`
+Get an entity from their id. Returns an [Entity](#entity-object).
+| Parameter | Type    | Description			 	|
+|-----------|---------|-------------------------|
+| id        | Integer | unique id of the entity |
 
 
 ### `env.bindComponent(entity_ref, component_id, ~params)`

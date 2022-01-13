@@ -434,24 +434,32 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			let entity=self.environment.createEntity(name); //38:17 | objects.ntm
 			entity.bindComponent("renderTarget",mesh); //41:25 | objects.ntm
 			entity.bindComponent("box"); //42:25 | objects.ntm
-			return entity; //44:11 | objects.ntm
+			return entity; //45:11 | objects.ntm
 		}; //5:5 | objects.ntm
-		$this.importScene=function(scene){ //3:27 | import export.ntm
-		}; //3:5 | import export.ntm
-		$this.exportScene=function(){ //9:27 | import export.ntm
-			let output=[]; //10:17 | import export.ntm
-			$this.environment.forEach((id,conponents)=>{
-				console.log(id); //14:20 | import export.ntm
-				let entity=$this.environment.getPointer(id); //15:21 | import export.ntm
-				console.log("entity: ",entity); //16:20 | import export.ntm
-				if(entity.box==true){
-					console.log("box"); //19:24 | import export.ntm
-				}else{
-					console.log("not a box"); //21:24 | import export.ntm
-				}; //18:11 | import export.ntm
-			}); //13:29 | import export.ntm
-			return output; //25:11 | import export.ntm
-		}; //9:5 | import export.ntm
+		$this.clearScene=function(){ //1:26 | load scene.ntm
+			$this.environment.forEach((id,components)=>{
+				let entity=$this.environment.getEntityById(id); //3:21 | load scene.ntm
+				if(entity.components.has("renderTarget")){
+					let render_target=components.renderTarget[id]; //6:32 | load scene.ntm
+					render_target.dispose(); //7:34 | load scene.ntm
+					components.renderTarget[id]=null; //8:23 | load scene.ntm
+				}; //5:11 | load scene.ntm
+				$this.environment.destroyEntity(id); //11:39 | load scene.ntm
+			}); //2:29 | load scene.ntm
+		}; //1:5 | load scene.ntm
+		$this.loadScene=function(scene){ //19:25 | load scene.ntm
+			$this.clearScene(); //20:20 | load scene.ntm
+			for(let name in scene.entities){
+				let entity=scene.entities[name];
+				if(entity.type=="box"){
+					$this.add.box(name,{
+						position:entity.position,
+						rotation:entity.rotation,
+						scale:entity.scale
+					}); //24:25 | load scene.ntm
+				}; //23:11 | load scene.ntm
+			}; //22:12 | load scene.ntm
+		}; //19:5 | load scene.ntm
 		private.fpsTimer=process.hrtime(); //1:8 | performance.ntm
 		private.fpsMax=Infinity*-1; //2:14 | performance.ntm
 		Object.defineProperty(this, "fpsMax", {get: ()=>{return private.fpsMax;}}); //2:7 | performance.ntm

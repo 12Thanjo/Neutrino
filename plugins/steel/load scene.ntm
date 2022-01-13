@@ -1,0 +1,32 @@
+this.clearScene = function(){
+	this.environment.forEach(@(id, components)->{
+		local entity = this.environment.getEntityById(id);
+
+		if(entity.components.has("renderTarget")){
+			local render_target = components.renderTarget[id];
+			render_target.dispose();
+			components.renderTarget[id] = null;
+		};
+
+		this.environment.destroyEntity(id);
+	});
+};
+
+
+
+
+
+this.loadScene = function(scene){
+	this.clearScene();
+
+	forKeys scene.entities(name, entity){
+		if(entity.type == "box"){
+			this.add.box(name, {
+				position: entity.position,
+				rotation: entity.rotation,
+				scale: entity.scale,
+			});
+		};
+	};
+};
+
