@@ -1,0 +1,13 @@
+
+
+this.importScene = function(scene){
+	
+};
+
+
+
+this.exportScene = function(){
+	this.environment.forEach(@(entity)->{
+		console.log(entity.id, entity.name);
+	});
+};

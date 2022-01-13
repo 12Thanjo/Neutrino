@@ -1,5 +1,5 @@
 private.entities = [];
-private.entity_id = 1;
+private.entity_id = 0;
 private.removed = new Set();
 private.entity_lookup = new Map();
 
@@ -85,4 +85,10 @@ this.bindComponent = function(entity_ref, component_id, ~params){
 	Query.forEach(@(query)->{
 		query.audit(entity);
 	});
+};
+
+this.forEach = function(event){
+	iterate private.entities(i, entity){
+		event(entity);
+	};
 };

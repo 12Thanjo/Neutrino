@@ -434,6 +434,13 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			self.environment.bindComponent(entity,"renderTarget",mesh); //41:35 | objects.ntm
 			return entity; //43:11 | objects.ntm
 		}; //5:5 | objects.ntm
+		$this.importScene=function(scene){ //3:27 | import export.ntm
+		}; //3:5 | import export.ntm
+		$this.exportScene=function(){ //9:27 | import export.ntm
+			$this.environment.forEach((entity)=>{
+				console.log(entity.id,entity.name); //11:20 | import export.ntm
+			}); //10:29 | import export.ntm
+		}; //9:5 | import export.ntm
 		private.fpsTimer=process.hrtime(); //1:8 | performance.ntm
 		private.fpsMax=Infinity*-1; //2:14 | performance.ntm
 		Object.defineProperty(this, "fpsMax", {get: ()=>{return private.fpsMax;}}); //2:7 | performance.ntm

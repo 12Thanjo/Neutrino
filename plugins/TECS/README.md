@@ -223,6 +223,11 @@ Bind a component to an entity.
 | component_id  | String  | Unique id of the component to bind to the Entity    																		|
 | \~params 	    | Params  | Values to set to the properties (length is optional). The order is in which they are created (top to bottom, left to right) |
 
+### `env.forEach(event)`
+Iterate over every entity
+| Parameter | Type     | Description			 	                                       |
+|-----------|----------|-------------------------------------------------------------------|
+| event     | Function | Function to run on every entity (takes the entity as a parameter) |
 
 
 ### Entity Object

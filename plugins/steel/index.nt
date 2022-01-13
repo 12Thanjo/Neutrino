@@ -75,7 +75,7 @@ species Engine(name, config){
 	this.pipeline.MSAA = config.MSAA;
 	macro "TECS";
 	macro "objects";
-
+	macro "import export";
 
 
 
