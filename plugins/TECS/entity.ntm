@@ -73,7 +73,7 @@ this.bindComponent = function(entity_ref, component_id, ~params){
 	
 	if(component.builder instanceof Prop){
 		if(params[0] == null){
-			this.components[component_id][entity_id] = component.builder;
+			this.components[component_id][entity_id] = component.builder.auto;
 		}else{
 			this.components[component_id][entity_id] = params[0];
 		};
@@ -89,6 +89,6 @@ this.bindComponent = function(entity_ref, component_id, ~params){
 
 this.forEach = function(event){
 	iterate private.entities(i, entity){
-		event(entity);
+		event(i, self.components);
 	};
 };

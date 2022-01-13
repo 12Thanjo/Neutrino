@@ -229,6 +229,13 @@ Iterate over every entity
 |-----------|----------|-------------------------------------------------------------------|
 | event     | Function | Function to run on every entity (takes the entity as a parameter) |
 
+#### event
+| Parameter  | Type    | Description	   | 
+|------------|---------|-------------------|
+| id         | Integer | id of the entity  |																											  
+| components | Object  | Object containing all components, where each component property is an array and the index of array corresponds to unique id of entity. If an entity has not been created yet, the value will be 0 (or null if using the _any_ type) |
+
+
 
 ### Entity Object
 

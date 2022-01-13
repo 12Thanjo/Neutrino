@@ -1,7 +1,7 @@
 
 this.add = {};
 
-
+this.environment.createComponent("box", prop("any", true));
 this.add.box = function(name, config){
 	config default {};
 	config.position default {
@@ -38,7 +38,8 @@ this.add.box = function(name, config){
 	local entity = self.environment.createEntity(name);
 
 	// components
-	self.environment.bindComponent(entity, "renderTarget", mesh);
+	entity.bindComponent("renderTarget", mesh);
+	entity.bindComponent("box");
 
 	return entity;
 };

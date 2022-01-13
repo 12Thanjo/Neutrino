@@ -407,6 +407,7 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			components.renderTarget[id].rotationQuaternion=BABYLON.Quaternion.RotationYawPitchRoll(components.rotation.z[id],components.rotation.x[id],components.rotation.y[id]); //64:15 | TECS.ntm
 		}); //58:15 | TECS.ntm
 		$this.add={}; //2:5 | objects.ntm
+		$this.environment.createComponent("box",prop("any",true)); //4:33 | objects.ntm
 		$this.add.box=function(name,config){ //5:23 | objects.ntm
 			if(config==null){config={};}; //6:11 | objects.ntm
 			if(config.position==null){config.position={
@@ -431,15 +432,25 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			private.shadowGenerator.getShadowMap().renderList.push(mesh); //33:59 | objects.ntm
 			mesh.receiveShadows=true; //34:9 | objects.ntm
 			let entity=self.environment.createEntity(name); //38:17 | objects.ntm
-			self.environment.bindComponent(entity,"renderTarget",mesh); //41:35 | objects.ntm
-			return entity; //43:11 | objects.ntm
+			entity.bindComponent("renderTarget",mesh); //41:25 | objects.ntm
+			entity.bindComponent("box"); //42:25 | objects.ntm
+			return entity; //44:11 | objects.ntm
 		}; //5:5 | objects.ntm
 		$this.importScene=function(scene){ //3:27 | import export.ntm
 		}; //3:5 | import export.ntm
 		$this.exportScene=function(){ //9:27 | import export.ntm
-			$this.environment.forEach((entity)=>{
-				console.log(entity.id,entity.name); //11:20 | import export.ntm
-			}); //10:29 | import export.ntm
+			let output=[]; //10:17 | import export.ntm
+			$this.environment.forEach((id,conponents)=>{
+				console.log(id); //14:20 | import export.ntm
+				let entity=$this.environment.getPointer(id); //15:21 | import export.ntm
+				console.log("entity: ",entity); //16:20 | import export.ntm
+				if(entity.box==true){
+					console.log("box"); //19:24 | import export.ntm
+				}else{
+					console.log("not a box"); //21:24 | import export.ntm
+				}; //18:11 | import export.ntm
+			}); //13:29 | import export.ntm
+			return output; //25:11 | import export.ntm
 		}; //9:5 | import export.ntm
 		private.fpsTimer=process.hrtime(); //1:8 | performance.ntm
 		private.fpsMax=Infinity*-1; //2:14 | performance.ntm

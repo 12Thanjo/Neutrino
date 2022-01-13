@@ -7,7 +7,12 @@ this.importScene = function(scene){
 
 
 this.exportScene = function(){
-	this.environment.forEach(@(entity)->{
-		console.log(entity.id, entity.name);
+	local output = [];
+
+
+	this.environment.forEach(@(id, conponents)->{
+		local entity = this.environment.getPointer(id);
 	});
+
+	return output;
 };
