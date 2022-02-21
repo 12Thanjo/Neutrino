@@ -1,0 +1,60 @@
+scope {
+	struct HashTable(){
+		private.map = new Map();
+
+		private.add_single = function(tag, add){
+			console.log(tag, private.map.has(tag));
+			if(private.map.has(tag)){
+				local arr = private.map.get(tag);
+				if(arr.includes(add) == false){
+					arr.push(add);
+					private.map.set(tag, arr);
+				};
+			}else{
+				private.map.set(tag, [add]);
+			};
+		};
+
+		this.add = function(tag, add){
+			if(add classof "Array"){
+				iterate add(i, add_val){
+					private.add_single(tag, add_val);
+				};
+			}else{
+				private.add_single(tag, add);
+			};
+		};
+
+		this.has = function(tag){
+			return private.map.has(tag);
+		};
+
+		this.get = function(tag){
+			return private.map.get(tag);
+		};
+
+		this.delete = function(tag){
+			private.map.delete(tag);
+		};
+
+		Object.defineProperty(this, 'size', {
+			get: function(){
+				return private.map.size;
+			},
+		});
+
+
+		this.print = function(){
+			local output = {};
+
+			iterate private.map(key, value){
+				output[key] = [~value];	
+			};
+
+			return output;
+		};
+	};
+
+
+	plugin.HashTable = HashTable;
+};

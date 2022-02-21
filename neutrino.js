@@ -26,32 +26,41 @@ if(args.length == 0){
 	var help_color = "yellow";
 	var help_log = function(title, description){
 		if(help_color == "yellow"){
-			help_color = "blue"; // actually orange due to my cmd theme
+			help_color = "green";
 		}else{
 			help_color = "yellow";
 		}
 
-		cmd.log(title + ": " + cmd.color[help_color] + description, cmd.color.green);
+		cmd.log(title + ": " + cmd.color[help_color] + description);
 	}
 
 
 	var help = function(){
 		cmd.log("Neutrino help:", cmd.color.cyan);
 		cmd.log('----------------', cmd.color.cyan);
+
 		help_log("<no arguments>", "Starts Neutrino runtime");
 		help_log("<file name>", 'run given compiled file (automatically adds ".js" if not present)');
-		help_log("build", 'compiles all .nt files in directory');
+		help_log("build", 'compiles all .nt files in directory (and sub-directories)');
 		help_log("compile <file name>", 'compiles a .nt file and outputs a .js file (automatically adds ".nt" if not present)');
-		help_log("help", 'shows "help" menu');
+		help_log("help", 'shows "help" menu ( this is the help menu :) )');
+
+		console.log();
+
 		help_log("-o", 'sets the name of the file to output (only used with the "compile" command)');
+
+		console.log();
+
 		help_log('--debug', 'Compiled output in debug mode');
 		help_log('--run', 'run the program after it compiled if it compiled successfully (only used with the "compile" command)');
 		help_log('--module', 'compile without imports (for internal use of Tau)');
+		help_log('--node', 'Compiles for node. This option is not necessary, but has some improvements (for example, more readable errors)');
 		help_log('--packaged', 'Plugins will be written into the file instead of a separate folder');
 		help_log('--preserve', 'Preserve the math (don\'t pre-simplify expressions)');
 		help_log('--verbose', 'logs to the console');
 		help_log('--view', 'will ouput the parsed program to the console (for the purpose of debugging the compiler)');
 
+		console.log();
 
 		process.exit();
 	}

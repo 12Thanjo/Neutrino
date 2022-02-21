@@ -1,1 +1,581 @@
-module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('structures',()=>{let plugin={metadata:{"name":"structures","version":"0.2.0","description":"adding data structures","main":"index.nt","author":"12Thanjo","dependancies":[]}};{let Node=function(data){let $this=this;let private={};this.$op={};$this.data=data;$this.next=null;};let Stack=function(setup_arr){let $this=this;let private={};this.$op={};private.top=null;private.length=0;Object.defineProperty(this, "length", {get: ()=>{return private.length;}});$this.push=function(data){let new_top=new Node(data);;new_top.next=private.top;private.top=new_top;private.length+=1;};$this.pop=function(){if(private.length!=0){private.length-=1;let output=private.top;private.top=private.top.next;return output.data;}else{return null;};};$this.peek=function(){if(private.top!=null){return private.top.data;}else{return null;};};$this.print=function(){let output=[];let target=private.top;while(target!=null){output.push(target.data);target=target.next;};return output;};if(setup_arr!=null){let length=setup_arr.length-1;for(var[i,value]of setup_arr.entries()){$this.push(setup_arr[length-i]);};};};plugin.Stack=Stack;};{let Node=function(data){let $this=this;let private={};this.$op={};$this.data=data;$this.next=null;};let Queue=function(setup_arr){let $this=this;let private={};this.$op={};private.front=null;private.back=null;private.length=0;Object.defineProperty(this, "length", {get: ()=>{return private.length;}});$this.push=function(data){let new_back=new Node(data);;if(private.length!=0){private.back.next=new_back;private.back=new_back;}else{private.front=new_back;private.back=new_back;};private.length+=1;};$this.pop=function(){if(private.length!=0){let output=private.front;private.length-=1;private.front=output.next;return output.data;}else{return null;};};$this.peek=function(){if(private.front!=null){return private.front.data;}else{return null;};};$this.print=function(){let output=[];let target=private.front;while(target!=null){output.push(target.data);target=target.next;};return output;};if(setup_arr!=null){for(var[i,value]of setup_arr.entries()){$this.push(value);};};};plugin.Queue=Queue;};let MinHeap=function(array){let $this=this;let private={};this.$op={};private.array=array;if(private.array==null){private.array=[];};private.array=[null,...private.array];$this.peek=function(){return $this.array[1];};$this.size=function(){return private.array.length;};$this.print=function(){return private.array.slice(1);};$this.push=function(value){private.array.push(value);if(private.array.length>1){let i=private.array.length-1;while(i>1&&private.array[Math.floor(i/2)]>private.array[i]){let save=private.array[Math.floor(i/2)];private.array[Math.floor(i/2)]=private.array[i];private.array[i]=save;i=Math.floor(i/2);};};};$this.pop=function(){let output=private.array[1];if(private.array.length>2){private.array[1]=private.array[private.array.length-1];private.array.splice(private.array.length-1);if(private.array.length==3){if(private.array[1]>private.array[2]){var $save=private.array[1];private.array[1]=private.array[2];private.array[2]=$save;};return output;};let i=1;let left_i=i*2;let right_i=i*2+1;let left=private.array[left_i];let right=private.array[right_i];while(left&&private.array[right_i]&&(private.array[i]>left||private.array[i]>right)){if(left<right){var $save=private.array[i];private.array[i]=private.array[left_i];private.array[left_i]=$save;i=left_i;}else{var $save=private.array[i];private.array[i]=private.array[right_i];private.array[right_i]=$save;i=right_i;};left_i=i*2;right_i=i*2+1;};}else if(private.array.length==2){private.array.splice(1,1);}else{return null;};return output;};};plugin.MinHeap=MinHeap;let MaxHeap=function(array){let $this=this;let private={};this.$op={};private.array=array;if(private.array==null){private.array=[];};private.array=[null,...private.array];$this.peek=function(){return $this.array[1];};$this.size=function(){return private.array.length;};$this.print=function(){return private.array.slice(1);};$this.push=function(value){private.array.push(value);if(private.array.length>1){let i=private.array.length-1;while(i>1&&private.array[Math.floor(i/2)]<private.array[i]){let save=private.array[Math.floor(i/2)];private.array[Math.floor(i/2)]=private.array[i];private.array[i]=save;i=Math.floor(i/2);};};};$this.pop=function(){let output=private.array[1];if(private.array.length>2){private.array[1]=private.array[private.array.length-1];private.array.splice(private.array.length-1);if(private.array.length==3){if(private.array[1]<private.array[2]){var $save=private.array[1];private.array[1]=private.array[2];private.array[2]=$save;};return output;};let i=1;let left_i=i*2;let right_i=i*2+1;let left=private.array[left_i];let right=private.array[right_i];while(left&&private.array[right_i]&&(private.array[i]<left||private.array[i]<right)){if(left>right){var $save=private.array[i];private.array[i]=private.array[left_i];private.array[left_i]=$save;i=left_i;}else{var $save=private.array[i];private.array[i]=private.array[right_i];private.array[right_i]=$save;i=right_i;};left_i=i*2;right_i=i*2+1;};}else if(private.array.length==2){private.array.splice(1,1);}else{return null;};return output;};};plugin.MaxHeap=MaxHeap;{let Node=function(priority,data){let $this=this;let private={};this.$op={};$this.priority=priority;$this.data=data;};let MinPriorityQueue=function(array){let $this=this;let private={};this.$op={};private.array=array;if(private.array==null){private.array=[];};private.array=[null,...private.array];$this.peek=function(){return $this.array[1];};$this.length=function(){return private.array.length;};$this.print=function(){return private.array.slice(1);};$this.push=function(priority,value){private.array.push(new Node(priority,value));if(private.array.length>1){let i=private.array.length-1;while(i>1&&private.array[Math.floor(i/2)].priority>private.array[i].priority){let save=private.array[Math.floor(i/2)];private.array[Math.floor(i/2)]=private.array[i];private.array[i]=save;i=Math.floor(i/2);};};};$this.pop=function(){let output=private.array[1];if(private.array.length>2){private.array[1]=private.array[private.array.length-1];private.array.splice(private.array.length-1);if(private.array.length==3){if(private.array[1].priority>private.array[2].priority){var $save=private.array[1];private.array[1]=private.array[2];private.array[2]=$save;};return output;};let i=1;let left_i=i*2;let right_i=i*2+1;let left=private.array[left_i];let right=private.array[right_i];while(left&&private.array[right_i]&&(private.array[i].priority>left.priority||private.array[i].priority>right.priority)){if(left.priority<right.priority){var $save=private.array[i];private.array[i]=private.array[left_i];private.array[left_i]=$save;i=left_i;}else{var $save=private.array[i];private.array[i]=private.array[right_i];private.array[right_i]=$save;i=right_i;};left_i=i*2;right_i=i*2+1;};}else if(private.array.length==2){private.array.splice(1,1);}else{return null;};return output;};};plugin.MinPriorityQueue=MinPriorityQueue;let MaxPriorityQueue=function(array){let $this=this;let private={};this.$op={};private.array=array;if(private.array==null){private.array=[];};private.array=[null,...private.array];$this.peek=function(){return $this.array[1];};$this.length=function(){return private.array.length;};$this.print=function(){return private.array.slice(1);};$this.push=function(priority,value){private.array.push(new Node(priority,value));if(private.array.length>1){let i=private.array.length-1;while(i>1&&private.array[Math.floor(i/2)].priority<private.array[i].priority){let save=private.array[Math.floor(i/2)];private.array[Math.floor(i/2)]=private.array[i];private.array[i]=save;i=Math.floor(i/2);};};};$this.pop=function(){let output=private.array[1];if(private.array.length>2){private.array[1]=private.array[private.array.length-1];private.array.splice(private.array.length-1);if(private.array.length==3){if(private.array[1].priority<private.array[2].priority){var $save=private.array[1];private.array[1]=private.array[2];private.array[2]=$save;};return output;};let i=1;let left_i=i*2;let right_i=i*2+1;let left=private.array[left_i];let right=private.array[right_i];while(left&&private.array[right_i]&&(private.array[i].priority<left.priority||private.array[i].priority<right.priority)){if(left.priority>right.priority){var $save=private.array[i];private.array[i]=private.array[left_i];private.array[left_i]=$save;i=left_i;}else{var $save=private.array[i];private.array[i]=private.array[right_i];private.array[right_i]=$save;i=right_i;};left_i=i*2;right_i=i*2+1;};}else if(private.array.length==2){private.array.splice(1,1);}else{return null;};return output;};};plugin.MaxPriorityQueue=MaxPriorityQueue;};{let Node=function(data){let $this=this;let private={};this.$op={};$this.data=data;$this.next=null;};let LinkedList=function(){let $this=this;let private={};this.$op={};private.head=null;Object.defineProperty(this, "head", {get: ()=>{return private.head;}});private.length=0;Object.defineProperty(this, "length", {get: ()=>{return private.length;}});$this.push=function(data){if(private.head==null){private.head=new Node(data);}else{let target=private.head;while(target.next!=null){target=target.next;};target.next=new Node(data);};private.length+=1;};$this.delete=function(i){if(i>private.length-1||i<0){return null;}else{private.length-=1;if(i==0){let output=private.head.data;private.head=private.head.next;return output;}else{let target=private.head;for(var j=0;j<i-1;j++){target=target.next;};let output=target.next;target.next=output.next;return output.data;};};};$this.get=function(i){if(i>private.length-1||i<0){return null;}else{let target=private.head;for(var j=0;j<i;j++){target=target.next;};return target;};};$this.peek=function(){return private.head;};$this.print=function(){let output=[];let target=private.head;while(target!=null){output.push(target.data);target=target.next;};return output;};};plugin.LinkedList=LinkedList;};{let Node=function(data){let $this=this;let private={};this.$op={};$this.data=data;$this.previous=null;$this.next=null;};let DoublyLinkedList=function(){let $this=this;let private={};this.$op={};private.front=null;private.rear=null;private.length=0;Object.defineProperty(this, "length", {get: ()=>{return private.length;}});$this.push=function(data){if(private.front==null){private.front=new Node(data);private.rear=private.front;}else{let new_node=new Node(data);;private.rear.next=new_node;new_node.previous=private.rear;private.rear=new_node;};private.length+=1;};$this.delete=function(i){if(i>private.length-1||i<0){return null;}else if(i==0){private.length-=1;let output=private.front.data;private.front=private.front.next;private.front.previous=null;return output;}else if(i==private.length-1){private.length-=1;let output=private.rear.data;private.rear=private.rear.previous;private.rear.next=null;return output;}else{private.length-=1;let target=null;if(i/private.length<0.5){target=private.front;for(var j=0;j<i;j++){target=target.next;};}else{i=private.length-i-1;target=private.rear;for(var j=0;j<i;j++){target=target.previous;};};let previous=target.previous;let next=target.next;previous.next=next;next.previous=previous;return target.data;};};$this.get=function(i){if(i>private.length-1||i<0){return null;}else{let target=null;if(i/private.length<0.5){target=private.front;for(var j=0;j<i;j++){target=target.next;};}else{i=private.length-i-1;target=private.rear;for(var j=0;j<i;j++){target=target.previous;};};return target;};};$this.peek=function(){return private.front;};$this.print=function(){let output=[];let target=private.front;while(target!=null){output.push(target.data);target=target.next;};return output;};};plugin.DoublyLinkedList=DoublyLinkedList;};return plugin;})};
+module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('structures',()=>{let plugin={metadata:{"name":"structures","version":"0.3.1","description":"custom data structures","main":"index.nt","author":"12Thanjo","dependancies":[]}};
+	{
+		let Node=function(data){
+			let $this=this;let private={};this.$op={};
+			$this.data=data; //3:13 | stack.ntm
+			$this.next=null; //4:13 | stack.ntm
+		}; //2:11 | stack.ntm
+		let Stack=function(setup_arr){
+			let $this=this;let private={};this.$op={};
+			private.top=null; //9:16 | stack.ntm
+			private.length=0; //10:22 | stack.ntm
+			Object.defineProperty(this, "length", {get: ()=>{return private.length;}}); //10:15 | stack.ntm
+			$this.push=function(data){ //12:28 | stack.ntm
+				let new_top=new Node(data); //13:26 | stack.ntm
+				new_top.next=private.top; //14:20 | stack.ntm
+				private.top=new_top; //15:20 | stack.ntm
+				private.length+=1; //16:20 | stack.ntm
+			}; //12:13 | stack.ntm
+			$this.pop=function(){ //19:27 | stack.ntm
+				if(private.length!=0){
+					private.length-=1; //21:24 | stack.ntm
+					let output=private.top; //22:29 | stack.ntm
+					private.top=private.top.next; //23:24 | stack.ntm
+					return output.data; //24:23 | stack.ntm
+				}else{
+					return null; //26:23 | stack.ntm
+				}; //20:15 | stack.ntm
+			}; //19:13 | stack.ntm
+			$this.peek=function(){ //30:28 | stack.ntm
+				if(private.top!=null){
+					return private.top.data; //32:23 | stack.ntm
+				}else{
+					return null; //34:23 | stack.ntm
+				}; //31:15 | stack.ntm
+			}; //30:13 | stack.ntm
+			$this.print=function(){ //38:29 | stack.ntm
+				let output=[]; //39:25 | stack.ntm
+				let target=private.top; //40:25 | stack.ntm
+				while(target!=null){
+					output.push(target.data); //43:28 | stack.ntm
+					target=target.next; //44:23 | stack.ntm
+				}; //42:18 | stack.ntm
+				return output; //47:19 | stack.ntm
+			}; //38:13 | stack.ntm
+			if(setup_arr!=null){
+				let length=setup_arr.length-1; //52:25 | stack.ntm
+				for(var[i,value]of setup_arr.entries()){
+					$this.push(setup_arr[length-i]); //54:26 | stack.ntm
+				}; //53:20 | stack.ntm
+			}; //51:11 | stack.ntm
+		}; //8:11 | stack.ntm
+		plugin.Stack=Stack; //58:11 | stack.ntm
+	}; //1:6 | stack.ntm
+	{
+		let Node=function(data){
+			let $this=this;let private={};this.$op={};
+			$this.data=data; //3:13 | queue.ntm
+			$this.next=null; //4:13 | queue.ntm
+		}; //2:11 | queue.ntm
+		let Queue=function(setup_arr){
+			let $this=this;let private={};this.$op={};
+			private.front=null; //8:16 | queue.ntm
+			private.back=null; //9:16 | queue.ntm
+			private.length=0; //10:22 | queue.ntm
+			Object.defineProperty(this, "length", {get: ()=>{return private.length;}}); //10:15 | queue.ntm
+			$this.push=function(data){ //12:28 | queue.ntm
+				let new_back=new Node(data); //13:27 | queue.ntm
+				if(private.length!=0){
+					private.back.next=new_back; //15:24 | queue.ntm
+					private.back=new_back; //16:24 | queue.ntm
+				}else{
+					private.front=new_back; //18:24 | queue.ntm
+					private.back=new_back; //19:24 | queue.ntm
+				}; //14:15 | queue.ntm
+				private.length+=1; //21:20 | queue.ntm
+			}; //12:13 | queue.ntm
+			$this.pop=function(){ //24:27 | queue.ntm
+				if(private.length!=0){
+					let output=private.front; //26:29 | queue.ntm
+					private.length-=1; //27:24 | queue.ntm
+					private.front=output.next; //28:24 | queue.ntm
+					return output.data; //29:23 | queue.ntm
+				}else{
+					return null; //31:23 | queue.ntm
+				}; //25:15 | queue.ntm
+			}; //24:13 | queue.ntm
+			$this.peek=function(){ //35:28 | queue.ntm
+				if(private.front!=null){
+					return private.front.data; //37:23 | queue.ntm
+				}else{
+					return null; //39:23 | queue.ntm
+				}; //36:15 | queue.ntm
+			}; //35:13 | queue.ntm
+			$this.print=function(){ //43:29 | queue.ntm
+				let output=[]; //44:25 | queue.ntm
+				let target=private.front; //45:25 | queue.ntm
+				while(target!=null){
+					output.push(target.data); //48:28 | queue.ntm
+					target=target.next; //49:23 | queue.ntm
+				}; //47:18 | queue.ntm
+				return output; //52:19 | queue.ntm
+			}; //43:13 | queue.ntm
+			if(setup_arr!=null){
+				for(var[i,value]of setup_arr.entries()){
+					$this.push(value); //57:26 | queue.ntm
+				}; //56:20 | queue.ntm
+			}; //55:11 | queue.ntm
+		}; //7:11 | queue.ntm
+		plugin.Queue=Queue; //61:11 | queue.ntm
+	}; //1:6 | queue.ntm
+	let MinHeap=function(array){
+		let $this=this;let private={};this.$op={};
+		private.array=array; //2:12 | heap.ntm
+		if(private.array==null){private.array=[];}; //3:12 | heap.ntm
+		private.array=[null,...private.array]; //4:12 | heap.ntm
+		$this.peek=function(){ //6:24 | heap.ntm
+			return $this.array[1]; //7:15 | heap.ntm
+		}; //6:9 | heap.ntm
+		$this.size=function(){ //10:24 | heap.ntm
+			return private.array.length; //11:15 | heap.ntm
+		}; //10:9 | heap.ntm
+		$this.print=function(){ //14:25 | heap.ntm
+			return private.array.slice(1); //15:15 | heap.ntm
+		}; //14:9 | heap.ntm
+		$this.push=function(value){ //18:24 | heap.ntm
+			private.array.push(value); //19:27 | heap.ntm
+			if(private.array.length>1){
+				let i=private.array.length-1; //22:20 | heap.ntm
+				while(i>1&&private.array[Math.floor(i/2)]>private.array[i]){
+					let save=private.array[Math.floor(i/2)]; //25:27 | heap.ntm
+					private.array[Math.floor(i/2)]=private.array[i]; //26:24 | heap.ntm
+					private.array[i]=save; //27:24 | heap.ntm
+					i=Math.floor(i/2); //28:18 | heap.ntm
+				}; //24:18 | heap.ntm
+			}; //21:11 | heap.ntm
+		}; //18:9 | heap.ntm
+		$this.pop=function(){ //33:23 | heap.ntm
+			let output=private.array[1]; //34:21 | heap.ntm
+			if(private.array.length>2){
+				private.array[1]=private.array[private.array.length-1]; //37:20 | heap.ntm
+				private.array.splice(private.array.length-1); //38:33 | heap.ntm
+				if(private.array.length==3){
+					if(private.array[1]>private.array[2]){
+						var $save=private.array[1];private.array[1]=private.array[2];private.array[2]=$save; //42:28 | heap.ntm
+					}; //41:19 | heap.ntm
+					return output; //44:23 | heap.ntm
+				}; //40:15 | heap.ntm
+				let i=1; //47:20 | heap.ntm
+				let left_i=i*2; //48:25 | heap.ntm
+				let right_i=i*2+1; //49:26 | heap.ntm
+				let left=private.array[left_i]; //50:23 | heap.ntm
+				let right=private.array[right_i]; //51:24 | heap.ntm
+				while(left&&private.array[right_i]&&(private.array[i]>left||private.array[i]>right)){
+					if(left<right){
+						var $save=private.array[i];private.array[i]=private.array[left_i];private.array[left_i]=$save; //56:28 | heap.ntm
+						i=left_i; //57:22 | heap.ntm
+					}else{
+						var $save=private.array[i];private.array[i]=private.array[right_i];private.array[right_i]=$save; //59:28 | heap.ntm
+						i=right_i; //60:22 | heap.ntm
+					}; //55:19 | heap.ntm
+					left_i=i*2; //63:23 | heap.ntm
+					right_i=i*2+1; //64:24 | heap.ntm
+				}; //54:18 | heap.ntm
+			}else if(private.array.length==2){
+				private.array.splice(1,1); //67:33 | heap.ntm
+			}else{
+				return null; //69:19 | heap.ntm
+			}; //36:11 | heap.ntm
+			return output; //72:15 | heap.ntm
+		}; //33:9 | heap.ntm
+	}; //1:7 | heap.ntm
+	plugin.MinHeap=MinHeap; //76:7 | heap.ntm
+	let MaxHeap=function(array){
+		let $this=this;let private={};this.$op={};
+		private.array=array; //81:12 | heap.ntm
+		if(private.array==null){private.array=[];}; //82:12 | heap.ntm
+		private.array=[null,...private.array]; //83:12 | heap.ntm
+		$this.peek=function(){ //85:24 | heap.ntm
+			return $this.array[1]; //86:15 | heap.ntm
+		}; //85:9 | heap.ntm
+		$this.size=function(){ //89:24 | heap.ntm
+			return private.array.length; //90:15 | heap.ntm
+		}; //89:9 | heap.ntm
+		$this.print=function(){ //93:25 | heap.ntm
+			return private.array.slice(1); //94:15 | heap.ntm
+		}; //93:9 | heap.ntm
+		$this.push=function(value){ //97:24 | heap.ntm
+			private.array.push(value); //98:27 | heap.ntm
+			if(private.array.length>1){
+				let i=private.array.length-1; //101:20 | heap.ntm
+				while(i>1&&private.array[Math.floor(i/2)]<private.array[i]){
+					let save=private.array[Math.floor(i/2)]; //104:27 | heap.ntm
+					private.array[Math.floor(i/2)]=private.array[i]; //105:24 | heap.ntm
+					private.array[i]=save; //106:24 | heap.ntm
+					i=Math.floor(i/2); //107:18 | heap.ntm
+				}; //103:18 | heap.ntm
+			}; //100:11 | heap.ntm
+		}; //97:9 | heap.ntm
+		$this.pop=function(){ //112:23 | heap.ntm
+			let output=private.array[1]; //113:21 | heap.ntm
+			if(private.array.length>2){
+				private.array[1]=private.array[private.array.length-1]; //116:20 | heap.ntm
+				private.array.splice(private.array.length-1); //117:33 | heap.ntm
+				if(private.array.length==3){
+					if(private.array[1]<private.array[2]){
+						var $save=private.array[1];private.array[1]=private.array[2];private.array[2]=$save; //121:28 | heap.ntm
+					}; //120:19 | heap.ntm
+					return output; //123:23 | heap.ntm
+				}; //119:15 | heap.ntm
+				let i=1; //126:20 | heap.ntm
+				let left_i=i*2; //127:25 | heap.ntm
+				let right_i=i*2+1; //128:26 | heap.ntm
+				let left=private.array[left_i]; //129:23 | heap.ntm
+				let right=private.array[right_i]; //130:24 | heap.ntm
+				while(left&&private.array[right_i]&&(private.array[i]<left||private.array[i]<right)){
+					if(left>right){
+						var $save=private.array[i];private.array[i]=private.array[left_i];private.array[left_i]=$save; //135:28 | heap.ntm
+						i=left_i; //136:22 | heap.ntm
+					}else{
+						var $save=private.array[i];private.array[i]=private.array[right_i];private.array[right_i]=$save; //138:28 | heap.ntm
+						i=right_i; //139:22 | heap.ntm
+					}; //134:19 | heap.ntm
+					left_i=i*2; //142:23 | heap.ntm
+					right_i=i*2+1; //143:24 | heap.ntm
+				}; //133:18 | heap.ntm
+			}else if(private.array.length==2){
+				private.array.splice(1,1); //146:33 | heap.ntm
+			}else{
+				return null; //148:19 | heap.ntm
+			}; //115:11 | heap.ntm
+			return output; //151:15 | heap.ntm
+		}; //112:9 | heap.ntm
+	}; //80:7 | heap.ntm
+	plugin.MaxHeap=MaxHeap; //155:7 | heap.ntm
+	{
+		let Node=function(priority,data){
+			let $this=this;let private={};this.$op={};
+			$this.priority=priority; //3:13 | priority queue.ntm
+			$this.data=data; //4:13 | priority queue.ntm
+		}; //2:11 | priority queue.ntm
+		let MinPriorityQueue=function(array){
+			let $this=this;let private={};this.$op={};
+			private.array=array; //10:16 | priority queue.ntm
+			if(private.array==null){private.array=[];}; //11:16 | priority queue.ntm
+			private.array=[null,...private.array]; //12:16 | priority queue.ntm
+			$this.peek=function(){ //14:28 | priority queue.ntm
+				return $this.array[1]; //15:19 | priority queue.ntm
+			}; //14:13 | priority queue.ntm
+			$this.length=function(){ //18:30 | priority queue.ntm
+				return private.array.length; //19:19 | priority queue.ntm
+			}; //18:13 | priority queue.ntm
+			$this.print=function(){ //22:29 | priority queue.ntm
+				return private.array.slice(1); //23:19 | priority queue.ntm
+			}; //22:13 | priority queue.ntm
+			$this.push=function(priority,value){ //26:28 | priority queue.ntm
+				private.array.push(new Node(priority,value)); //27:31 | priority queue.ntm
+				if(private.array.length>1){
+					let i=private.array.length-1; //30:24 | priority queue.ntm
+					while(i>1&&private.array[Math.floor(i/2)].priority>private.array[i].priority){
+						let save=private.array[Math.floor(i/2)]; //33:31 | priority queue.ntm
+						private.array[Math.floor(i/2)]=private.array[i]; //34:28 | priority queue.ntm
+						private.array[i]=save; //35:28 | priority queue.ntm
+						i=Math.floor(i/2); //36:22 | priority queue.ntm
+					}; //32:22 | priority queue.ntm
+				}; //29:15 | priority queue.ntm
+			}; //26:13 | priority queue.ntm
+			$this.pop=function(){ //41:27 | priority queue.ntm
+				let output=private.array[1]; //42:25 | priority queue.ntm
+				if(private.array.length>2){
+					private.array[1]=private.array[private.array.length-1]; //45:24 | priority queue.ntm
+					private.array.splice(private.array.length-1); //46:37 | priority queue.ntm
+					if(private.array.length==3){
+						if(private.array[1].priority>private.array[2].priority){
+							var $save=private.array[1];private.array[1]=private.array[2];private.array[2]=$save; //50:32 | priority queue.ntm
+						}; //49:23 | priority queue.ntm
+						return output; //52:27 | priority queue.ntm
+					}; //48:19 | priority queue.ntm
+					let i=1; //55:24 | priority queue.ntm
+					let left_i=i*2; //56:29 | priority queue.ntm
+					let right_i=i*2+1; //57:30 | priority queue.ntm
+					let left=private.array[left_i]; //58:27 | priority queue.ntm
+					let right=private.array[right_i]; //59:28 | priority queue.ntm
+					while(left&&private.array[right_i]&&(private.array[i].priority>left.priority||private.array[i].priority>right.priority)){
+						if(left.priority<right.priority){
+							var $save=private.array[i];private.array[i]=private.array[left_i];private.array[left_i]=$save; //64:32 | priority queue.ntm
+							i=left_i; //65:26 | priority queue.ntm
+						}else{
+							var $save=private.array[i];private.array[i]=private.array[right_i];private.array[right_i]=$save; //67:32 | priority queue.ntm
+							i=right_i; //68:26 | priority queue.ntm
+						}; //63:23 | priority queue.ntm
+						left_i=i*2; //71:27 | priority queue.ntm
+						right_i=i*2+1; //72:28 | priority queue.ntm
+					}; //62:22 | priority queue.ntm
+				}else if(private.array.length==2){
+					private.array.splice(1,1); //75:37 | priority queue.ntm
+				}else{
+					return null; //77:23 | priority queue.ntm
+				}; //44:15 | priority queue.ntm
+				return output; //80:19 | priority queue.ntm
+			}; //41:13 | priority queue.ntm
+		}; //9:11 | priority queue.ntm
+		plugin.MinPriorityQueue=MinPriorityQueue; //84:11 | priority queue.ntm
+		let MaxPriorityQueue=function(array){
+			let $this=this;let private={};this.$op={};
+			private.array=array; //89:16 | priority queue.ntm
+			if(private.array==null){private.array=[];}; //90:16 | priority queue.ntm
+			private.array=[null,...private.array]; //91:16 | priority queue.ntm
+			$this.peek=function(){ //93:28 | priority queue.ntm
+				return $this.array[1]; //94:19 | priority queue.ntm
+			}; //93:13 | priority queue.ntm
+			$this.length=function(){ //97:30 | priority queue.ntm
+				return private.array.length; //98:19 | priority queue.ntm
+			}; //97:13 | priority queue.ntm
+			$this.print=function(){ //101:29 | priority queue.ntm
+				return private.array.slice(1); //102:19 | priority queue.ntm
+			}; //101:13 | priority queue.ntm
+			$this.push=function(priority,value){ //105:28 | priority queue.ntm
+				private.array.push(new Node(priority,value)); //106:31 | priority queue.ntm
+				if(private.array.length>1){
+					let i=private.array.length-1; //109:24 | priority queue.ntm
+					while(i>1&&private.array[Math.floor(i/2)].priority<private.array[i].priority){
+						let save=private.array[Math.floor(i/2)]; //112:31 | priority queue.ntm
+						private.array[Math.floor(i/2)]=private.array[i]; //113:28 | priority queue.ntm
+						private.array[i]=save; //114:28 | priority queue.ntm
+						i=Math.floor(i/2); //115:22 | priority queue.ntm
+					}; //111:22 | priority queue.ntm
+				}; //108:15 | priority queue.ntm
+			}; //105:13 | priority queue.ntm
+			$this.pop=function(){ //120:27 | priority queue.ntm
+				let output=private.array[1]; //121:25 | priority queue.ntm
+				if(private.array.length>2){
+					private.array[1]=private.array[private.array.length-1]; //124:24 | priority queue.ntm
+					private.array.splice(private.array.length-1); //125:37 | priority queue.ntm
+					if(private.array.length==3){
+						if(private.array[1].priority<private.array[2].priority){
+							var $save=private.array[1];private.array[1]=private.array[2];private.array[2]=$save; //129:32 | priority queue.ntm
+						}; //128:23 | priority queue.ntm
+						return output; //131:27 | priority queue.ntm
+					}; //127:19 | priority queue.ntm
+					let i=1; //134:24 | priority queue.ntm
+					let left_i=i*2; //135:29 | priority queue.ntm
+					let right_i=i*2+1; //136:30 | priority queue.ntm
+					let left=private.array[left_i]; //137:27 | priority queue.ntm
+					let right=private.array[right_i]; //138:28 | priority queue.ntm
+					while(left&&private.array[right_i]&&(private.array[i].priority<left.priority||private.array[i].priority<right.priority)){
+						if(left.priority>right.priority){
+							var $save=private.array[i];private.array[i]=private.array[left_i];private.array[left_i]=$save; //143:32 | priority queue.ntm
+							i=left_i; //144:26 | priority queue.ntm
+						}else{
+							var $save=private.array[i];private.array[i]=private.array[right_i];private.array[right_i]=$save; //146:32 | priority queue.ntm
+							i=right_i; //147:26 | priority queue.ntm
+						}; //142:23 | priority queue.ntm
+						left_i=i*2; //150:27 | priority queue.ntm
+						right_i=i*2+1; //151:28 | priority queue.ntm
+					}; //141:22 | priority queue.ntm
+				}else if(private.array.length==2){
+					private.array.splice(1,1); //154:37 | priority queue.ntm
+				}else{
+					return null; //156:23 | priority queue.ntm
+				}; //123:15 | priority queue.ntm
+				return output; //159:19 | priority queue.ntm
+			}; //120:13 | priority queue.ntm
+		}; //88:11 | priority queue.ntm
+		plugin.MaxPriorityQueue=MaxPriorityQueue; //163:11 | priority queue.ntm
+	}; //1:6 | priority queue.ntm
+	{
+		let Node=function(data){
+			let $this=this;let private={};this.$op={};
+			$this.data=data; //3:13 | linked list.ntm
+			$this.next=null; //4:13 | linked list.ntm
+		}; //2:11 | linked list.ntm
+		let LinkedList=function(){
+			let $this=this;let private={};this.$op={};
+			private.head=null; //8:20 | linked list.ntm
+			Object.defineProperty(this, "head", {get: ()=>{return private.head;}}); //8:15 | linked list.ntm
+			private.length=0; //9:22 | linked list.ntm
+			Object.defineProperty(this, "length", {get: ()=>{return private.length;}}); //9:15 | linked list.ntm
+			$this.push=function(data){ //11:28 | linked list.ntm
+				if(private.head==null){
+					private.head=new Node(data); //13:24 | linked list.ntm
+				}else{
+					let target=private.head; //15:29 | linked list.ntm
+					while(target.next!=null){
+						target=target.next; //17:27 | linked list.ntm
+					}; //16:22 | linked list.ntm
+					target.next=new Node(data); //19:23 | linked list.ntm
+				}; //12:15 | linked list.ntm
+				private.length+=1; //22:20 | linked list.ntm
+			}; //11:13 | linked list.ntm
+			$this.delete=function(i){ //26:30 | linked list.ntm
+				if(i>private.length-1||i<0){
+					return null; //28:23 | linked list.ntm
+				}else{
+					private.length-=1; //30:24 | linked list.ntm
+					if(i==0){
+						let output=private.head.data; //32:33 | linked list.ntm
+						private.head=private.head.next; //33:28 | linked list.ntm
+						return output; //34:27 | linked list.ntm
+					}else{
+						let target=private.head; //36:33 | linked list.ntm
+						for(var j=0;j<i-1;j++){
+							target=target.next; //38:31 | linked list.ntm
+						}; //37:27 | linked list.ntm
+						let output=target.next; //41:33 | linked list.ntm
+						target.next=output.next; //42:27 | linked list.ntm
+						return output.data; //43:27 | linked list.ntm
+					}; //31:19 | linked list.ntm
+				}; //27:15 | linked list.ntm
+			}; //26:13 | linked list.ntm
+			$this.get=function(i){ //48:27 | linked list.ntm
+				if(i>private.length-1||i<0){
+					return null; //50:23 | linked list.ntm
+				}else{
+					let target=private.head; //52:29 | linked list.ntm
+					for(var j=0;j<i;j++){
+						target=target.next; //54:27 | linked list.ntm
+					}; //53:23 | linked list.ntm
+					return target; //56:23 | linked list.ntm
+				}; //49:15 | linked list.ntm
+			}; //48:13 | linked list.ntm
+			$this.peek=function(){ //61:28 | linked list.ntm
+				return private.head; //62:19 | linked list.ntm
+			}; //61:13 | linked list.ntm
+			$this.print=function(){ //65:29 | linked list.ntm
+				let output=[]; //66:25 | linked list.ntm
+				let target=private.head; //67:25 | linked list.ntm
+				while(target!=null){
+					output.push(target.data); //69:28 | linked list.ntm
+					target=target.next; //70:23 | linked list.ntm
+				}; //68:18 | linked list.ntm
+				return output; //72:19 | linked list.ntm
+			}; //65:13 | linked list.ntm
+		}; //7:11 | linked list.ntm
+		plugin.LinkedList=LinkedList; //76:11 | linked list.ntm
+	}; //1:6 | linked list.ntm
+	{
+		let Node=function(data){
+			let $this=this;let private={};this.$op={};
+			$this.data=data; //82:13 | linked list.ntm
+			$this.previous=null; //83:13 | linked list.ntm
+			$this.next=null; //84:13 | linked list.ntm
+		}; //81:11 | linked list.ntm
+		let DoublyLinkedList=function(){
+			let $this=this;let private={};this.$op={};
+			private.front=null; //88:16 | linked list.ntm
+			private.rear=null; //89:16 | linked list.ntm
+			private.length=0; //90:22 | linked list.ntm
+			Object.defineProperty(this, "length", {get: ()=>{return private.length;}}); //90:15 | linked list.ntm
+			$this.push=function(data){ //92:28 | linked list.ntm
+				if(private.front==null){
+					private.front=new Node(data); //94:24 | linked list.ntm
+					private.rear=private.front; //95:24 | linked list.ntm
+				}else{
+					let new_node=new Node(data); //97:31 | linked list.ntm
+					private.rear.next=new_node; //98:24 | linked list.ntm
+					new_node.previous=private.rear; //99:25 | linked list.ntm
+					private.rear=new_node; //100:24 | linked list.ntm
+				}; //93:15 | linked list.ntm
+				private.length+=1; //102:20 | linked list.ntm
+			}; //92:13 | linked list.ntm
+			$this.delete=function(i){ //106:30 | linked list.ntm
+				if(i>private.length-1||i<0){
+					return null; //108:23 | linked list.ntm
+				}else if(i==0){
+					private.length-=1; //110:24 | linked list.ntm
+					let output=private.front.data; //112:29 | linked list.ntm
+					private.front=private.front.next; //113:24 | linked list.ntm
+					private.front.previous=null; //114:24 | linked list.ntm
+					return output; //115:23 | linked list.ntm
+				}else if(i==private.length-1){
+					private.length-=1; //117:24 | linked list.ntm
+					let output=private.rear.data; //119:29 | linked list.ntm
+					private.rear=private.rear.previous; //120:24 | linked list.ntm
+					private.rear.next=null; //121:24 | linked list.ntm
+					return output; //122:23 | linked list.ntm
+				}else{
+					private.length-=1; //124:24 | linked list.ntm
+					let target=null; //125:29 | linked list.ntm
+					if(i/private.length<0.5){
+						target=private.front; //127:27 | linked list.ntm
+						for(var j=0;j<i;j++){
+							target=target.next; //129:31 | linked list.ntm
+						}; //128:27 | linked list.ntm
+					}else{
+						i=private.length-i-1; //132:22 | linked list.ntm
+						target=private.rear; //133:27 | linked list.ntm
+						for(var j=0;j<i;j++){
+							target=target.previous; //135:31 | linked list.ntm
+						}; //134:27 | linked list.ntm
+					}; //126:19 | linked list.ntm
+					let previous=target.previous; //139:31 | linked list.ntm
+					let next=target.next; //140:27 | linked list.ntm
+					previous.next=next; //141:25 | linked list.ntm
+					next.previous=previous; //142:21 | linked list.ntm
+					return target.data; //144:23 | linked list.ntm
+				}; //107:15 | linked list.ntm
+			}; //106:13 | linked list.ntm
+			$this.get=function(i){ //149:27 | linked list.ntm
+				if(i>private.length-1||i<0){
+					return null; //151:23 | linked list.ntm
+				}else{
+					let target=null; //153:29 | linked list.ntm
+					if(i/private.length<0.5){
+						target=private.front; //155:27 | linked list.ntm
+						for(var j=0;j<i;j++){
+							target=target.next; //157:31 | linked list.ntm
+						}; //156:27 | linked list.ntm
+					}else{
+						i=private.length-i-1; //160:22 | linked list.ntm
+						target=private.rear; //161:27 | linked list.ntm
+						for(var j=0;j<i;j++){
+							target=target.previous; //163:31 | linked list.ntm
+						}; //162:27 | linked list.ntm
+					}; //154:19 | linked list.ntm
+					return target; //166:23 | linked list.ntm
+				}; //150:15 | linked list.ntm
+			}; //149:13 | linked list.ntm
+			$this.peek=function(){ //170:28 | linked list.ntm
+				return private.front; //171:19 | linked list.ntm
+			}; //170:13 | linked list.ntm
+			$this.print=function(){ //174:29 | linked list.ntm
+				let output=[]; //175:25 | linked list.ntm
+				let target=private.front; //176:25 | linked list.ntm
+				while(target!=null){
+					output.push(target.data); //178:28 | linked list.ntm
+					target=target.next; //179:23 | linked list.ntm
+				}; //177:18 | linked list.ntm
+				return output; //181:19 | linked list.ntm
+			}; //174:13 | linked list.ntm
+		}; //87:11 | linked list.ntm
+		plugin.DoublyLinkedList=DoublyLinkedList; //185:11 | linked list.ntm
+	}; //80:6 | linked list.ntm
+	{
+		let HashTable=function(){
+			let $this=this;let private={};this.$op={};
+			private.map=new Map(); //3:16 | hash table.ntm
+			private.add_single=function(tag,add){ //5:37 | hash table.ntm
+				if(private.map.has(tag)){
+					let arr=private.map.get(tag); //8:26 | hash table.ntm
+					if(arr.includes(add)==false){
+						arr.push(add); //10:29 | hash table.ntm
+						private.map.set(tag,arr); //11:36 | hash table.ntm
+					}; //9:19 | hash table.ntm
+				}else{
+					private.map.set(tag,[add]); //14:32 | hash table.ntm
+				}; //7:15 | hash table.ntm
+			}; //5:16 | hash table.ntm
+			$this.add=function(tag,add){ //18:27 | hash table.ntm
+				if(add.constructor.name ==="Array"){
+					for(var[i,add_val]of add.entries()){
+						private.add_single(tag,add_val); //21:39 | hash table.ntm
+					}; //20:24 | hash table.ntm
+				}else{
+					private.add_single(tag,add); //24:35 | hash table.ntm
+				}; //19:15 | hash table.ntm
+			}; //18:13 | hash table.ntm
+			$this.has=function(tag){ //28:27 | hash table.ntm
+				return private.map.has(tag); //29:19 | hash table.ntm
+			}; //28:13 | hash table.ntm
+			$this.get=function(tag){ //32:27 | hash table.ntm
+				return private.map.get(tag); //33:19 | hash table.ntm
+			}; //32:13 | hash table.ntm
+			$this.delete=function(tag){ //36:30 | hash table.ntm
+				private.map.delete(tag); //37:31 | hash table.ntm
+			}; //36:13 | hash table.ntm
+			Object.defineProperty($this,'size',{
+				get:function(){ //41:26 | hash table.ntm
+					return private.map.size; //42:23 | hash table.ntm
+				}
+			}); //40:30 | hash table.ntm
+			$this.print=function(){ //47:29 | hash table.ntm
+				let output={}; //48:25 | hash table.ntm
+				for(var[key,value]of private.map.entries()){
+					output[key]=[...value]; //51:23 | hash table.ntm
+				}; //50:20 | hash table.ntm
+				return output; //54:19 | hash table.ntm
+			}; //47:13 | hash table.ntm
+		}; //2:11 | hash table.ntm
+		plugin.HashTable=HashTable; //59:11 | hash table.ntm
+	}; //1:6 | hash table.ntm
+return plugin;})};

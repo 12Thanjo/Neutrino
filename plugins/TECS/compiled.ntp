@@ -399,7 +399,9 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('TECS
 		}; //79:5 | entity.ntm
 		$this.forEach=function(event){ //119:23 | entity.ntm
 			for(var[i,entity]of private.entities.entries()){
-				event(i,self.components); //121:14 | entity.ntm
+				if(entity!=null){
+					event(i,self.components); //122:18 | entity.ntm
+				}; //121:11 | entity.ntm
 			}; //120:12 | entity.ntm
 		}; //119:5 | entity.ntm
 		let SharedSet=function(){

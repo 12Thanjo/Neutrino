@@ -365,6 +365,7 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			}
 		}); //361:22 | post processing.ntm
 		$this.pipeline.MSAA=config.MSAA; //75:9 | index.nt
+		TECS.print=false; //2:5 | TECS.ntm
 		$this.environment=new TECS.Environment(private.name,{
 			size:config.size,
 			threads:config.threads
@@ -538,7 +539,11 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 		$this.getEngine=function(){ //118:29 | index.nt
 			return private.engine; //119:15 | index.nt
 		}; //118:9 | index.nt
+		$this.destroy=function(){ //125:27 | index.nt
+			$this.clearScene(); //126:24 | index.nt
+			TECS.Environment.delete(private.name); //127:32 | index.nt
+		}; //125:9 | index.nt
 	}; //10:8 | index.nt
 	Engine.$map=new Map();Engine.get=function(id){return Engine.$map.get(id);};Engine.has=function(id){return Engine.$map.has(id);};Engine.forEach=function(cb){Engine.$map.forEach(cb);};Engine.delete=function(cb){Engine.$map.delete(cb);}; //10:8 | index.nt
-	plugin.Engine=Engine; //122:7 | index.nt
+	plugin.Engine=Engine; //130:7 | index.nt
 return plugin;})};

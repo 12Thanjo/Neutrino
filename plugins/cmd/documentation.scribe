@@ -91,6 +91,12 @@ name: cmd
 		param: backgroundColor
 			type: string
 			description: bakground color of text (cmd.backgroundColor)
+	name: input
+		type: function
+		description: enable text input
+		param: event
+			type: function
+			description: event to run when text input is recieved (takes recieved text as a parameter)
 	name: error
 		type: function
 		description: console.error() with stylizations with style-overflow prevention

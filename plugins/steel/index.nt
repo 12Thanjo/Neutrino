@@ -118,5 +118,13 @@ species Engine(name, config){
 	this.getEngine = function(){
 		return private.engine;
 	};
+
+
+
+
+	this.destroy = function(){
+		this.clearScene();
+		TECS.Environment.delete(private.name);
+	};
 };
 plugin.Engine = Engine;

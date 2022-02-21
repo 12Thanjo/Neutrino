@@ -118,6 +118,8 @@ this.bindComponent = function(entity_ref, component_id, ~params){
 
 this.forEach = function(event){
 	iterate private.entities(i, entity){
-		event(i, self.components);
+		if(entity != null){
+			event(i, self.components);
+		};
 	};
 };

@@ -2,7 +2,6 @@
 // description: command line interaction
 // author: 12Thanjo
 
-//require util;
 
 plugin.color = {
 	black: "\x1b[30m", 
@@ -36,22 +35,25 @@ plugin.style = {
 	hidden: "\x1b[8m"
 };
 
-// local enable_input = function(func){
-// 	util.inspect.defaultOptions.depth = null;
-// 	//allows server admin to type commands into console
-// 	process.stdin.setEncoding('utf8');
-// 	process.stdin.on('readable', @()->{
-// 	    var chunk;
-// 	    // Use a loop to make sure we read all available data.
-// 	    while((chunk = process.stdin.read()) !== null){
-// 	        try{
-// 	        	func(chunk);
-// 	        }catch(e){
-// 	            console.log("\x1b[31m" + e + "\x1b[37m\n");
-// 	        };
-// 	    };
-// 	});
-// };
+
+local util = require('util');
+plugin.input = function(event){
+	util.inspect.defaultOptions.depth = null;
+	//allows server admin to type commands into console
+	process.stdin.setEncoding('utf8');
+	process.stdin.on('readable', @()->{
+	    local chunk = process.stdin.read();
+	    // Use a loop to make sure we read all available data.
+	    while(chunk != null){
+	        chunk = process.stdin.read();
+	        try{
+	        	event(chunk);
+	        }catch(e){
+	            console.log("\x1b[31m" + e + "\x1b[37m\n");
+	        };
+	    };
+	});
+};
 
 
 plugin.log = function(string, color, backgroundColor){

@@ -1,7 +1,7 @@
 {
     "name": "structures",
-    "version": "0.2.0",
-    "description": "adding data structures",
+    "version": "0.3.1",
+    "description": "custom data structures",
     "main": "index.nt",
     "author": "12Thanjo",
     "dependancies": []

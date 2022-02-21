@@ -1,1 +1,175 @@
-module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('math',()=>{let plugin={metadata:{"name":"math","version":"0.1.0","description":"advanced math types and functions","main":"index.nt","author":"12Thanjo","dependancies":[]}};plugin.TAU=Math.PI*2;let Vector2=function(x,y){let $this=this;let private={};this.$op={};private.x=x;Object.defineProperty(this, "x", {get: ()=>{return private.x;}});private.y=y;Object.defineProperty(this, "y", {get: ()=>{return private.y;}});$this.add=function(vector){private.x+=vector.x;private.y+=vector.y;};$this.sub=function(vector){private.x-=vector.x;private.y-=vector.y;};$this.mul=function(scalar){private.x*=scalar;private.y*=scalar;};$this.div=function(scalar){private.x/=scalar;private.y/=scalar;};$this.equal=function(vector){return vector instanceof Vector2&&private.x==vector.x&&private.y==vector.y;};$this.magnitude=function(){return Math.sqrt(private.x*private.x,private.y*private.y);};$this.distance=function(vector){let dx=private.x-vector.x;let dy=private.y-vector.y;return Math.sqrt(dx*dx,dy*dy);};};plugin.Vector2=Vector2;Vector2.normalize=function(vector){let length=vector.magnitude();;return new Vector2(vector.x/length,vector.y/length);};Vector2.dot=function(vector1,vector2){return vector1.x*vector2.x+vector1.y*vector2.y;};Vector2.cross=function(vector1,vector2){return vector1.x*vector2.y-vector1.y*vector2.x;};plugin.clamp=function(value,min,max){if(value<min){return min;}else if(value>max){return max;}else{return value;};};plugin.apply=function(){for(let key in plugin){let value=plugin[key];if(key!="apply"){Math[key]=value;};};};return plugin;})};
+module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('math',()=>{let plugin={metadata:{"name":"math","version":"0.1.0","description":"advanced math types and functions","main":"index.nt","author":"12Thanjo","dependancies":[]}};
+	plugin.TAU=Math.PI*2; //1:7 | constants.ntm
+	let Vector2=function(x,y){
+		let $this=this;let private={};this.$op={};
+		private.x=x; //2:13 | Vector2.ntm
+		Object.defineProperty(this, "x", {get: ()=>{return private.x;}}); //2:11 | Vector2.ntm
+		private.y=y; //3:13 | Vector2.ntm
+		Object.defineProperty(this, "y", {get: ()=>{return private.y;}}); //3:11 | Vector2.ntm
+		$this.add=function(vector){ //5:23 | Vector2.ntm
+			private.x+=vector.x; //6:16 | Vector2.ntm
+			private.y+=vector.y; //7:16 | Vector2.ntm
+		}; //5:9 | Vector2.ntm
+		$this.sub=function(vector){ //10:23 | Vector2.ntm
+			private.x-=vector.x; //11:16 | Vector2.ntm
+			private.y-=vector.y; //12:16 | Vector2.ntm
+		}; //10:9 | Vector2.ntm
+		$this.mul=function(scalar){ //15:23 | Vector2.ntm
+			private.x*=scalar; //16:16 | Vector2.ntm
+			private.y*=scalar; //17:16 | Vector2.ntm
+		}; //15:9 | Vector2.ntm
+		$this.div=function(scalar){ //20:23 | Vector2.ntm
+			private.x/=scalar; //21:16 | Vector2.ntm
+			private.y/=scalar; //22:16 | Vector2.ntm
+		}; //20:9 | Vector2.ntm
+		$this.equal=function(vector){ //25:25 | Vector2.ntm
+			return vector instanceof Vector2&&private.x==vector.x&&private.y==vector.y; //26:15 | Vector2.ntm
+		}; //25:9 | Vector2.ntm
+		$this.magnitude=function(){ //29:29 | Vector2.ntm
+			return Math.sqrt(private.x*private.x,private.y*private.y); //30:15 | Vector2.ntm
+		}; //29:9 | Vector2.ntm
+		$this.distance=function(vector){ //33:28 | Vector2.ntm
+			let dx=private.x-vector.x; //34:17 | Vector2.ntm
+			let dy=private.y-vector.y; //35:17 | Vector2.ntm
+			return Math.sqrt(dx*dx,dy*dy); //36:15 | Vector2.ntm
+		}; //33:9 | Vector2.ntm
+	}; //1:7 | Vector2.ntm
+	plugin.Vector2=Vector2; //39:7 | Vector2.ntm
+	Vector2.normalize=function(vector){ //41:28 | Vector2.ntm
+		let length=vector.magnitude(); //42:17 | Vector2.ntm
+		return new Vector2(vector.x/length,vector.y/length); //43:11 | Vector2.ntm
+	}; //41:8 | Vector2.ntm
+	Vector2.dot=function(vector1,vector2){ //46:22 | Vector2.ntm
+		return vector1.x*vector2.x+vector1.y*vector2.y; //47:11 | Vector2.ntm
+	}; //46:8 | Vector2.ntm
+	Vector2.cross=function(vector1,vector2){ //50:24 | Vector2.ntm
+		return vector1.x*vector2.y-vector1.y*vector2.x; //51:11 | Vector2.ntm
+	}; //50:8 | Vector2.ntm
+	let Matrix=function(width,height){
+		let $this=this;let private={};this.$op={};
+		private.width=width; //3:17 | Matrix.ntm
+		Object.defineProperty(this, "width", {get: ()=>{return private.width;}}); //3:11 | Matrix.ntm
+		private.height=height; //4:18 | Matrix.ntm
+		Object.defineProperty(this, "height", {get: ()=>{return private.height;}}); //4:11 | Matrix.ntm
+		private.array=[]; //6:12 | Matrix.ntm
+		for(var i=0;i<width;i++){
+			let arr=[]; //9:18 | Matrix.ntm
+			for(var j=0;j<height;j++){
+				arr.push(0); //11:21 | Matrix.ntm
+			}; //10:15 | Matrix.ntm
+			private.array.push(arr); //13:27 | Matrix.ntm
+		}; //8:11 | Matrix.ntm
+		$this.getValue=function(x,y){ //19:28 | Matrix.ntm
+			return private.array[x][y]; //20:15 | Matrix.ntm
+		}; //19:9 | Matrix.ntm
+		$this.setValue=function(x,y,value){ //23:28 | Matrix.ntm
+			private.array[x][y]=value; //24:16 | Matrix.ntm
+			return value; //25:15 | Matrix.ntm
+		}; //23:9 | Matrix.ntm
+		$this.setArray=function(array){ //28:28 | Matrix.ntm
+			if(array.length!=private.width){
+				try{
+					throw new Error("Recieved array for matrix of non-same or invalid dimentions");
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //30:18 | Matrix.ntm
+			}; //29:11 | Matrix.ntm
+			for(var[i,collumn]of private.array.entries()){
+				if(collumn.length!=private.height){
+					try{
+						throw new Error("Recieved array for matrix of non-same or invalid dimentions");
+					}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //34:22 | Matrix.ntm
+				}; //33:15 | Matrix.ntm
+			}; //32:16 | Matrix.ntm
+			private.array=array; //38:16 | Matrix.ntm
+		}; //28:9 | Matrix.ntm
+		$this.print=function(){ //43:25 | Matrix.ntm
+			return [...private.array]; //44:15 | Matrix.ntm
+		}; //43:9 | Matrix.ntm
+		this.$op["+ <Matrix>"]=function(matrix){
+			if(private.width!=matrix.width||private.height!=matrix.height){
+				try{
+					throw new SyntaxError("Matrix Addition must be of the same dimentions");
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //52:24 | Matrix.ntm
+			}; //51:11 | Matrix.ntm
+			let output=new Matrix(private.width,private.height); //55:21 | Matrix.ntm
+			var $arr_length=private.array.length;
+			for(var i=0;i<$arr_length;i++){
+				var $arr_length=private.array[i].length;
+				for(var j=0;j<$arr_length;j++){
+					output.setValue(i,j,private.array[i][j]+matrix.getValue(i,j)); //59:32 | Matrix.ntm
+				}; //58:16 | Matrix.ntm
+			}; //57:12 | Matrix.ntm
+			return output; //63:15 | Matrix.ntm
+		}; //50:14 | Matrix.ntm
+		this.$op["+= <Matrix>"]=function(matrix){
+			if(private.width!=matrix.width||private.height!=matrix.height){
+				try{
+					throw new SyntaxError("Matrix Addition must be of the same dimentions");
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //68:24 | Matrix.ntm
+			}; //67:11 | Matrix.ntm
+			var $arr_length=private.array.length;
+			for(var i=0;i<$arr_length;i++){
+				var $arr_length=private.array[i].length;
+				for(var j=0;j<$arr_length;j++){
+					private.array[i][j]+=matrix.getValue(i,j); //73:24 | Matrix.ntm
+				}; //72:16 | Matrix.ntm
+			}; //71:12 | Matrix.ntm
+		}; //66:14 | Matrix.ntm
+		this.$op["- <Matrix>"]=function(matrix){
+			if(private.width!=matrix.width||private.height!=matrix.height){
+				try{
+					throw new SyntaxError("Matrix Addition must be of the same dimentions");
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //81:24 | Matrix.ntm
+			}; //80:11 | Matrix.ntm
+			let output=new Matrix(private.width,private.height); //84:21 | Matrix.ntm
+			var $arr_length=private.array.length;
+			for(var i=0;i<$arr_length;i++){
+				var $arr_length=private.array[i].length;
+				for(var j=0;j<$arr_length;j++){
+					output.setValue(i,j,private.array[i][j]-matrix.getValue(i,j)); //88:32 | Matrix.ntm
+				}; //87:16 | Matrix.ntm
+			}; //86:12 | Matrix.ntm
+			return output; //92:15 | Matrix.ntm
+		}; //79:14 | Matrix.ntm
+		this.$op["-= <Matrix>"]=function(matrix){
+			if(private.width!=matrix.width||private.height!=matrix.height){
+				try{
+					throw new SyntaxError("Matrix Addition must be of the same dimentions");
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //97:24 | Matrix.ntm
+			}; //96:11 | Matrix.ntm
+			var $arr_length=private.array.length;
+			for(var i=0;i<$arr_length;i++){
+				var $arr_length=private.array[i].length;
+				for(var j=0;j<$arr_length;j++){
+					private.array[i][j]-=matrix.getValue(i,j); //102:24 | Matrix.ntm
+				}; //101:16 | Matrix.ntm
+			}; //100:12 | Matrix.ntm
+		}; //95:14 | Matrix.ntm
+		this.$op["*= <Number>"]=function(coefficient){
+			var $arr_length=private.array.length;
+			for(var i=0;i<$arr_length;i++){
+				var $arr_length=private.array[i].length;
+				for(var j=0;j<$arr_length;j++){
+					private.array[i][j]*=coefficient; //111:24 | Matrix.ntm
+				}; //110:16 | Matrix.ntm
+			}; //109:12 | Matrix.ntm
+		}; //108:14 | Matrix.ntm
+	}; //1:7 | Matrix.ntm
+	plugin.Matrix=Matrix; //117:7 | Matrix.ntm
+	plugin.clamp=function(value,min,max){ //10:23 | index.nt
+		if(value<min){
+			return min; //12:15 | index.nt
+		}else if(value>max){
+			return max; //14:15 | index.nt
+		}else{
+			return value; //16:15 | index.nt
+		}; //11:7 | index.nt
+	}; //10:7 | index.nt
+	plugin.apply=function(){ //20:23 | index.nt
+		for(let key in plugin){
+			let value=plugin[key];
+			if(key!="apply"){
+				Math[key]=value; //23:17 | index.nt
+			}; //22:11 | index.nt
+		}; //21:12 | index.nt
+	}; //20:7 | index.nt
+return plugin;})};

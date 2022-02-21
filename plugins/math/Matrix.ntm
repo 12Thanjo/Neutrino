@@ -1,0 +1,117 @@
+struct Matrix(width, height){
+	// setup
+	access width = width;
+	access height = height;
+
+	private.array = [];
+
+	forNum(i, width){
+		local arr = [];
+		forNum(j, height){	
+			arr.push(0);
+		};
+		private.array.push(arr);
+	};
+
+
+	// methods
+
+	this.getValue = function(x, y){
+		return private.array[x][y];
+	};
+
+	this.setValue = function(x, y, value){
+		private.array[x][y] = value;
+		return value;
+	};
+
+	this.setArray = function(array){
+		if(array.length != private.width){
+			Error "Recieved array for matrix of non-same or invalid dimentions";
+		};
+		iterate private.array(i, collumn){
+			if(collumn.length != private.height){
+				Error "Recieved array for matrix of non-same or invalid dimentions";		
+			};
+		};
+
+		private.array = array;
+	};
+
+
+
+	this.print = function(){
+		return [~private.array];
+	};
+
+
+	// operations ////////////////////////////////////////////////////////////
+	// addition
+	operation + (Matrix, matrix){
+		if(private.width != matrix.width || private.height != matrix.height){
+			SyntaxError "Matrix Addition must be of the same dimentions";
+		};
+
+		local output = new Matrix(private.width, private.height);
+
+		for(i, private.array){
+			for(j, private.array[i]){
+				output.setValue(i, j, private.array[i][j] + matrix.getValue(i, j));
+			};
+		};
+
+		return output;
+	};
+
+	operation += (Matrix, matrix){
+		if(private.width != matrix.width || private.height != matrix.height){
+			SyntaxError "Matrix Addition must be of the same dimentions";
+		};
+
+		for(i, private.array){
+			for(j, private.array[i]){
+				private.array[i][j] += matrix.getValue(i, j);
+			};
+		};
+	};
+
+	// subtraction
+	operation - (Matrix, matrix){
+		if(private.width != matrix.width || private.height != matrix.height){
+			SyntaxError "Matrix Addition must be of the same dimentions";
+		};
+
+		local output = new Matrix(private.width, private.height);
+
+		for(i, private.array){
+			for(j, private.array[i]){
+				output.setValue(i, j, private.array[i][j] - matrix.getValue(i, j));
+			};
+		};
+
+		return output;
+	};
+
+	operation -= (Matrix, matrix){
+		if(private.width != matrix.width || private.height != matrix.height){
+			SyntaxError "Matrix Addition must be of the same dimentions";
+		};
+
+		for(i, private.array){
+			for(j, private.array[i]){
+				private.array[i][j] -= matrix.getValue(i, j);
+			};
+		};
+	};
+
+	// multiplication
+	operation *= (Number, coefficient){
+		for(i, private.array){
+			for(j, private.array[i]){
+				private.array[i][j] *= coefficient;
+			};
+		};
+	};
+};
+
+plugin.Matrix = Matrix;

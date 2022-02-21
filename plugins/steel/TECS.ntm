@@ -1,5 +1,5 @@
 
-// TECS.print = false;
+TECS.print = false;
 
 this.environment = new TECS.Environment(private.name, {
 	size: config.size,

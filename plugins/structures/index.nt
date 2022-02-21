@@ -7,3 +7,4 @@ macro "queue";
 macro "heap";
 macro "priority queue";
 macro "linked list";
+macro "hash table";

@@ -5,6 +5,7 @@
 
 macro "constants";
 macro "Vector2";
+macro "Matrix";
 
 plugin.clamp = function(value, min, max){
 	if(value < min){
