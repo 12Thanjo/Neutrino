@@ -1,13 +1,13 @@
-struct Matrix(width, height){
+struct Matrix(rows, collumns){
 	// setup
-	access width = width;
-	access height = height;
+	access rows = rows;
+	access collumns = collumns;
 
 	private.array = [];
 
-	forNum(i, width){
+	forNum(i, collumns){
 		local arr = [];
-		forNum(j, height){	
+		forNum(j, rows){
 			arr.push(0);
 		};
 		private.array.push(arr);
@@ -26,11 +26,11 @@ struct Matrix(width, height){
 	};
 
 	this.setArray = function(array){
-		if(array.length != private.width){
+		if(array.length != private.collumns){
 			Error "Recieved array for matrix of non-same or invalid dimentions";
 		};
-		iterate private.array(i, collumn){
-			if(collumn.length != private.height){
+		iterate private.array(i, row){
+			if(row.length != private.rows){
 				Error "Recieved array for matrix of non-same or invalid dimentions";		
 			};
 		};
@@ -48,11 +48,11 @@ struct Matrix(width, height){
 	// operations ////////////////////////////////////////////////////////////
 	// addition
 	operation + (Matrix, matrix){
-		if(private.width != matrix.width || private.height != matrix.height){
+		if(private.rows != matrix.rows || private.collumns != matrix.collumns){
 			SyntaxError "Matrix Addition must be of the same dimentions";
 		};
 
-		local output = new Matrix(private.width, private.height);
+		local output = new Matrix(private.rows, private.collumns);
 
 		for(i, private.array){
 			for(j, private.array[i]){
@@ -64,7 +64,7 @@ struct Matrix(width, height){
 	};
 
 	operation += (Matrix, matrix){
-		if(private.width != matrix.width || private.height != matrix.height){
+		if(private.rows != matrix.rows || private.collumns != matrix.collumns){
 			SyntaxError "Matrix Addition must be of the same dimentions";
 		};
 
@@ -77,11 +77,11 @@ struct Matrix(width, height){
 
 	// subtraction
 	operation - (Matrix, matrix){
-		if(private.width != matrix.width || private.height != matrix.height){
+		if(private.rows != matrix.rows || private.collumns != matrix.collumns){
 			SyntaxError "Matrix Addition must be of the same dimentions";
 		};
 
-		local output = new Matrix(private.width, private.height);
+		local output = new Matrix(private.rows, private.collumns);
 
 		for(i, private.array){
 			for(j, private.array[i]){
@@ -93,7 +93,7 @@ struct Matrix(width, height){
 	};
 
 	operation -= (Matrix, matrix){
-		if(private.width != matrix.width || private.height != matrix.height){
+		if(private.rows != matrix.rows || private.collumns != matrix.collumns){
 			SyntaxError "Matrix Addition must be of the same dimentions";
 		};
 
@@ -112,6 +112,47 @@ struct Matrix(width, height){
 			};
 		};
 	};
+
+
+
+	operation * (Matrix, matrix){
+		if(private.width != matrix.height){
+			SyntaxError "Matrix A's width must be the same as Matrix B's height (where A *= B)";
+		};
+
+		local output = new Matrix(private.height, matrix.width);
+
+		forNum(a_row, private.height){
+			console.log("hi");
+			forNum(b_collumn, matrix.width){
+				local value = 0;
+				forNum(a_index, private.width){
+					forNum(b_index, matrix.height){
+						
+					};
+				};
+			};
+		};
+	};
+
+
+	this.rows = function(){
+		for(i, private.array){
+			console.log(|"private.array["i"]: "|, private.array[i]);
+		};
+	};
+
+	this.collumns = function(){
+		forNum(i, private.height){
+			local str = "";
+			forNum(j, private.width){
+				str += private.array[j][i] + ", ";
+			};
+
+			console.log(|"collumn "i":"|, str);
+		};
+	};
+
 };
 
 plugin.Matrix = Matrix;
