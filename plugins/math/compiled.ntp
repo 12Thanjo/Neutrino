@@ -52,9 +52,9 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('math
 		private.collumns=collumns; //4:20 | Matrix.ntm
 		Object.defineProperty(this, "collumns", {get: ()=>{return private.collumns;}}); //4:11 | Matrix.ntm
 		private.array=[]; //6:12 | Matrix.ntm
-		for(var i=0;i<collumns;i++){
+		for(var i=0;i<rows;i++){
 			let arr=[]; //9:18 | Matrix.ntm
-			for(var j=0;j<rows;j++){
+			for(var j=0;j<collumns;j++){
 				arr.push(0); //11:21 | Matrix.ntm
 			}; //10:15 | Matrix.ntm
 			private.array.push(arr); //13:27 | Matrix.ntm
@@ -67,13 +67,13 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('math
 			return value; //25:15 | Matrix.ntm
 		}; //23:9 | Matrix.ntm
 		$this.setArray=function(array){ //28:28 | Matrix.ntm
-			if(array.length!=private.collumns){
+			if(array.length!=private.rows){
 				try{
 					throw new Error("Recieved array for matrix of non-same or invalid dimentions");
 				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //30:18 | Matrix.ntm
 			}; //29:11 | Matrix.ntm
-			for(var[i,row]of private.array.entries()){
-				if(row.length!=private.rows){
+			for(var[i,collumn]of private.array.entries()){
+				if(collumn.length!=private.collumns){
 					try{
 						throw new Error("Recieved array for matrix of non-same or invalid dimentions");
 					}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //34:22 | Matrix.ntm
@@ -84,110 +84,153 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('math
 		$this.print=function(){ //43:25 | Matrix.ntm
 			return [...private.array]; //44:15 | Matrix.ntm
 		}; //43:9 | Matrix.ntm
+		$this.forEach=function(func){ //48:27 | Matrix.ntm
+			for(var i=0;i<private.rows;i++){
+				for(var j=0;j<private.collumns;j++){
+					private.array[i][j]=func(private.array[i][j]); //51:24 | Matrix.ntm
+				}; //50:19 | Matrix.ntm
+			}; //49:15 | Matrix.ntm
+		}; //48:9 | Matrix.ntm
 		this.$op["+ <Matrix>"]=function(matrix){
 			if(private.rows!=matrix.rows||private.collumns!=matrix.collumns){
 				try{
 					throw new SyntaxError("Matrix Addition must be of the same dimentions");
-				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //52:24 | Matrix.ntm
-			}; //51:11 | Matrix.ntm
-			let output=new Matrix(private.rows,private.collumns); //55:21 | Matrix.ntm
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //60:24 | Matrix.ntm
+			}; //59:11 | Matrix.ntm
+			let output=new Matrix(private.rows,private.collumns); //63:21 | Matrix.ntm
 			var $0=private.array.length;
 			for(var i=0;i<$0;i++){
 				var $1=private.array[i].length;
 				for(var j=0;j<$1;j++){
-					output.setValue(i,j,private.array[i][j]+matrix.getValue(i,j)); //59:32 | Matrix.ntm
-				}; //58:16 | Matrix.ntm
-			}; //57:12 | Matrix.ntm
-			return output; //63:15 | Matrix.ntm
-		}; //50:14 | Matrix.ntm
+					output.setValue(i,j,private.array[i][j]+matrix.getValue(i,j)); //67:32 | Matrix.ntm
+				}; //66:16 | Matrix.ntm
+			}; //65:12 | Matrix.ntm
+			return output; //71:15 | Matrix.ntm
+		}; //58:14 | Matrix.ntm
 		this.$op["+= <Matrix>"]=function(matrix){
 			if(private.rows!=matrix.rows||private.collumns!=matrix.collumns){
 				try{
 					throw new SyntaxError("Matrix Addition must be of the same dimentions");
-				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //68:24 | Matrix.ntm
-			}; //67:11 | Matrix.ntm
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //76:24 | Matrix.ntm
+			}; //75:11 | Matrix.ntm
 			var $2=private.array.length;
 			for(var i=0;i<$2;i++){
 				var $3=private.array[i].length;
 				for(var j=0;j<$3;j++){
-					private.array[i][j]+=matrix.getValue(i,j); //73:24 | Matrix.ntm
-				}; //72:16 | Matrix.ntm
-			}; //71:12 | Matrix.ntm
-		}; //66:14 | Matrix.ntm
+					private.array[i][j]+=matrix.getValue(i,j); //81:24 | Matrix.ntm
+				}; //80:16 | Matrix.ntm
+			}; //79:12 | Matrix.ntm
+		}; //74:14 | Matrix.ntm
 		this.$op["- <Matrix>"]=function(matrix){
 			if(private.rows!=matrix.rows||private.collumns!=matrix.collumns){
 				try{
 					throw new SyntaxError("Matrix Addition must be of the same dimentions");
-				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //81:24 | Matrix.ntm
-			}; //80:11 | Matrix.ntm
-			let output=new Matrix(private.rows,private.collumns); //84:21 | Matrix.ntm
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //89:24 | Matrix.ntm
+			}; //88:11 | Matrix.ntm
+			let output=new Matrix(private.rows,private.collumns); //92:21 | Matrix.ntm
 			var $4=private.array.length;
 			for(var i=0;i<$4;i++){
 				var $5=private.array[i].length;
 				for(var j=0;j<$5;j++){
-					output.setValue(i,j,private.array[i][j]-matrix.getValue(i,j)); //88:32 | Matrix.ntm
-				}; //87:16 | Matrix.ntm
-			}; //86:12 | Matrix.ntm
-			return output; //92:15 | Matrix.ntm
-		}; //79:14 | Matrix.ntm
+					output.setValue(i,j,private.array[i][j]-matrix.getValue(i,j)); //96:32 | Matrix.ntm
+				}; //95:16 | Matrix.ntm
+			}; //94:12 | Matrix.ntm
+			return output; //100:15 | Matrix.ntm
+		}; //87:14 | Matrix.ntm
 		this.$op["-= <Matrix>"]=function(matrix){
 			if(private.rows!=matrix.rows||private.collumns!=matrix.collumns){
 				try{
 					throw new SyntaxError("Matrix Addition must be of the same dimentions");
-				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //97:24 | Matrix.ntm
-			}; //96:11 | Matrix.ntm
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //105:24 | Matrix.ntm
+			}; //104:11 | Matrix.ntm
 			var $6=private.array.length;
 			for(var i=0;i<$6;i++){
 				var $7=private.array[i].length;
 				for(var j=0;j<$7;j++){
-					private.array[i][j]-=matrix.getValue(i,j); //102:24 | Matrix.ntm
-				}; //101:16 | Matrix.ntm
-			}; //100:12 | Matrix.ntm
-		}; //95:14 | Matrix.ntm
-		this.$op["*= <Number>"]=function(coefficient){
+					private.array[i][j]-=matrix.getValue(i,j); //110:24 | Matrix.ntm
+				}; //109:16 | Matrix.ntm
+			}; //108:12 | Matrix.ntm
+		}; //103:14 | Matrix.ntm
+		this.$op["* <Number>"]=function(coefficient){
+			let output=new Matrix(private.rows,private.collumns); //117:21 | Matrix.ntm
 			var $8=private.array.length;
 			for(var i=0;i<$8;i++){
 				var $9=private.array[i].length;
 				for(var j=0;j<$9;j++){
-					private.array[i][j]*=coefficient; //111:24 | Matrix.ntm
-				}; //110:16 | Matrix.ntm
-			}; //109:12 | Matrix.ntm
-		}; //108:14 | Matrix.ntm
+					output.setValue(i,j,private.array[i][j]*coefficient); //120:32 | Matrix.ntm
+				}; //119:16 | Matrix.ntm
+			}; //118:12 | Matrix.ntm
+		}; //116:14 | Matrix.ntm
+		this.$op["*= <Number>"]=function(coefficient){
+			var $10=private.array.length;
+			for(var i=0;i<$10;i++){
+				var $11=private.array[i].length;
+				for(var j=0;j<$11;j++){
+					private.array[i][j]*=coefficient; //128:24 | Matrix.ntm
+				}; //127:16 | Matrix.ntm
+			}; //126:12 | Matrix.ntm
+		}; //125:14 | Matrix.ntm
 		this.$op["* <Matrix>"]=function(matrix){
 			if(private.width!=matrix.height){
 				try{
 					throw new SyntaxError("Matrix A's width must be the same as Matrix B's height (where A *= B)");
-				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //120:24 | Matrix.ntm
-			}; //119:11 | Matrix.ntm
-			let output=new Matrix(private.height,matrix.width); //123:21 | Matrix.ntm
-			for(var a_row=0;a_row<private.height;a_row++){
-				console.log("hi"); //126:24 | Matrix.ntm
-				for(var b_collumn=0;b_collumn<matrix.width;b_collumn++){
-					let value=0; //128:28 | Matrix.ntm
-					for(var a_index=0;a_index<private.width;a_index++){
-						for(var b_index=0;b_index<matrix.height;b_index++){
-						}; //130:27 | Matrix.ntm
-					}; //129:23 | Matrix.ntm
-				}; //127:19 | Matrix.ntm
-			}; //125:15 | Matrix.ntm
-		}; //118:14 | Matrix.ntm
-		$this.rows=function(){ //139:24 | Matrix.ntm
-			var $10=private.array.length;
-			for(var i=0;i<$10;i++){
-				console.log("private.array["+(i)+"]: ",private.array[i]); //141:24 | Matrix.ntm
-			}; //140:12 | Matrix.ntm
-		}; //139:9 | Matrix.ntm
-		$this.collumns=function(){ //145:28 | Matrix.ntm
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //136:24 | Matrix.ntm
+			}; //135:11 | Matrix.ntm
+			let output=new Matrix(private.rows,matrix.collumns); //139:21 | Matrix.ntm
+			for(var a_row=0;a_row<private.rows;a_row++){
+				for(var b_collumn=0;b_collumn<matrix.collumns;b_collumn++){
+					let num=0; //143:26 | Matrix.ntm
+					for(var i=0;i<private.collumns;i++){
+						num+=private.array[a_row][i]*matrix.getValue(i,b_collumn); //145:24 | Matrix.ntm
+					}; //144:23 | Matrix.ntm
+					output.setValue(a_row,b_collumn,num); //147:32 | Matrix.ntm
+				}; //142:19 | Matrix.ntm
+			}; //141:15 | Matrix.ntm
+			return output; //151:15 | Matrix.ntm
+		}; //134:14 | Matrix.ntm
+		this.$op["*= <Matrix>"]=function(matrix){
+			if(private.width!=matrix.height){
+				try{
+					throw new SyntaxError("Matrix A's width must be the same as Matrix B's height (where A *= B)");
+				}catch(e){console.log('[31m'+e.stack+'[37m');process.exit();}; //156:24 | Matrix.ntm
+			}; //155:11 | Matrix.ntm
+			let new_array=[]; //159:24 | Matrix.ntm
+			for(var i=0;i<private.rows;i++){
+				let arr=[]; //161:22 | Matrix.ntm
+				for(var j=0;j<matrix.collumns;j++){
+					arr.push(0); //163:25 | Matrix.ntm
+				}; //162:19 | Matrix.ntm
+				new_array.push(arr); //165:27 | Matrix.ntm
+			}; //160:15 | Matrix.ntm
+			for(var a_row=0;a_row<private.rows;a_row++){
+				for(var b_collumn=0;b_collumn<matrix.collumns;b_collumn++){
+					let num=0; //170:26 | Matrix.ntm
+					for(var i=0;i<private.collumns;i++){
+						num+=private.array[a_row][i]*matrix.getValue(i,b_collumn); //172:24 | Matrix.ntm
+					}; //171:23 | Matrix.ntm
+					new_array[a_row][b_collumn]=num; //174:26 | Matrix.ntm
+				}; //169:19 | Matrix.ntm
+			}; //168:15 | Matrix.ntm
+			private.array=new_array; //178:16 | Matrix.ntm
+			private.collumns=matrix.collumns; //179:16 | Matrix.ntm
+		}; //154:14 | Matrix.ntm
+		$this.rows=function(){ //183:24 | Matrix.ntm
+			var $12=private.array.length;
+			for(var i=0;i<$12;i++){
+				console.log("private.array["+(i)+"]: ",private.array[i]); //185:24 | Matrix.ntm
+			}; //184:12 | Matrix.ntm
+		}; //183:9 | Matrix.ntm
+		$this.collumns=function(){ //189:28 | Matrix.ntm
 			for(var i=0;i<private.height;i++){
-				let str=""; //147:22 | Matrix.ntm
+				let str=""; //191:22 | Matrix.ntm
 				for(var j=0;j<private.width;j++){
-					str+=private.array[j][i]+", "; //149:20 | Matrix.ntm
-				}; //148:19 | Matrix.ntm
-				console.log("collumn "+(i)+":",str); //152:24 | Matrix.ntm
-			}; //146:15 | Matrix.ntm
-		}; //145:9 | Matrix.ntm
+					str+=private.array[j][i]+", "; //193:20 | Matrix.ntm
+				}; //192:19 | Matrix.ntm
+				console.log("collumn "+(i)+":",str); //196:24 | Matrix.ntm
+			}; //190:15 | Matrix.ntm
+		}; //189:9 | Matrix.ntm
 	}; //1:7 | Matrix.ntm
-	plugin.Matrix=Matrix; //158:7 | Matrix.ntm
+	plugin.Matrix=Matrix; //202:7 | Matrix.ntm
 	plugin.clamp=function(value,min,max){ //10:23 | index.nt
 		if(value<min){
 			return min; //12:15 | index.nt

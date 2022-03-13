@@ -55,7 +55,7 @@ if(args.length == 0){
 		help_log('--run', 'run the program after it compiled if it compiled successfully (only used with the "compile" command)');
 		help_log('--module', 'compile without imports (for internal use of Tau)');
 		help_log('--node', 'Compiles for node. This option is not necessary, but has some improvements (for example, more readable errors)');
-		help_log('--packaged', 'Plugins will be written into the file instead of a separate folder');
+		help_log('--package', 'Plugins will be written into the file instead of a separate folder');
 		help_log('--preserve', 'Preserve the math (don\'t pre-simplify expressions)');
 		help_log('--verbose', 'logs to the console');
 		help_log('--view', 'will ouput the parsed program to the console (for the purpose of debugging the compiler)');

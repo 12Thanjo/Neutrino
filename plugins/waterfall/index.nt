@@ -51,6 +51,7 @@ local parse = require('querystring').parse;
 
 
 plugin = function(PORT, handler){
+	console.log("PORT: ", PORT);
 	handler default function(req, res){
 		res.header('Content-Type', 'application/json');
 		delete req.original;

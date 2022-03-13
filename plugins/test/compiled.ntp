@@ -1,0 +1,1 @@
+module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('test',()=>{let plugin={metadata:{"name":"test","version":"0.1.0","description":"test","main":"index.nt","author":"12Thanjo","dependancies":[]}};plugin.name="test";return plugin;})};

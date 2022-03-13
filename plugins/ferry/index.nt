@@ -64,6 +64,8 @@ local error_check = function(req, res, event){
 
 
 plugin.start = function(port, config){
+	port default 8000;
+
 	// config
 	config default {};
 	config.cookieSecret default "";

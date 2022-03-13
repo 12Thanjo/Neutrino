@@ -5,9 +5,9 @@ struct Matrix(rows, collumns){
 
 	private.array = [];
 
-	forNum(i, collumns){
+	forNum(i, rows){
 		local arr = [];
-		forNum(j, rows){
+		forNum(j, collumns){
 			arr.push(0);
 		};
 		private.array.push(arr);
@@ -26,11 +26,11 @@ struct Matrix(rows, collumns){
 	};
 
 	this.setArray = function(array){
-		if(array.length != private.collumns){
+		if(array.length != private.rows){
 			Error "Recieved array for matrix of non-same or invalid dimentions";
 		};
-		iterate private.array(i, row){
-			if(row.length != private.rows){
+		iterate private.array(i, collumn){
+			if(collumn.length != private.collumns){
 				Error "Recieved array for matrix of non-same or invalid dimentions";		
 			};
 		};
@@ -44,6 +44,14 @@ struct Matrix(rows, collumns){
 		return [~private.array];
 	};
 
+
+	this.forEach = function(func){
+		forNum(i, private.rows){
+			forNum(j, private.collumns){
+				private.array[i][j] = func(private.array[i][j]);
+			};
+		};
+	};
 
 	// operations ////////////////////////////////////////////////////////////
 	// addition
@@ -105,6 +113,15 @@ struct Matrix(rows, collumns){
 	};
 
 	// multiplication
+	operation * (Number, coefficient){
+		local output = new Matrix(private.rows, private.collumns);
+		for(i, private.array){
+			for(j, private.array[i]){
+				output.setValue(i, j, private.array[i][j] * coefficient);
+			};
+		};
+	};
+
 	operation *= (Number, coefficient){
 		for(i, private.array){
 			for(j, private.array[i]){
@@ -114,25 +131,52 @@ struct Matrix(rows, collumns){
 	};
 
 
-
 	operation * (Matrix, matrix){
 		if(private.width != matrix.height){
 			SyntaxError "Matrix A's width must be the same as Matrix B's height (where A *= B)";
 		};
 
-		local output = new Matrix(private.height, matrix.width);
+		local output = new Matrix(private.rows, matrix.collumns);
 
-		forNum(a_row, private.height){
-			console.log("hi");
-			forNum(b_collumn, matrix.width){
-				local value = 0;
-				forNum(a_index, private.width){
-					forNum(b_index, matrix.height){
-						
-					};
+		forNum(a_row, private.rows){
+			forNum(b_collumn, matrix.collumns){
+				local num = 0;
+				forNum(i, private.collumns){
+					num += private.array[a_row][i] * matrix.getValue(i, b_collumn);
 				};
+				output.setValue(a_row, b_collumn, num);
 			};
 		};
+
+		return output;
+	};
+
+	operation *= (Matrix, matrix){
+		if(private.width != matrix.height){
+			SyntaxError "Matrix A's width must be the same as Matrix B's height (where A *= B)";
+		};
+
+		local new_array = [];
+		forNum(i, private.rows){
+			local arr = [];
+			forNum(j, matrix.collumns){
+				arr.push(0);
+			};
+			new_array.push(arr);
+		};
+
+		forNum(a_row, private.rows){
+			forNum(b_collumn, matrix.collumns){
+				local num = 0;
+				forNum(i, private.collumns){
+					num += private.array[a_row][i] * matrix.getValue(i, b_collumn);
+				};
+				new_array[a_row][b_collumn] = num;
+			};
+		};
+
+		private.array = new_array;
+		private.collumns = matrix.collumns;	
 	};
 
 

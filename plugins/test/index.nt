@@ -1,0 +1,5 @@
+// plugin: test
+// description: test
+// author: 12Thanjo
+
+plugin.name = "test";
