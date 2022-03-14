@@ -67,6 +67,10 @@ plugin.error = function(string){
 	console.log(plugin.color.red + string + plugin.color.white + plugin.backgroundColor.black + plugin.style.reset);
 };
 
+plugin.warn = function(string){
+	console.log(plugin.color.yellow + string + plugin.color.white + plugin.backgroundColor.black + plugin.style.reset);
+};
+
 plugin.specialLog = function(data){
 	if(data typeof "string" == false){
 		console.log(data);

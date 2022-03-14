@@ -13,6 +13,12 @@ macro "sessions";
 
 local dir_map = {};
 setup_dir = function(method, path, event){
+	if(path.length != 1 && path[path.length-1] == "/"){
+		path = path.slice(0, path.length-1);
+		cmd.warn(|"Removed \"/\" from end of path ( "path" )"|);
+	};
+
+
 	if(dir_map[method] == null){
 		dir_map[method] = new Map();
 	};
@@ -160,6 +166,11 @@ plugin.start = function(port, config){
 		if(continue){
 			// directory event ///////////////////////////////////
 			local method = req.method;
+			
+			if(req.path.length != 1 && req.path[req.path.length-1] == "/"){
+				req.path = req.path.slice(0, req.path.length-1);	
+			};
+
 			if(dir_map[method] && dir_map[method].has(req.path)){
 				error_check(req, res, 
 					dir_map[method].get(req.path)

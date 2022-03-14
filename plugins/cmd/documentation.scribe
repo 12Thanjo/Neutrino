@@ -99,7 +99,13 @@ name: cmd
 			description: event to run when text input is recieved (takes recieved text as a parameter)
 	name: error
 		type: function
-		description: console.error() with stylizations with style-overflow prevention
+		description: essentially console.error() with stylizations with style-overflow prevention
+		param: string
+			type: string
+			description: string to output
+	name: warn
+		type: function
+		description: essentially console.warning() with stylizations with style-overflow prevention
 		param: string
 			type: string
 			description: string to output
