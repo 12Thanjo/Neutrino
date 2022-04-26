@@ -3,7 +3,6 @@ scope {
 		private.map = new Map();
 
 		private.add_single = function(tag, add){
-			console.log(tag, private.map.has(tag));
 			if(private.map.has(tag)){
 				local arr = private.map.get(tag);
 				if(arr.includes(add) == false){
@@ -16,7 +15,7 @@ scope {
 		};
 
 		this.add = function(tag, add){
-			if(add classof "Array"){
+			if(add != null && add classof "Array"){
 				iterate add(i, add_val){
 					private.add_single(tag, add_val);
 				};

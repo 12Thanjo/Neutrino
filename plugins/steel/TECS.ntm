@@ -29,6 +29,7 @@ this.environment.createComponent("rotation", {
 });
 
 this.environment.createComponent("renderTarget", prop("any"));
+this.environment.createComponent("material", prop("any"));
 
 
 // systems //////////////////////////////////////////////////////////////

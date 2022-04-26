@@ -1,52 +1,52 @@
-module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('steel',()=>{let plugin={metadata:{"name":"steel","version":"0.1.0","description":"a game engine written in neutrino","main":"index.nt","author":"12Thanjo","dependancies":["BABYLON","DOM","TECS"]}};
+module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('steel',()=>{let plugin={metadata:{"name":"steel","version":"0.1.0","description":"a game engine written in neutrino","main":"index.nt","author":"12Thanjo","dependancies":["BABYLON","DOM","TECS","convert","convert"]}};
 	let BABYLON=$get_plugin('BABYLON'); //5:7
 	let DOM=$get_plugin('DOM'); //6:7
 	let {prop,all,some,none}=$get_plugin('TECS');let TECS=$get_plugin('TECS'); //8:7
 	let Engine=function(name,config){
 		let $this=this;let private={};this.$op={};Engine.$map.set(name,this);
-		private.name=name; //11:16 | index.nt
-		Object.defineProperty(this, "name", {get: ()=>{return private.name;}}); //11:11 | index.nt
-		let self=$this; //12:15 | index.nt
-		if(config==null){config={};}; //15:11 | index.nt
+		private.name=name; //12:16 | index.nt
+		Object.defineProperty(this, "name", {get: ()=>{return private.name;}}); //12:11 | index.nt
+		let self=$this; //13:15 | index.nt
+		if(config==null){config={};}; //16:11 | index.nt
 		if(config.canvas==null){
-			$this.canvas=DOM.createElement("canvas",document.body); //17:13 | index.nt
+			$this.canvas=DOM.createElement("canvas",document.body); //18:13 | index.nt
 			$this.canvas.css({
 				width:DOM.w,
 				height:DOM.h
-			}); //18:24 | index.nt
+			}); //19:24 | index.nt
 		}else{
-			$this.canvas=DOM(config.canvas); //23:13 | index.nt
-		}; //16:7 | index.nt
-		if(config.fov==null){config.fov=75;}; //25:11 | index.nt
-		if(config.shadowResolution==null){config.shadowResolution=2048;}; //26:11 | index.nt
-		if(config.MSAA==null){config.MSAA=1;}; //27:11 | index.nt
-		if(config.poll==null){config.poll=15.625;}; //28:11 | index.nt
-		if(config.size==null){config.size=10000;}; //29:11 | index.nt
-		if(config.threads==null){config.threads=require('os').cpus().length-1;}; //30:11 | index.nt
+			$this.canvas=DOM(config.canvas); //24:13 | index.nt
+		}; //17:7 | index.nt
+		if(config.fov==null){config.fov=75;}; //26:11 | index.nt
+		if(config.shadowResolution==null){config.shadowResolution=2048;}; //27:11 | index.nt
+		if(config.MSAA==null){config.MSAA=1;}; //28:11 | index.nt
+		if(config.poll==null){config.poll=15.625;}; //29:11 | index.nt
+		if(config.size==null){config.size=10000;}; //30:11 | index.nt
+		if(config.threads==null){config.threads=require('os').cpus().length-1;}; //31:11 | index.nt
 		if(config.create==null){config.create=()=>{
-		};}; //32:11 | index.nt
-		if(config.update==null){config.update=()=>{
 		};}; //33:11 | index.nt
-		if(config.render==null){config.render=()=>{
+		if(config.update==null){config.update=()=>{
 		};}; //34:11 | index.nt
+		if(config.render==null){config.render=()=>{
+		};}; //35:11 | index.nt
 		private.engine=new BABYLON.Engine($this.canvas.array[0].element,true,{
 			preserveDrawingBuffer:true,
 			stencil:true,
 			disableWebGL2Support:false
-		}); //39:12 | index.nt
-		private.scene=new BABYLON.Scene(private.engine); //40:12 | index.nt
-		private.camera=new BABYLON.FreeCamera("camera1",new BABYLON.Vector3(0,5,-10),private.scene); //41:18 | index.nt
-		Object.defineProperty(this, "camera", {get: ()=>{return private.camera;}}); //41:11 | index.nt
-		private.camera.setTarget(BABYLON.Vector3.Zero()); //42:29 | index.nt
-		private.camera.fov=config.fov*0.0174; //43:12 | index.nt
-		private.camera.minZ=0.1; //44:12 | index.nt
-		private.scene.clearColor=new BABYLON.Color3(0.05,0.05,0.06); //47:12 | index.nt
-		let light=new BABYLON.DirectionalLight("ambient light",new BABYLON.Vector3(-1,-2,-1),private.scene); //48:16 | index.nt
-		light.position=new BABYLON.Vector3(20,40,20); //49:10 | index.nt
-		light.intensity=0.6; //50:10 | index.nt
-		private.shadowGenerator=new BABYLON.ShadowGenerator(config.shadowResolution,light); //53:12 | index.nt
-		private.shadowGenerator.setDarkness(0.25); //54:40 | index.nt
-		private.shadowGenerator.usePoissonSampling=true; //55:12 | index.nt
+		}); //40:12 | index.nt
+		private.scene=new BABYLON.Scene(private.engine); //41:12 | index.nt
+		private.camera=new BABYLON.FreeCamera("camera1",new BABYLON.Vector3(0,5,-10),private.scene); //42:18 | index.nt
+		Object.defineProperty(this, "camera", {get: ()=>{return private.camera;}}); //42:11 | index.nt
+		private.camera.setTarget(BABYLON.Vector3.Zero()); //43:29 | index.nt
+		private.camera.fov=config.fov*0.0174; //44:12 | index.nt
+		private.camera.minZ=0.1; //45:12 | index.nt
+		private.scene.clearColor=new BABYLON.Color3(0.05,0.05,0.06); //48:12 | index.nt
+		let light=new BABYLON.DirectionalLight("ambient light",new BABYLON.Vector3(-1,-2,-1),private.scene); //49:16 | index.nt
+		light.position=new BABYLON.Vector3(20,40,20); //50:10 | index.nt
+		light.intensity=0.6; //51:10 | index.nt
+		private.shadowGenerator=new BABYLON.ShadowGenerator(config.shadowResolution,light); //54:12 | index.nt
+		private.shadowGenerator.setDarkness(0.25); //55:40 | index.nt
+		private.shadowGenerator.usePoissonSampling=true; //56:12 | index.nt
 		let pipeline=new BABYLON.DefaultRenderingPipeline("default",true,private.scene,[private.camera]); //1:15 | post processing.ntm
 		pipeline.fxaaEnabled=false; //4:9 | post processing.ntm
 		pipeline.samples=1; //7:9 | post processing.ntm
@@ -364,7 +364,7 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 				pipeline.grain.animated=val; //366:17 | post processing.ntm
 			}
 		}); //361:22 | post processing.ntm
-		$this.pipeline.MSAA=config.MSAA; //75:9 | index.nt
+		$this.pipeline.MSAA=config.MSAA; //76:9 | index.nt
 		TECS.print=false; //2:5 | TECS.ntm
 		$this.environment=new TECS.Environment(private.name,{
 			size:config.size,
@@ -386,27 +386,54 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			z:prop("float64")
 		}); //25:33 | TECS.ntm
 		$this.environment.createComponent("renderTarget",prop("any")); //31:33 | TECS.ntm
-		$this.environment.createQuery("position",all("position","renderTarget")); //37:29 | TECS.ntm
+		$this.environment.createComponent("material",prop("any")); //32:33 | TECS.ntm
+		$this.environment.createQuery("position",all("position","renderTarget")); //38:29 | TECS.ntm
 		let position=$this.environment.createSystem("position","position",(id,components)=>{
-			let render_position=components.renderTarget[id].position; //39:26 | TECS.ntm
-			render_position.x=components.position.x[id]; //41:20 | TECS.ntm
-			render_position.z=components.position.y[id]; //42:20 | TECS.ntm
-			render_position.y=components.position.z[id]; //43:20 | TECS.ntm
-		}); //38:15 | TECS.ntm
-		$this.environment.createQuery("scale",all("scale","renderTarget")); //47:29 | TECS.ntm
+			let render_position=components.renderTarget[id].position; //40:26 | TECS.ntm
+			render_position.x=components.position.x[id]; //42:20 | TECS.ntm
+			render_position.z=components.position.y[id]; //43:20 | TECS.ntm
+			render_position.y=components.position.z[id]; //44:20 | TECS.ntm
+		}); //39:15 | TECS.ntm
+		$this.environment.createQuery("scale",all("scale","renderTarget")); //48:29 | TECS.ntm
 		let scale=$this.environment.createSystem("scale","scale",(id,components)=>{
-			let render_scale=components.renderTarget[id].scale; //49:23 | TECS.ntm
-			render_scale.x=components.scale.x[id]; //51:17 | TECS.ntm
-			render_scale.z=components.scale.y[id]; //52:17 | TECS.ntm
-			render_scale.y=components.scale.z[id]; //53:17 | TECS.ntm
-		}); //48:12 | TECS.ntm
-		$this.environment.createQuery("rotation",all("rotation","renderTarget")); //57:29 | TECS.ntm
+			let render_scale=components.renderTarget[id].scale; //50:23 | TECS.ntm
+			render_scale.x=components.scale.x[id]; //52:17 | TECS.ntm
+			render_scale.z=components.scale.y[id]; //53:17 | TECS.ntm
+			render_scale.y=components.scale.z[id]; //54:17 | TECS.ntm
+		}); //49:12 | TECS.ntm
+		$this.environment.createQuery("rotation",all("rotation","renderTarget")); //58:29 | TECS.ntm
 		let rotation=$this.environment.createSystem("rotation","rotation",(id,components)=>{
-			components.rotation.z[id]%=Math.TAU; //61:15 | TECS.ntm
-			components.rotation.x[id]%=Math.TAU; //62:15 | TECS.ntm
-			components.rotation.y[id]%=Math.TAU; //63:15 | TECS.ntm
-			components.renderTarget[id].rotationQuaternion=BABYLON.Quaternion.RotationYawPitchRoll(components.rotation.z[id],components.rotation.x[id],components.rotation.y[id]); //64:15 | TECS.ntm
-		}); //58:15 | TECS.ntm
+			components.rotation.z[id]%=Math.TAU; //62:15 | TECS.ntm
+			components.rotation.x[id]%=Math.TAU; //63:15 | TECS.ntm
+			components.rotation.y[id]%=Math.TAU; //64:15 | TECS.ntm
+			components.renderTarget[id].rotationQuaternion=BABYLON.Quaternion.RotationYawPitchRoll(components.rotation.z[id],components.rotation.x[id],components.rotation.y[id]); //65:15 | TECS.ntm
+		}); //59:15 | TECS.ntm
+		{
+			$this.materials={
+				basic:{}
+			}; //3:9 | materials.ntm
+			let convert=$get_plugin('convert'); //6:11
+			let Basic_Material=function(name,color){
+				let $this=this;let private={};this.$op={};Basic_Material.$map.set(name,this);
+				private.name=name; //10:20 | materials.ntm
+				Object.defineProperty(this, "name", {get: ()=>{return private.name;}}); //10:15 | materials.ntm
+				private.color=color; //11:21 | materials.ntm
+				Object.defineProperty(this, "color", {get: ()=>{return private.color;}}); //11:15 | materials.ntm
+				$this.mat=new BABYLON.StandardMaterial(name,private.scene); //13:13 | materials.ntm
+				$this.mat.diffuseColor=new BABYLON.Color3(color[0],color[1],color[2]); //14:13 | materials.ntm
+			}; //9:12 | materials.ntm
+			Basic_Material.$map=new Map();Basic_Material.get=function(id){return Basic_Material.$map.get(id);};Basic_Material.has=function(id){return Basic_Material.$map.has(id);};Basic_Material.forEach=function(cb){Basic_Material.$map.forEach(cb);};Basic_Material.delete=function(cb){Basic_Material.$map.delete(cb);}; //9:12 | materials.ntm
+			$this.bm=Basic_Material; //18:9 | materials.ntm
+			$this.materials.basic.create=function(name,hex){ //21:42 | materials.ntm
+				return new Basic_Material(name,convert.hexToRgb(hex)); //22:15 | materials.ntm
+			}; //21:9 | materials.ntm
+			$this.materials.basic.add=function(entity,material){ //25:40 | materials.ntm
+				let mat=Basic_Material.get(material); //26:19 | materials.ntm
+				entity.bindComponent("material",mat); //28:30 | materials.ntm
+				let renderTarget=entity.getComponent("renderTarget"); //29:28 | materials.ntm
+				renderTarget.material=mat.mat; //30:22 | materials.ntm
+			}; //25:10 | materials.ntm
+		}; //2:6 | materials.ntm
 		$this.add={}; //2:5 | objects.ntm
 		$this.environment.createComponent("box",prop("any",true)); //4:33 | objects.ntm
 		$this.add.box=function(name,config){ //5:23 | objects.ntm
@@ -508,42 +535,42 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stee
 			}; //45:7 | performance.ntm
 			private.fpsTimer=process.hrtime(); //51:12 | performance.ntm
 		}; //39:23 | performance.ntm
-		let polling_rate=1/config.poll*1000; //83:23 | index.nt
-		$this.animationScaling=function(value){ //84:36 | index.nt
+		let polling_rate=1/config.poll*1000; //85:23 | index.nt
+		$this.animationScaling=function(value){ //86:36 | index.nt
 			if(private.fps!=0){
-				return value*polling_rate/private.fps; //86:19 | index.nt
+				return value*polling_rate/private.fps; //88:19 | index.nt
 			}else{
-				return 0; //88:19 | index.nt
-			}; //85:11 | index.nt
-		}; //84:9 | index.nt
-		config.create($this); //92:18 | index.nt
+				return 0; //90:19 | index.nt
+			}; //87:11 | index.nt
+		}; //86:9 | index.nt
+		config.create($this); //94:18 | index.nt
 		private.update=new time.AdvancedInterval(config.poll,()=>{
-			config.update($this); //96:22 | index.nt
-		}); //95:12 | index.nt
-		private.update.start(); //98:25 | index.nt
-		private.event_loop=new TECS.EventLoop(private.name); //101:12 | index.nt
+			config.update($this); //98:22 | index.nt
+		}); //97:12 | index.nt
+		private.update.start(); //100:25 | index.nt
+		private.event_loop=new TECS.EventLoop(private.name); //103:12 | index.nt
 		private.event_loop.add((done)=>{
 			position.run(()=>{
-			}); //103:21 | index.nt
-			scale.run(()=>{
-			}); //104:18 | index.nt
-			rotation.run(()=>{
 			}); //105:21 | index.nt
-		}); //102:27 | index.nt
+			scale.run(()=>{
+			}); //106:18 | index.nt
+			rotation.run(()=>{
+			}); //107:21 | index.nt
+		}); //104:27 | index.nt
 		private.engine.runRenderLoop(()=>{
-			calc_performance(); //110:25 | index.nt
-			config.render($this); //111:22 | index.nt
-			private.event_loop.start(); //113:33 | index.nt
-			private.scene.render(); //115:32 | index.nt
-		}); //109:33 | index.nt
-		$this.getEngine=function(){ //118:29 | index.nt
-			return private.engine; //119:15 | index.nt
-		}; //118:9 | index.nt
-		$this.destroy=function(){ //125:27 | index.nt
-			$this.clearScene(); //126:24 | index.nt
-			TECS.Environment.delete(private.name); //127:32 | index.nt
-		}; //125:9 | index.nt
-	}; //10:8 | index.nt
-	Engine.$map=new Map();Engine.get=function(id){return Engine.$map.get(id);};Engine.has=function(id){return Engine.$map.has(id);};Engine.forEach=function(cb){Engine.$map.forEach(cb);};Engine.delete=function(cb){Engine.$map.delete(cb);}; //10:8 | index.nt
-	plugin.Engine=Engine; //130:7 | index.nt
+			calc_performance(); //112:25 | index.nt
+			config.render($this); //113:22 | index.nt
+			private.event_loop.start(); //115:33 | index.nt
+			private.scene.render(); //117:32 | index.nt
+		}); //111:33 | index.nt
+		$this.getEngine=function(){ //120:29 | index.nt
+			return private.engine; //121:15 | index.nt
+		}; //120:9 | index.nt
+		$this.destroy=function(){ //127:27 | index.nt
+			$this.clearScene(); //128:24 | index.nt
+			TECS.Environment.delete(private.name); //129:32 | index.nt
+		}; //127:9 | index.nt
+	}; //11:8 | index.nt
+	Engine.$map=new Map();Engine.get=function(id){return Engine.$map.get(id);};Engine.has=function(id){return Engine.$map.has(id);};Engine.forEach=function(cb){Engine.$map.forEach(cb);};Engine.delete=function(cb){Engine.$map.delete(cb);}; //11:8 | index.nt
+	plugin.Engine=Engine; //132:7 | index.nt
 return plugin;})};

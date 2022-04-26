@@ -134,7 +134,7 @@ plugin.renameFile = function(path, name){
 plugin.deleteDirectory = function(path){
     if(fs.existsSync(path)){
         fs.readdirSync(path).forEach(@(file, index)->{
-            local current_path = node_path.join(path, file);
+            local current_path = |path "/" file|;
             if(fs.lstatSync(current_path).isDirectory()){ // recurse
                 deleteDirectory(current_path);
             }else{ // delete file

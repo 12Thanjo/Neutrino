@@ -536,46 +536,46 @@ module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('stru
 			private.map=new Map(); //3:16 | hash table.ntm
 			private.add_single=function(tag,add){ //5:37 | hash table.ntm
 				if(private.map.has(tag)){
-					let arr=private.map.get(tag); //8:26 | hash table.ntm
+					let arr=private.map.get(tag); //7:26 | hash table.ntm
 					if(arr.includes(add)==false){
-						arr.push(add); //10:29 | hash table.ntm
-						private.map.set(tag,arr); //11:36 | hash table.ntm
-					}; //9:19 | hash table.ntm
+						arr.push(add); //9:29 | hash table.ntm
+						private.map.set(tag,arr); //10:36 | hash table.ntm
+					}; //8:19 | hash table.ntm
 				}else{
-					private.map.set(tag,[add]); //14:32 | hash table.ntm
-				}; //7:15 | hash table.ntm
+					private.map.set(tag,[add]); //13:32 | hash table.ntm
+				}; //6:15 | hash table.ntm
 			}; //5:16 | hash table.ntm
-			$this.add=function(tag,add){ //18:27 | hash table.ntm
-				if(add.constructor.name ==="Array"){
+			$this.add=function(tag,add){ //17:27 | hash table.ntm
+				if(add!=null&&add.constructor.name ==="Array"){
 					for(var[i,add_val]of add.entries()){
-						private.add_single(tag,add_val); //21:39 | hash table.ntm
-					}; //20:24 | hash table.ntm
+						private.add_single(tag,add_val); //20:39 | hash table.ntm
+					}; //19:24 | hash table.ntm
 				}else{
-					private.add_single(tag,add); //24:35 | hash table.ntm
-				}; //19:15 | hash table.ntm
-			}; //18:13 | hash table.ntm
-			$this.has=function(tag){ //28:27 | hash table.ntm
-				return private.map.has(tag); //29:19 | hash table.ntm
-			}; //28:13 | hash table.ntm
-			$this.get=function(tag){ //32:27 | hash table.ntm
-				return private.map.get(tag); //33:19 | hash table.ntm
-			}; //32:13 | hash table.ntm
-			$this.delete=function(tag){ //36:30 | hash table.ntm
-				private.map.delete(tag); //37:31 | hash table.ntm
-			}; //36:13 | hash table.ntm
+					private.add_single(tag,add); //23:35 | hash table.ntm
+				}; //18:15 | hash table.ntm
+			}; //17:13 | hash table.ntm
+			$this.has=function(tag){ //27:27 | hash table.ntm
+				return private.map.has(tag); //28:19 | hash table.ntm
+			}; //27:13 | hash table.ntm
+			$this.get=function(tag){ //31:27 | hash table.ntm
+				return private.map.get(tag); //32:19 | hash table.ntm
+			}; //31:13 | hash table.ntm
+			$this.delete=function(tag){ //35:30 | hash table.ntm
+				private.map.delete(tag); //36:31 | hash table.ntm
+			}; //35:13 | hash table.ntm
 			Object.defineProperty($this,'size',{
-				get:function(){ //41:26 | hash table.ntm
-					return private.map.size; //42:23 | hash table.ntm
+				get:function(){ //40:26 | hash table.ntm
+					return private.map.size; //41:23 | hash table.ntm
 				}
-			}); //40:30 | hash table.ntm
-			$this.print=function(){ //47:29 | hash table.ntm
-				let output={}; //48:25 | hash table.ntm
+			}); //39:30 | hash table.ntm
+			$this.print=function(){ //46:29 | hash table.ntm
+				let output={}; //47:25 | hash table.ntm
 				for(var[key,value]of private.map.entries()){
-					output[key]=[...value]; //51:23 | hash table.ntm
-				}; //50:20 | hash table.ntm
-				return output; //54:19 | hash table.ntm
-			}; //47:13 | hash table.ntm
+					output[key]=[...value]; //50:23 | hash table.ntm
+				}; //49:20 | hash table.ntm
+				return output; //53:19 | hash table.ntm
+			}; //46:13 | hash table.ntm
 		}; //2:11 | hash table.ntm
-		plugin.HashTable=HashTable; //59:11 | hash table.ntm
+		plugin.HashTable=HashTable; //58:11 | hash table.ntm
 	}; //1:6 | hash table.ntm
 return plugin;})};

@@ -1,0 +1,15 @@
+module.exports=function($pending_plugins,$get_plugin){$pending_plugins.set('convert',()=>{let plugin={metadata:{"name":"convert","version":"0.1.0","description":"unit conversion","main":"index.nt","author":"12Thanjo","dependancies":[]}};
+	plugin.rgbToHex=function(rgb){ //5:26 | index.nt
+		let r=rgb[0].toString(16); //6:12 | index.nt
+		let g=rgb[1].toString(16); //7:12 | index.nt
+		let b=rgb[2].toString(16); //8:12 | index.nt
+		return parseInt("0x"+r+g+b,16); //10:11 | index.nt
+	}; //5:7 | index.nt
+	plugin.hexToRgb=function(hex){ //14:26 | index.nt
+		let str=hex.toString(16); //15:14 | index.nt
+		while(str.length<6){
+			str='0'+str; //17:12 | index.nt
+		}; //16:10 | index.nt
+		return [parseInt("0x"+str.substr(0,2))/255,parseInt("0x"+str.substr(2,2))/255,parseInt("0x"+str.substr(4,2))/255]; //20:11 | index.nt
+	}; //14:7 | index.nt
+return plugin;})};

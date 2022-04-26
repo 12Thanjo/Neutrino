@@ -1,0 +1,21 @@
+// plugin: convert
+// description: unit conversion
+// author: 12Thanjo
+
+plugin.rgbToHex = function(rgb){
+	local r = rgb[0].toString(16);
+	local g = rgb[1].toString(16);
+	local b = rgb[2].toString(16);
+
+	return parseInt("0x" + r + g + b, 16);
+};
+
+
+plugin.hexToRgb = function(hex){
+	local str = hex.toString(16);
+	while(str.length < 6){
+		str = '0' + str;
+	};
+
+	return [parseInt("0x" + str.substr(0, 2))/255, parseInt("0x" + str.substr(2, 2))/255, parseInt("0x" + str.substr(4, 2))/255];
+};

@@ -1,0 +1,35 @@
+
+scope {
+	this.materials = {
+		basic: {},
+	};
+	import convert;
+
+
+	species Basic_Material(name, color){
+		access name = name;
+		access color = color;
+
+		this.mat = new BABYLON.StandardMaterial(name, private.scene);
+		this.mat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);
+		// this.mat.emmisiveColor = new BABYLON.Color3(color[0], color[1], color[2]);
+
+	};
+	this.bm = Basic_Material;
+
+
+	this.materials.basic.create = function(name, hex){
+		return new Basic_Material(name, convert.hexToRgb(hex));
+	};
+
+ 	this.materials.basic.add = function(entity, material){
+ 		local mat = Basic_Material.get(material);
+
+ 		entity.bindComponent("material", mat);
+ 		local renderTarget = entity.getComponent("renderTarget");
+ 		renderTarget.material = mat.mat;
+ 	};
+
+};
+
+

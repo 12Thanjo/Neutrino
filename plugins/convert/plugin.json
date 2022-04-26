@@ -1,0 +1,8 @@
+{
+    "name": "convert",
+    "version": "0.1.0",
+    "description": "unit conversion",
+    "main": "index.nt",
+    "author": "12Thanjo",
+    "dependancies": []
+}

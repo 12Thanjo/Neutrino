@@ -6,6 +6,7 @@ import BABYLON;
 import DOM;
 // import OCS [Prop, all, some, none];
 import TECS [prop, all, some, none];
+// import convert;
 
 species Engine(name, config){
 	access name = name;
@@ -74,6 +75,7 @@ species Engine(name, config){
 	macro "post processing";
 	this.pipeline.MSAA = config.MSAA;
 	macro "TECS";
+	macro "materials";
 	macro "objects";
 	macro "load scene";
 

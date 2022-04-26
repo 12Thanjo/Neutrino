@@ -229,6 +229,7 @@ Bind a component to an entity.
 | component_id  | String  | Unique id of the component to bind to the Entity    																		|
 | \~params 	    | Params  | Values to set to the properties (length is optional). The order is in which they are created (top to bottom, left to right) |
 
+
 ### `env.forEach(event)`
 Iterate over every entity
 | Parameter | Type     | Description			 	                                       |
@@ -263,6 +264,12 @@ Returns a boolean if the entity has the component.
 | Parameter     | Type    | Description			 	  						 |
 |---------------|---------|--------------------------------------------------|
 | component_id  | String  | Unique id of the component to bind to the Entity |
+
+### `Entity.getComponent(component_id)`
+Bind a component to an entity.
+| Parameter     | Type    | Description			 	  						 				|
+|---------------|---------|-----------------------------------------------------------------|
+| component_id  | String  | Unique id of the component (that is bound to the Entity) to get |
 
 
 ## Query
