@@ -95,8 +95,7 @@ plugin.normalize = function(path, forwards){
 
 plugin.getFilePath = function(path){
     if(plugin.getFileExtention(path) != ""){
-        path = plugin.normalize(path);
-        return path.substring(0, path.lastIndexOf("/") + 1);
+        return path.substring(0, plugin.normalize(path).lastIndexOf("/") + 1);
     }else{
         return path;
     };
