@@ -114,13 +114,13 @@ module.exports = function(args, dirname, compile_target, output_target){
 
 		try{
 			var compiled = neutrino.Compiler(parsed.output, parsed.const_dict, {
-				debug: 			args.includes('--debug'),
-				package: 		args.includes('--package'),
-				plugin: 		args.includes('--plugin'),
-				preserve: 		args.includes('--preserve'),
-				relative: 		file.relative.replaceAll("\\", "/"),
-				node: 			args.includes('--node'),
-				compatibility: 	args.includes('--compatibility'),
+				debug: 		args.includes('--debug'),
+				package: 	args.includes('--package'),
+				plugin: 	args.includes('--plugin'),
+				preserve: 	args.includes('--preserve'),
+				relative: 	file.relative.replaceAll("\\", "/"),
+				node: 		args.includes('--node'),
+				legacy: 	args.includes('--legacy'),
 			});
 		}catch(e){
 			console.log(cmd.color.red);
