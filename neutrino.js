@@ -51,6 +51,7 @@ if(args.length == 0){
 
 		console.log();
 
+		help_log('--compatibility', 'Attempts to maintain compatibility with older versions of JS');
 		help_log('--debug', 'Compiled output in debug mode');
 		help_log('--run', 'run the program after it compiled if it compiled successfully (only used with the "compile" command)');
 		help_log('--module', 'compile without imports (for internal use of Tau)');
