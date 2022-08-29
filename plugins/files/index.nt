@@ -59,12 +59,16 @@ plugin.createDirectory = function(path){
 
 plugin.getFileExtention = function(path){
     local dot_index = path.lastIndexOf(".");
-    local forward = path.lastIndexOf("/");
-    local backward = path.lastIndexOf("\\");
-    if(stats.max(dot_index, forward, backward) != dot_index){
-        return "";
+    if(dot_index != -1){
+        local forward = path.lastIndexOf("/");
+        local backward = path.lastIndexOf("\\");
+        if(stats.max(dot_index, forward, backward) != dot_index){
+            return "";
+        }else{
+            return path.substring(dot_index + 1);
+        };
     }else{
-        return path.substring(dot_index + 1);
+        return "";
     };
 };
 
