@@ -245,7 +245,7 @@ assert('class', true, @()->{
 		private.priv_prop = "hi";
 	};
 
-	// create some 
+	// create some instances of GenericClass
 	spawn GenericClass("foo");
 	spawn GenericClass("bar");
 
@@ -261,8 +261,9 @@ assert('class', true, @()->{
 			GenericClass.has(2) == false;
 });
 assert('species', true, @()->{
-	 // id parameter is needed
-	 // the first parameter is used
+	 // an id parameter is required
+	 // the first parameter is used for this (with any name)
+
 	 // this id param is used as the index for the map
 	species GenericSpecies(id, param){
 		this.name = id;

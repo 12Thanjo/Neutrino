@@ -3,7 +3,7 @@
 // author: 12Thanjo
 
 plugin.smoothStart2 = function(t){
-	return t*t;	
+	return t*t;
 };
 plugin.smoothStart3 = function(t){
 	return t*t*t;	

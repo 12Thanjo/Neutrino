@@ -170,6 +170,7 @@ local get_files_recursive = function(path, depth){
                         name: file.name,
                         type: "directory",
                         dir: get_files_recursive(path + "/" + file.name, depth - 1),
+                        properties: plugin.properties(path + "/" + file.name)
                     });
                 }else{//file
                     output.push({
