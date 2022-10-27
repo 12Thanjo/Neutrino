@@ -113,6 +113,12 @@ module.exports = function(args, dirname, compile_target, output_target){
 		}
 
 		try{
+			if(args.includes('--legacy') && args.includes("--legacy_nw")){
+				console.log(cmd.color.red);
+				console.log("Cannot have both --legacy and --legacy_nw flags");
+				console.log(cmd.color.white);
+				process.exit();
+			}
 			var compiled = neutrino.Compiler(parsed.output, parsed.const_dict, {
 				debug: 		args.includes('--debug'),
 				package: 	args.includes('--package'),
@@ -120,7 +126,8 @@ module.exports = function(args, dirname, compile_target, output_target){
 				preserve: 	args.includes('--preserve'),
 				relative: 	file.relative.replaceAll("\\", "/"),
 				node: 		args.includes('--node'),
-				legacy: 	args.includes('--legacy'),
+				legacy: 	args.includes('--legacy') || args.includes('--legacy_nw'),
+				legacy_no_warnings: args.includes('--legacy_nw'),
 			});
 		}catch(e){
 			console.log(cmd.color.red);

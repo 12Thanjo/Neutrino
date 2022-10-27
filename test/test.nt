@@ -97,6 +97,14 @@ assert('power (^)', 128, @()->{return 2 ^ 7;});
 console.log();
 
 
+console.log("Bitwise Operators:");
+assert('bitwise shift left (<<)', 32, @()->{return 1 << 5;});
+assert('bitwise shift right (>>)', 31, @()->{return 1000 >> 5;});
+assert('bitwise or (|||)', 37, @()->{return 36 ||| 5;});
+assert('bitwise and (&&&)', 4, @()->{return 36 &&& 5;});
+console.log();
+
+
 console.log("Assignment Operators:");
 regional num = 10;
 assert('addition (+=)', 14, @()->{num += 4; return num;});
@@ -239,6 +247,7 @@ assert('class', true, @()->{
 	class GenericClass(param){
 		// access creates a private variable with a public getter
 		// it can be used with struct, class, species
+		// this will throw a compiler error in legacy mode
 		access id = id;
 
 		this.param = param;
@@ -269,6 +278,7 @@ assert('species', true, @()->{
 		this.name = id;
 		this.param = param;
 		private.priv_prop = "hi";
+		// this will throw a compiler error in legacy mode
 		access getter_prop = 0;
 		private.getter_prop += 1;
 	};

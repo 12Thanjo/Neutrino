@@ -54,6 +54,7 @@ if(args.length == 0){
 		help_log('--debug', 'Compiled output in debug mode');
 		help_log('--run', 'run the program after it compiled if it compiled successfully (only used with the "compile" command)');
 		help_log('--legacy', 'Attempts to maintain compatibility with older versions of JS');
+		help_log('--legacy_nw', 'same as --legacy, but supresses warnings');
 		help_log('--module', 'compile without imports (for internal use of Tau)');
 		help_log('--node', 'Compiles for node. This option is not necessary, but has some improvements (for example, more readable errors)');
 		help_log('--package', 'Plugins will be written into the file instead of a separate folder');
